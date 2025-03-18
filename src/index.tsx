@@ -9,8 +9,11 @@ import { init } from '@/init.ts';
 import '@telegram-apps/telegram-ui/dist/styles.css';
 import './index.css';
 
-// Mock the environment in case, we are outside Telegram.
+// Mock the environment in case we are outside Telegram.
 import './mockEnv.ts';
+
+// Import service worker
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 
@@ -20,9 +23,13 @@ try {
 
   root.render(
     <StrictMode>
-      <Root/>
-    </StrictMode>,
+      <Root />
+    </StrictMode>
   );
+
+  // Register the Service Worker for PWA
+  serviceWorkerRegistration.register();
+
 } catch (e) {
-  root.render(<EnvUnsupported/>);
+  root.render(<EnvUnsupported />);
 }

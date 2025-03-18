@@ -1,9 +1,8 @@
 {
-  "name": "reactjs-template",
+  "name": "lije-cares-mini-app",
   "private": true,
   "version": "0.0.1",
   "type": "module",
-  "homepage": "https://telegram-mini-apps.github.io/reactjs-template",
   "scripts": {
     "deploy": "gh-pages -d dist",
     "dev": "vite",
@@ -15,13 +14,22 @@
     "predeploy": "npm run build"
   },
   "dependencies": {
+    "@100mslive/react-icons": "^0.10.32",
+    "@tailwindcss/vite": "^4.0.13",
     "@telegram-apps/sdk-react": "^2.0.20",
     "@telegram-apps/telegram-ui": "^2.1.8",
     "@tonconnect/ui-react": "^2.0.5",
     "eruda": "^3.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.23.0"
+    "react-icons": "^5.5.0",
+    "react-router-dom": "^6.23.0",
+    "tailwindcss": "^4.0.13",
+    "workbox-core": "^7.3.0",
+    "workbox-expiration": "^7.3.0",
+    "workbox-precaching": "^7.3.0",
+    "workbox-routing": "^7.3.0",
+    "workbox-strategies": "^7.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.2.0",
