@@ -1,5 +1,5 @@
 import doctorImage from '@/assets/images/doctorImage.png'
-import { Headline, Subheadline, Title } from '@telegram-apps/telegram-ui';
+import { Headline, Subheadline } from '@telegram-apps/telegram-ui';
 import { useNavigate } from 'react-router-dom';
 const DoctorsList=()=>{
      const navigate = useNavigate();
@@ -41,10 +41,11 @@ const DoctorsList=()=>{
                         marginRight: "15px"}}
                 alt="Doctor"/>
                 <div className="card-content" style={{flex: '1'}}>
-                    <div className="doctor-name" style={{
+                    <div className="doctor-name" onClick={()=>navigate('/consultation')} style={{
                                                         fontSize: '20px',
                                                         fontWeight: "bold",
                                                         marginBottom: '5px',}}>
+                                                          
                                                             Dr. kASU
                                                         </div>
                     <div className="description" style={{

@@ -1,12 +1,18 @@
 import { FaUser, FaLock, FaBell, FaChild } from "react-icons/fa";
 import { MdPersonAdd } from "react-icons/md";
-import { IoHomeOutline, IoChatbubbleOutline, IoTimeOutline } from "react-icons/io5";
+import { useNavigate } from 'react-router-dom';
+
 import { Button, Cell, List, Modal, Placeholder, Text } from "@telegram-apps/telegram-ui";
 import { useState } from "react";
 import ParentProfile from "@/components/ParentProfile";
 import ChildProfile from "@/components/ChildProfile";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 export default function ProfileScreen() {
+
+    const navigate = useNavigate();
+
     const [isParentOpen, setIsParentOpen] =useState(false);
     const [isChildOpen, setIsChildOpen] =useState(false);
     const [isNotificationOpen, setIsNotificationOpen] =useState(false);
@@ -71,10 +77,10 @@ export default function ProfileScreen() {
       {/* Profile Options */}
       <div  style={{height: '100vh'}}  className="bg-gray-500 rounded-t-3xl p-4 flex flex-col gap-4">
         <ProfileOption onClick={() => setIsParentOpen(true)} icon={<FaUser />} label="Parent Profile" />
-        <ProfileOption onClick={() => setIsChildOpen(true)} icon={<FaChild />} label="Child Profile" />
+        <ProfileOption onClick={() => navigate('/children')} icon={<FaChild />} label="Child Profile" />
         <ProfileOption onClick={() => setIsNotificationOpen(true)} icon={<FaBell />} label="Notification" />
         <ProfileOption onClick={() => setIsSettingOpen(true)} icon={<FaLock />} label="Password & Security" />
-        <ProfileOption onClick={() => setIsAddchildOpen(true)} icon={<MdPersonAdd />} label="Add Child Profile" />
+        <ProfileOption onClick={() => navigate('/children')} icon={<MdPersonAdd />} label="Add Child Profile" />
       </div>
 
      

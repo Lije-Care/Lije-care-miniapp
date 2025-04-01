@@ -1,16 +1,63 @@
 import { Section, Input, Tappable, Headline, Button } from '@telegram-apps/telegram-ui';
-import { useState, type FC } from 'react';
-
+import { useEffect, useState, type FC } from 'react';
+import axios from "axios";
 import { Page } from '@/components/Page.tsx';
+import { useDispatch, useSelector } from 'react-redux';
 
-import BottomNav from '@/components/Templates/BottomNav';
 import LijeCard from '@/components/Templates/LijeCard';
 import { SearchIcon } from '@100mslive/react-icons';
 import { IoClose } from 'react-icons/io5';
 import DoctorsList from '@/components/Templates/DoctorsList';
+import { useSearchParams } from 'react-router-dom';
+
+import { AppDispatch, RootState } from '@/redux/store';
+import { fetchParent } from '@/redux/slices/itemSlice';
 
 export const IndexPage: FC = () => {
   const [value, setValue] = useState('');
+  const [getId, setGetId] = useState('');
+  const [parentData,setParentData] = useState();
+  const [searchParams] = useSearchParams();
+   
+    const params = new URLSearchParams(window.location.search);
+    const userIdFromUrl = params.get("userId");
+    // const dispatch = useDispatch()
+
+    const dispatch = useDispatch<AppDispatch>();
+    const  parents = useSelector((state: RootState) => state.parent);
+    console.log(parents);
+    const [newItem, setNewItem] = useState("");
+  
+  
+    useEffect(() => {
+        dispatch(fetchParent());
+    }, [dispatch]); // Ensure dispatch is called only once on mount
+
+    useEffect(()=>{
+     
+      if(userIdFromUrl != undefined && userIdFromUrl != null)
+      {
+        console.log(userIdFromUrl)
+        console.log("userIdFromUrl")
+        
+        dispatch(fetchParent());
+        console.log({parents, loading, error});
+
+      
+      
+        setGetId(userIdFromUrl );
+      }
+      else{
+        console.log(userIdFromUrl);
+        if(userIdFromUrl  == null){
+          dispatch(fetchParent());
+        }
+      }
+     
+    },[userIdFromUrl])
+
+
+ 
   return (
     <Page back={false}>
       <Section  style={{ overflow: 'scroll'}}>

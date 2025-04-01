@@ -47,7 +47,7 @@ const PaymentSuccessScreen = () => {
       {/* Back Button */}
       <Button 
         title="" 
-        onClick={()=>{navigate('/');}} 
+        onClick={()=>{navigate('/consultation');}} 
         style={{ width: "80%", backgroundColor: "#1DA1F2" }} 
       >
         Back

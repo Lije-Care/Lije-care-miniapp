@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { IoSearch, IoMic, IoHome, IoChatbubble, IoPerson } from "react-icons/io5";
-import { IoTimeOutline } from "react-icons/io5";
+import { IoSearch, IoMic } from "react-icons/io5";
 import docIcon1 from "@/assets/images/docicon1.png";
 import docIcon2 from "@/assets/images/docicon2.png";
 import docIcon3 from "@/assets/images/docicon3.png";
-import docIcon4 from "@/assets/images/docicon4.png";
+
+import { useNavigate } from "react-router-dom";
 const doctors = [
   { name: "Dr. Tomas", message: "Worem consectetur adipiscing elit.", time: "12:50", img: docIcon1, unread: 2, active: true },
   { name: "Dr. Nahom", message: "Worem consectetur adipiscing elit.", time: "12:50", img: docIcon2, unread: 0, active: true },
@@ -17,6 +17,7 @@ const doctors = [
 ];
 
 const ChatComponent = () => {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
 
   return (
@@ -71,7 +72,7 @@ const ChatComponent = () => {
       <div className="flex-1 overflow-y-auto px-4 mt-4">
         <h3 className="text-lg">Messages</h3>
         {doctors.map((doc, index) => (
-          <div key={index} className="bg-gray-700 rounded-lg p-3 mt-3 flex items-center justify-between">
+          <div onClick={()=>navigate('/consultation')} key={index} className="bg-gray-700 rounded-lg p-3 mt-3 flex items-center justify-between">
             <div className="flex items-center">
               <img src={doc.img} alt={doc.name} className="w-10 h-10 rounded-full" />
               <div className="ml-3">
