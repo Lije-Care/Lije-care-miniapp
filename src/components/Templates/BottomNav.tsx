@@ -12,7 +12,7 @@ const BottomNav = () => {
 
   const tabs = [
     { label: <HomeIcon />, path: "/" },
-    { label: <IoTimeOutline />, path: "/meal" },
+    { label: <IoTimeOutline />, path: "/mealplansummary" },
     { label: <ChatIcon />, path: "/chat" },
     { label: <CartIcon />, path: "/ecommerce" },
     { label: <PersonIcon />, path: "/profile" },

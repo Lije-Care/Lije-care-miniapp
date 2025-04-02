@@ -9,6 +9,7 @@ import MealPlanPage from '@/pages/MealPlanPage';
 import MealComponent from '@/pages/meal/MealPlan';
 import DoctorsConsultationPage from '@/pages/DoctorsConsultationPage';
 import ConsultationTab from '@/pages/ConsultationBookingPage';
+import MealPlanSummary from '@/pages/MealPlanSummary';
 
 
 const Layout = ({ children }: {children: any}) => (
@@ -49,12 +50,11 @@ export function App() {
         <Routes>
           {routes.map((route) => <Route key={route.path} {...route} />)}
           <Route path="*" element={<Navigate to="/"/>}/>
-          {/* <Route path="/" element={<Home />} /> */}
-          {/* <Route path="/history" element={<History />} /> */}
+         
           <Route path="/meal" element={<MealComponent />} />
-
+          <Route path="/mealplansummary" element={<MealPlanSummary />} />
+            
           <Route path="/chat" element={<ConsultationTab />} />
-          {/* <Route path="/profile" elemetnt={<Profile />} /> */}
           </Routes>
         </Layout>
       </HashRouter>
