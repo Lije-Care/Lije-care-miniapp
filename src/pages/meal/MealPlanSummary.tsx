@@ -51,7 +51,7 @@ const MealPlanSummary = () => {
         mealPlans.map((mealPlan) => (
           <Card
             key={mealPlan.id}
-            className="p-4 shadow-md bg-white dark:bg-gray-800 rounded-lg"
+            className="p-4 shadow-md bg-white dark:bg-gray-800 rounded-lg w-full"
           >
             <p className="text-gray-700 dark:text-gray-300">
               {mealPlan.meal_description}
@@ -94,8 +94,8 @@ const MealPlanSummary = () => {
         <Placeholder/>
           </>
       )}
-<div className="text-center">
-          
+    <div className="text-center">
+              
           <Button
             className="mt-4 w-full bg-green-500 text-white"
             onClick={() => navigate("/meal")}

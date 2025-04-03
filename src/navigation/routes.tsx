@@ -5,11 +5,11 @@ import SigninPage from '@/pages/auth/SigninPage';
 import SignUpPage from '@/pages/auth/SignUpPage';
 
 import ProfileScreen from '@/pages/Profile';
-import ProductList from '@/pages/ProductList';
+import ProductList from '@/pages/ecommerce/products/ProductList';
 import PaymentScreen from '@/components/Templates/PaymentScreen';
 import PaymentSuccessScreen from '@/pages/PaymentSuccessScreen';
 import DoctorsConsultationPage from '@/pages/DoctorsConsultationPage';
-import MealPlanPage from '@/pages/MealPlanPage';
+import MealPlanPage from '@/pages/meal/MealPlanPage';
 import ConsultationBookingPage from '@/pages/ConsultationBookingPage';
 import ChildProfilePage from '@/pages/ChildProfilePage';
 import ChildrenListPage from '@/pages/ChildrenListPage';

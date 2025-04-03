@@ -5,11 +5,11 @@ import { Navigate, Route, Routes, HashRouter, } from 'react-router-dom';
 import { routes } from '@/navigation/routes.tsx';
 import BottomNav from './Templates/BottomNav';
 import ChatComponent from '@/pages/Chat/ChatComponent';
-import MealPlanPage from '@/pages/MealPlanPage';
+import MealPlanPage from '@/pages/meal/MealPlanPage';
 import MealComponent from '@/pages/meal/MealPlan';
 import DoctorsConsultationPage from '@/pages/DoctorsConsultationPage';
 import ConsultationTab from '@/pages/ConsultationBookingPage';
-import MealPlanSummary from '@/pages/MealPlanSummary';
+import MealPlanSummary from '@/pages/meal/MealPlanSummary';
 
 
 const Layout = ({ children }: {children: any}) => (
