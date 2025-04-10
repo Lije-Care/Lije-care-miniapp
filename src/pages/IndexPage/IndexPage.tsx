@@ -37,15 +37,8 @@ export const IndexPage: FC = () => {
      
       if(userIdFromUrl != undefined && userIdFromUrl != null)
       {
-        console.log(userIdFromUrl)
-        console.log("userIdFromUrl")
-        
-        dispatch(fetchParent());
-        console.log({parents, loading, error});
-
-      
-      
-        setGetId(userIdFromUrl );
+      dispatch(fetchParent()); 
+      setGetId(userIdFromUrl );
       }
       else{
         console.log(userIdFromUrl);

@@ -4,6 +4,7 @@
 import { Button } from '@telegram-apps/telegram-ui';
 import { useState } from 'react';
 import { MdMessage } from 'react-icons/md';
+import ChatComponent from './Consultation/ChatComponent';
 
 
 
@@ -34,6 +35,7 @@ export default function ConsultationTab() {
   const [chatMessages, setChatMessages] = useState<string[]>([]);
   const [newMessage, setNewMessage] = useState('');
   // const { joinRoom, meetingUrl } = use100ms();
+  
 
   const sendMessage = () => {
     if (newMessage.trim()) {
@@ -44,27 +46,8 @@ export default function ConsultationTab() {
 
   if (chatOpen && selectedDoctor) {
     return (
-      <div className="flex flex-col h-full p-4">
-        <h2 className="text-lg font-semibold mb-2">Chatting with {selectedDoctor.name}</h2>
-        <div className="flex-1 overflow-y-auto space-y-2 mb-4">
-          {chatMessages.map((msg, idx) => (
-            <div key={idx} className="bg-gray-100 dark:bg-gray-700 p-2 rounded-md w-max max-w-xs">
-              {msg}
-            </div>
-          ))}
-        </div>
-        <div className="mt-auto flex items-center gap-2">
-          <input
-            type="text"
-            placeholder="Type your message..."
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none"
-          />
-          <Button onClick={sendMessage}>Send</Button>
-        </div>
-        <Button className="mt-4" onClick={() => setChatOpen(false)}>Back to Booking</Button>
-      </div>
+
+      <ChatComponent setChatOpen={setChatOpen} selectedDoctor={selectedDoctor}/>
     );
   }
 
@@ -117,7 +100,10 @@ export default function ConsultationTab() {
                     <p className="text-sm">Languages: {pro.languages.join(', ')}</p>
                   </div>
                 </div>
-                <button onClick={() => { setSelectedDoctor(pro); setChatOpen(true); }} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                <button onClick={() => { 
+                    setSelectedDoctor(pro); 
+                    setChatOpen(true); 
+                    }} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
                   <MdMessage className="w-5 h-5 text-blue-500" />
                 </button>
               </div>

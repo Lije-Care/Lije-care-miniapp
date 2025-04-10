@@ -5,6 +5,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary.tsx';
 import { publicUrl } from '@/helpers/publicUrl.ts';
 import { Provider } from 'react-redux';
 import { store } from "@/redux/store";
+import { HMSRoomProvider } from '@100mslive/react-sdk';
 function ErrorBoundaryError({ error }: { error: unknown }) {
   return (
     <div>
@@ -29,7 +30,9 @@ export function Root() {
         manifestUrl={publicUrl('tonconnect-manifest.json')}
       >
         <Provider store={store}>
+        <HMSRoomProvider>
         <App/>
+        </HMSRoomProvider>
         </Provider>
       </TonConnectUIProvider>
     </ErrorBoundary>

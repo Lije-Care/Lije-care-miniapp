@@ -42,7 +42,7 @@ export const addChild = createAsyncThunk("children/addChildren", async (newParen
 export const fetchChildrenByParentId = createAsyncThunk("parent/fetchChildrenByParentId", async () => {
   try {
     const response = await axios.get(
-      "http://localhost:4000/api/v1/children/find-all?parentId=4063295a-b873-44c9-8396-bbddfb145f32"
+      "http://localhost:4000/api/v1/children/find-all?parentId=e7faf23d-3d48-43b8-aca4-235dfac77c8c"
     );
 
     return response.data;

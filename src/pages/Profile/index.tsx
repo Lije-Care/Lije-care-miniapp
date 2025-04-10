@@ -59,8 +59,8 @@ export default function ProfileScreen() {
       
         >
         
-           
-               <ParentProfile/>
+           <div>test</div>
+               {/* <ParentProfile/> */}
            
         </Modal>
 

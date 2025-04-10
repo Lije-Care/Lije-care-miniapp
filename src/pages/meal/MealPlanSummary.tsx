@@ -86,7 +86,7 @@ const MealPlanSummary = () => {
               ))}
             </div>
 
-            <Button className="mt-4 w-full bg-blue-500 text-white">Edit Meal Plan</Button>
+            <Button onClick={() => navigate(`/meal-plans/edit/${mealPlan.id}`)} className="mt-4 w-full bg-blue-500 text-white">Edit Meal Plan</Button>
           </Card>
         ))
       ) : (

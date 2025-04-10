@@ -41,7 +41,7 @@ const initialState: ParentState = {
 export const fetchParent = createAsyncThunk("parent/fetchParent", async () => {
   try {
     const response = await axios.get(
-      "http://localhost:4000/api/v1/specialists/find-one/4063295a-b873-44c9-8396-bbddfb145f32"
+      "http://localhost:4000/api/v1/users/find-one/e7faf23d-3d48-43b8-aca4-235dfac77c8c"
     );
 
     return response.data;
@@ -61,7 +61,7 @@ export const addParent = createAsyncThunk("parent/addParent", async (newParent: 
 
 
 export const updateParent = createAsyncThunk("parent/updateParent", async (updatedParent: Parent) => {
-  const response = await axios.patch<Parent>(`http://localhost:4000/api/v1/specialists/update/4063295a-b873-44c9-8396-bbddfb145f32`, updatedParent);
+  const response = await axios.patch<Parent>(`http://localhost:4000/api/v1/users/update/e7faf23d-3d48-43b8-aca4-235dfac77c8c`, updatedParent);
   return response.data;
 });
 
