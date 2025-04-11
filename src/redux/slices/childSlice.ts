@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "@/api/axios";
 
 
 
@@ -35,14 +35,14 @@ const initialState: ChildState = {
 
 // Async Thunks for API Calls
 export const addChild = createAsyncThunk("children/addChildren", async (newParent: Omit<Parent, "id">) => {
-  const response = await axios.post<Parent>(`${process.env.BASE_URL}children/create`, newParent);
+  const response = await api.post<Parent>(`children/create`, newParent);
   return response.data;
 });
 
 export const fetchChildrenByParentId = createAsyncThunk("parent/fetchChildrenByParentId", async () => {
   try {
-    const response = await axios.get(
-      "http://localhost:4000/api/v1/children/find-all?parentId=e7faf23d-3d48-43b8-aca4-235dfac77c8c"
+    const response = await api.get(
+      "children/find-all?parentId=ce10dd72-07d0-48f0-a774-295f8e36fdc0"
     );
 
     return response.data;
@@ -54,7 +54,7 @@ export const fetchChildrenByParentId = createAsyncThunk("parent/fetchChildrenByP
 
 export const updateChild = createAsyncThunk("child/updateChild", async (updateChild: any) => {
   console.log(updateChild);
-  const response = await axios.patch<Parent>(`http://localhost:4000/api/v1/children/${updateChild.id}`, updateChild);
+  const response = await api.patch<Parent>(`children/${updateChild.id}`, updateChild);
   return response.data;
 });
 

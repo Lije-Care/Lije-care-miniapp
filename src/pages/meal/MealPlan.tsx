@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "@/api/axios";
 
 import { FaCheck, FaUtensils, FaTrash } from "react-icons/fa";
 import { Button, Card, List, Text, Title } from "@telegram-apps/telegram-ui";
@@ -34,8 +34,8 @@ const MealLibraryComponent = () => {
   const [selectedMeals, setSelectedMeals] = useState<MealLibrary[]>([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:4000/api/v1/mealLibrary/findall")
+    api
+      .get("mealLibrary/findall")
       .then((response) => setMeals(response.data))
       .catch((error) => console.error("Error fetching meals:", error));
   }, []);

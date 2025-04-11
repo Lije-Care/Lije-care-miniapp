@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from '@/api/axios';
 import { useParams, useNavigate } from "react-router-dom";
-import { Input, Button, Card, Badge, Select } from "@telegram-apps/telegram-ui";
+import { Input, Button, Card, Badge } from "@telegram-apps/telegram-ui";
 
 type Meal = {
   id: string;
@@ -31,7 +31,7 @@ const EditMealPlan = () => {
 
   useEffect(() => {
     // Fetch existing meal plan
-    axios.get(`http://localhost:4000/api/v1/meal-plans/find-one/${id}`)
+    api.get(`meal-plans/find-one/${id}`)
       .then((response) => {
         setMealPlan(response.data);
         setFormData({
@@ -62,7 +62,7 @@ const EditMealPlan = () => {
   };
 
   const handleSubmit = () => {
-    axios.put(`http://localhost:4000/api/v1/meal-plans/update/${id}`, {
+    api.put(`meal-plans/update/${id}`, {
       ...formData,
       meals: selectedMeals,
     })

@@ -1,14 +1,52 @@
 import React from "react";
-import { FaExclamationTriangle, FaCheckCircle, FaInfoCircle } from "react-icons/fa";
+import {
+  FaExclamationTriangle,
+  FaCheckCircle,
+  FaInfoCircle,
+} from "react-icons/fa";
+import {
+  CircularProgressbar,
+  buildStyles,
+} from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
-// Define styles and icons based on Z-Score
-const getResultStyle = (zScore) => {
-  if (zScore < -3) return { label: "Severe Stunting", textColor: "text-red-500", bgColor: "bg-gray-800", icon: <FaExclamationTriangle className="text-red-500 text-2xl" /> };
-  if (zScore < -2) return { label: "Moderate Stunting", textColor: "text-orange-400", bgColor: "bg-gray-800", icon: <FaExclamationTriangle className="text-orange-400 text-2xl" /> };
-  if (zScore < -1) return { label: "Mild Stunting", textColor: "text-yellow-400", bgColor: "bg-gray-800", icon: <FaInfoCircle className="text-yellow-400 text-2xl" /> };
-  if (zScore < 1) return { label: "Normal Height", textColor: "text-green-400", bgColor: "bg-gray-800", icon: <FaCheckCircle className="text-green-400 text-2xl" /> };
-  if (zScore < 2) return { label: "Above Average Height", textColor: "text-blue-400", bgColor: "bg-gray-800", icon: <FaInfoCircle className="text-blue-400 text-2xl" /> };
-  return { label: "Exceptionally Tall", textColor: "text-purple-400", bgColor: "bg-gray-800", icon: <FaInfoCircle className="text-purple-400 text-2xl" /> };
+// Map Z-Score ranges to gauge properties
+const getGaugeProperties = (zScore: number) => {
+  if (zScore < -3)
+    return {
+      label: "Severe Stunting",
+      color: "#f87171", // red-400
+      icon: <FaExclamationTriangle size={24} className="text-red-500" />,
+    };
+  if (zScore < -2)
+    return {
+      label: "Moderate Stunting",
+      color: "#fb923c", // orange-400
+      icon: <FaExclamationTriangle size={24} className="text-orange-400" />,
+    };
+  if (zScore < -1)
+    return {
+      label: "Mild Stunting",
+      color: "#facc15", // yellow-400
+      icon: <FaInfoCircle size={24} className="text-yellow-400" />,
+    };
+  if (zScore < 1)
+    return {
+      label: "Normal Height",
+      color: "#4ade80", // green-400
+      icon: <FaCheckCircle size={24} className="text-green-400" />,
+    };
+  if (zScore < 2)
+    return {
+      label: "Above Average Height",
+      color: "#60a5fa", // blue-400
+      icon: <FaInfoCircle size={24} className="text-blue-400" />,
+    };
+  return {
+    label: "Exceptionally Tall",
+    color: "#c084fc", // purple-400
+    icon: <FaInfoCircle size={24} className="text-purple-400" />,
+  };
 };
 
 const InterpretZScore = ({ zScore }) => {
@@ -22,14 +60,29 @@ const InterpretZScore = ({ zScore }) => {
     );
   }
 
-  const { label, textColor, bgColor, icon } = getResultStyle(zScore);
+  const { label, color, icon } = getGaugeProperties(zScore);
+  const percentage = Math.max(
+    0,
+    Math.min(100, ((zScore + 4) / 8) * 100)
+  ); // normalize zScore from -4 to +4 into 0–100%
 
   return (
-    <div className={`p-4 mt-4 rounded-lg ${bgColor} flex items-center transition-all duration-300 shadow-md`}> 
-      <div className="mr-3">{icon}</div>
-      <div>
-        <h2 className={`text-lg font-bold ${textColor}`}>{label}</h2>
-        <p className={`text-sm ${textColor}`}>Z-Score: {zScore.toFixed(2)}</p>
+    <div className="p-6 mt-4 bg-gray-800 rounded-xl shadow-md flex flex-col items-center space-y-3">
+      <div className="w-32 h-32">
+        <CircularProgressbar
+          value={percentage}
+          text={`${zScore.toFixed(2)}`}
+          styles={buildStyles({
+            pathColor: color,
+            textColor: color,
+            trailColor: "#374151",
+            textSize: "16px",
+          })}
+        />
+      </div>
+      <div className="flex items-center space-x-2">
+        {icon}
+        <h2 className="text-white font-semibold text-lg">{label}</h2>
       </div>
     </div>
   );

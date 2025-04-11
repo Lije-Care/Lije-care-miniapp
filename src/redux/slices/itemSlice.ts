@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
+import api from '@/api/axios';
 
 interface Parent {
   id: number;
@@ -40,9 +41,9 @@ const initialState: ParentState = {
 // Async Thunks for API Calls
 export const fetchParent = createAsyncThunk("parent/fetchParent", async () => {
   try {
-    const response = await axios.get(
-      "http://localhost:4000/api/v1/users/find-one/e7faf23d-3d48-43b8-aca4-235dfac77c8c"
-    );
+    const response = await api.get(
+      "users/find-one/ce10dd72-07d0-48f0-a774-295f8e36fdc0");
+    
 
     return response.data;
   } catch (error: any) {
@@ -54,14 +55,14 @@ export const fetchParent = createAsyncThunk("parent/fetchParent", async () => {
 
 
 export const addParent = createAsyncThunk("parent/addParent", async (newParent: Omit<Parent, "id">) => {
-  const response = await axios.post<Parent>(API_URL, newParent);
+  const response = await api.post<Parent>('', newParent);
   return response.data;
 });
 
 
 
 export const updateParent = createAsyncThunk("parent/updateParent", async (updatedParent: Parent) => {
-  const response = await axios.patch<Parent>(`http://localhost:4000/api/v1/users/update/e7faf23d-3d48-43b8-aca4-235dfac77c8c`, updatedParent);
+  const response = await api.patch<Parent>(`users/update/ce10dd72-07d0-48f0-a774-295f8e36fdc0)`, updatedParent);
   return response.data;
 });
 
@@ -69,7 +70,7 @@ export const updateParent = createAsyncThunk("parent/updateParent", async (updat
 
 
 export const deleteParent = createAsyncThunk("parent/deleteParent", async (id: number) => {
-  await axios.delete(`${API_URL}/${id}`);
+  await axios.delete(`/${id}`);
   return id;
 });
 

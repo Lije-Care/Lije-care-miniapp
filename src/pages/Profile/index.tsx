@@ -2,12 +2,10 @@ import { FaUser, FaLock, FaBell, FaChild } from "react-icons/fa";
 import { MdPersonAdd } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
 
-import { Button, Cell, List, Modal, Placeholder, Text } from "@telegram-apps/telegram-ui";
+import { Modal } from "@telegram-apps/telegram-ui";
 import { useState } from "react";
 import ParentProfile from "@/components/ParentProfile";
 import ChildProfile from "@/components/ChildProfile";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
 
 export default function ProfileScreen() {
 
@@ -52,15 +50,14 @@ export default function ProfileScreen() {
         <h2 className="mt-2 text-lg font-semibold">Profile</h2>
       </div>
       <Modal
-          
           trigger={undefined}
           open={isParentOpen}
           onOpenChange={setIsParentOpen}
       
         >
         
-           <div>test</div>
-               {/* <ParentProfile/> */}
+         
+               <ParentProfile/>
            
         </Modal>
 

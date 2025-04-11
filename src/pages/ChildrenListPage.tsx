@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchChildrenByParentId } from "@/redux/slices/childSlice";
 import { useForm } from "react-hook-form";
 import { addChild } from "@/redux/slices/childSlice";
+import AddChildForm from "./Profile/AddChildForm";
 
 const ChildrenListPage = () => {
   const dispatch = useDispatch();
@@ -84,26 +85,10 @@ const ChildrenListPage = () => {
       </div>
 
       {showAddModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-gray-800 rounded-lg p-6 max-w-md w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-gray-800 rounded-lg p-6 max-w-md w-full shadow-lg">
             <h2 className="text-xl font-semibold mb-4">Add New Child</h2>
-            <form onSubmit={handleSubmit(handleAddChild)} className="space-y-4">
-              <Input label="Name" {...register("name", { required: true })} />
-              <Input label="Date of Birth" type="date" {...register("date_of_birth", { required: true })} />
-              <Select label="Gender" {...register("gender", { required: true })}>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </Select>
-              <div className="grid grid-cols-3 gap-4">
-                <Input label="Weight (kg)" type="number" step="0.1" {...register("weight", { required: true })} />
-                <Input label="Height (cm)" type="number" step="0.1" {...register("height", { required: true })} />
-                <Input label="MUAC (cm)" type="number" step="0.1" {...register("muac", { required: true })} />
-              </div>
-              <div className="flex justify-end gap-4 mt-6">
-                <Button stretched onClick={() => setShowAddModal(false)}>Cancel</Button>
-                <Button stretched type="submit">Add Child</Button>
-              </div>
-            </form>
+            <AddChildForm  onClose={() => setShowAddModal(false)} />
           </div>
         </div>
       )}
