@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import docIcon1 from "@/assets/images/docicon1.png";
-import docIcon2 from "@/assets/images/docicon2.png";
+// import docIcon2 from "@/assets/images/docicon2.png";
 import docIcon3 from "@/assets/images/docicon3.png";
 import { IoMic, IoSearch } from 'react-icons/io5';
 

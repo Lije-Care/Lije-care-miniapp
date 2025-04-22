@@ -4,7 +4,7 @@ import {
   useVideo,
 } from "@100mslive/react-sdk";
 
-export const ScreenTile = ({ peer }) => {
+export const ScreenTile = ({ peer }: any) => {
   const screenshareVideoTrack = useHMSStore(selectScreenShareByPeerID(peer.id));
   const { videoRef } = useVideo({
     trackId: screenshareVideoTrack.id,

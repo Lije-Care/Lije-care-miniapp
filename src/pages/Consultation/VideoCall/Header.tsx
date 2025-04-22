@@ -4,7 +4,7 @@ import {
   useHMSActions,
   useHMSStore,
 } from "@100mslive/react-sdk";
-import React from "react";
+
 
 function Header() {
   const isConnected = useHMSStore(selectIsConnectedToRoom);

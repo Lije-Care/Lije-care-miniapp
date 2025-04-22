@@ -9,19 +9,19 @@ type Meal = {
   meal_type: string;
 };
 
-type MealPlan = {
-  id: string;
-  meal_description: string;
-  calories: number;
-  meals: Meal[];
-};
+// type MealPlan = {
+//   id: string;
+//   meal_description: string;
+//   calories: number;
+//   meals: Meal[];
+// };
 
 const EditMealPlan = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [mealPlan, setMealPlan] = useState<MealPlan | null>(null);
-  const [mealOptions, setMealOptions] = useState<Meal[]>([]);
+  // const [ setMealPlan] = useState<MealPlan | null>(null);
+  const [mealOptions] = useState<Meal[]>([]);
   const [selectedMeals, setSelectedMeals] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
@@ -33,7 +33,7 @@ const EditMealPlan = () => {
     // Fetch existing meal plan
     api.get(`meal-plans/find-one/${id}`)
       .then((response) => {
-        setMealPlan(response.data);
+        // setMealPlan(response.data);
         setFormData({
           meal_description: response.data.meal_description,
           calories: response.data.calories,
@@ -42,13 +42,6 @@ const EditMealPlan = () => {
         setLoading(false);
       })
       .catch((error) => console.error("Error fetching meal plan:", error));
-
-    // Fetch available meals
-    // axios.get("http://localhost:4000/api/v1/meals")
-    //   .then((response) => {
-    //     setMealOptions(response.data);
-    //   })
-    //   .catch((error) => console.error("Error fetching meals:", error));
   }, [id]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

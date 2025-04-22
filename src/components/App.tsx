@@ -5,13 +5,16 @@ import { Navigate, Route, Routes, HashRouter, } from 'react-router-dom';
 import { routes } from '@/navigation/routes.tsx';
 import BottomNav from './Templates/BottomNav';
 import ConsultationTab from '@/pages/ConsultationBookingPage';
-import MealPlanPage from '@/pages/meal/MealPlanPage';
+
 import MealComponent from '@/pages/meal/MealPlan';
-import DoctorsConsultationPage from '@/pages/DoctorsConsultationPage';
 
 import MealPlanSummary from '@/pages/meal/MealPlanSummary';
 import EditMealPlan from '@/pages/meal/EditMealPLan';
 import VideoCall from '@/pages/Consultation/VideoCall';
+import MealDetails from '@/pages/meal/MealView';
+// import ArticleSlider from '@/pages/knowledgebase/ArticleSlider';
+import ArticlesPage from '@/pages/knowledgebase/ArticleSlider';
+import ArticleDetail from '@/pages/knowledgebase/ArticleDetail';
 
 
 const Layout = ({ children }: {children: any}) => (
@@ -54,8 +57,11 @@ export function App() {
           <Route path="*" element={<Navigate to="/"/>}/>
          
           <Route path="/meal" element={<MealComponent />} />
+          <Route path="/articles" element={<ArticlesPage />} />
+          <Route path="/articles/:id" element={<ArticleDetail />} />
           <Route path="/mealplansummary" element={<MealPlanSummary />} />
           <Route path="/meal-plans/edit/:id" element={<EditMealPlan />} />
+          <Route path="/mealplansummary/:id" element={<MealDetails />} />
           <Route path="/chat" element={<ConsultationTab />} />
           <Route path="/video-call" element={<VideoCall />} />
           

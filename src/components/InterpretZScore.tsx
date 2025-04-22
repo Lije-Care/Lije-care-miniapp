@@ -1,4 +1,4 @@
-import React from "react";
+
 import {
   FaExclamationTriangle,
   FaCheckCircle,
@@ -49,7 +49,7 @@ const getGaugeProperties = (zScore: number) => {
   };
 };
 
-const InterpretZScore = ({ zScore }) => {
+const InterpretZScore = ({ zScore }: any) => {
   if (typeof zScore !== "number" || isNaN(zScore)) {
     return (
       <div className="p-4 mt-4 bg-gray-900 text-white rounded-lg text-center">

@@ -1,80 +1,111 @@
-// src/app/(tabs)/consultation/page.tsx
-'use client'
+'use client';
 
-import { Button } from '@telegram-apps/telegram-ui';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Button, Spinner } from '@telegram-apps/telegram-ui';
 import { MdMessage } from 'react-icons/md';
+import { RootState, AppDispatch } from '@/redux/store';
+import { fetchSpecialists } from '@/redux/slices/specialistSlice';
 import ChatComponent from './Consultation/ChatComponent';
-
-
+import api from '@/api/axios';
 
 const concerns = ['Nutrition', 'Sleep Issues', 'Growth', 'Vaccination', 'Skin Issues'];
-const professionals = [
-  {
-    id: 1,
-    name: 'Dr. Hana Belay',
-    specialty: 'Pediatric Nutritionist',
-    languages: ['Amharic', 'English'],
-    image: '/doctors/hana.png',
-  },
-  {
-    id: 2,
-    name: 'Dr. Elias Mekonnen',
-    specialty: 'Child Psychologist',
-    languages: ['English'],
-    image: '/doctors/elias.png',
-  },
-];
 
 export default function ConsultationTab() {
+  const dispatch = useDispatch<AppDispatch>();
+  const { specialists, loading, error } = useSelector((state: RootState) => state.specialists);
+
   const [selectedConcern, setSelectedConcern] = useState('');
   const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
-  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [availability, setAvailability] = useState<any[]>([]);
+  const [selectedSlot, setSelectedSlot] = useState<string>('');
   const [confirmed, setConfirmed] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
-  const [chatMessages, setChatMessages] = useState<string[]>([]);
-  const [newMessage, setNewMessage] = useState('');
-  // const { joinRoom, meetingUrl } = use100ms();
-  
+  const [userPackageId, setUserPackageId] = useState<string | null>(null);
+  const [loadingSlots, setLoadingSlots] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const sendMessage = () => {
-    if (newMessage.trim()) {
-      setChatMessages([...chatMessages, newMessage]);
-      setNewMessage('');
+  // Load specialists on mount
+  useEffect(() => {
+    dispatch(fetchSpecialists({ page: 1, limit: 10 }));
+  }, [dispatch]);
+
+  // Load availability when doctor selected
+  useEffect(() => {
+    if (selectedDoctor) {
+      fetchAvailability(selectedDoctor.userId);
+      fetchUserPackage();
+    }
+  }, [selectedDoctor]);
+
+  const fetchAvailability = async (expertId: string) => {
+    try {
+      setLoadingSlots(true);
+      const today = new Date().toISOString().split('T')[0];
+      const res = await api.get(`/availability?userId=${expertId}&date=${today}`);
+      setAvailability(res.data);
+    } catch (e) {
+      setAvailability([]);
+    } finally {
+      setLoadingSlots(false);
+    }
+  };
+
+  const fetchUserPackage = async () => {
+    try {
+      const res = await api.get('/user-packages/active?userId=ME'); // Replace 'ME' with real user context
+      setUserPackageId(res.data.id);
+    } catch (e) {
+      setUserPackageId(null);
+    }
+  };
+
+  const bookSlot = async () => {
+    if (!selectedSlot || !selectedDoctor || !userPackageId) {
+      setErrorMsg('Please complete all fields or purchase a package.');
+      return;
+    }
+
+    try {
+      await api.post('/booking', {
+        parentId: 'PARENT_ID', // should come from auth/user context
+        expertId: selectedDoctor.userId,
+        slotId: selectedSlot,
+        userPackageId,
+      });
+
+      setConfirmed(true);
+    } catch (err) {
+      setErrorMsg('Booking failed. Try again.');
     }
   };
 
   if (chatOpen && selectedDoctor) {
-    return (
-
-      <ChatComponent setChatOpen={setChatOpen} selectedDoctor={selectedDoctor}/>
-    );
+    return <ChatComponent selectedDoctor={selectedDoctor} />;
   }
 
   if (confirmed) {
     return (
-      <div className="p-4 text-center">
-        <h2 className="text-xl font-bold mb-4">Consultation Confirmed!</h2>
-        <p className="mb-2">You have booked a session with <strong>{selectedDoctor?.name}</strong></p>
-        <p className="mb-4">Date: {selectedDate}</p>
-        <Button onClick={()=>{}}>Join Video Call</Button>
-        {/* {meetingUrl && (
-          <div className="mt-4 text-sm text-gray-500">Meeting Link: <a href={meetingUrl} target="_blank" rel="noreferrer" className="text-blue-500 underline">Join Now</a></div>
-        )} */}
+      <div className="p-6 text-center text-white space-y-4">
+        <h2 className="text-2xl font-semibold text-green-400">🎉 Consultation Confirmed</h2>
+        <p>
+          Session booked with <span className="font-bold">{selectedDoctor?.user?.firstName} {selectedDoctor?.user?.lastName}</span>
+        </p>
+        <Button className="bg-indigo-600 text-white mt-4">Join Video Call</Button>
       </div>
     );
   }
 
   return (
-    <div className="p-4 space-y-6">
-      <h1 className="text-xl font-bold">Consult a Professional</h1>
+    <div className="p-6 max-w-3xl mx-auto space-y-6 text-white">
+      <h1 className="text-2xl font-bold text-emerald-400">Consult a Specialist</h1>
 
       <div>
-        <p className="font-semibold mb-2">Select Concern Category</p>
+        <p className="font-medium mb-2 text-gray-300">🩺 Select a Concern</p>
         <select
           value={selectedConcern}
           onChange={(e) => setSelectedConcern(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-primary"
+          className="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white"
         >
           <option value="" disabled>Select a concern</option>
           {concerns.map((concern) => (
@@ -84,48 +115,80 @@ export default function ConsultationTab() {
       </div>
 
       {selectedConcern && (
-        <div>
-          <p className="font-semibold mb-2">Choose a Professional</p>
-          <div className="space-y-2">
-            {professionals.map((pro) => (
-              <div
-                key={pro.id}
-                className={`flex items-center p-3 border rounded-md justify-between hover:shadow-md transition-all ${selectedDoctor?.id === pro.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}`}
-              >
-                <div onClick={() => setSelectedDoctor(pro)} className="flex items-center cursor-pointer">
-                  <img src={pro.image} alt={pro.name} className="w-12 h-12 rounded-full object-cover mr-4" />
-                  <div>
-                    <p className="font-bold text-md">{pro.name}</p>
-                    <p className="text-sm text-gray-500">{pro.specialty}</p>
-                    <p className="text-sm">Languages: {pro.languages.join(', ')}</p>
+        <>
+          <p className="font-medium text-gray-300">👩‍⚕️ Choose a Specialist</p>
+
+          {loading ? (
+            <div className="flex justify-center py-4"><Spinner size="l" /></div>
+          ) : error ? (
+            <p className="text-red-500">{error}</p>
+          ) : (
+            <div className="space-y-3">
+              {specialists.map((doc) => {
+                const isSelected = selectedDoctor?.id === doc.id;
+                const fullName = `${doc.user.firstName} ${doc.user.lastName}`;
+                return (
+                  <div
+                    key={doc.id}
+                    className={`p-4 border rounded-lg flex justify-between items-center ${
+                      isSelected ? 'border-emerald-500 bg-emerald-900/30' : 'border-gray-700 bg-gray-800'
+                    }`}
+                  >
+                    <div className="flex gap-4 cursor-pointer" onClick={() => setSelectedDoctor(doc)}>
+                      <img
+                        src={doc.user.avatarUrl || '/doctors/default-avatar.png'}
+                        alt={fullName}
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                      <div>
+                        <p className="font-bold">{fullName}</p>
+                        <p className="text-sm text-gray-400">{doc.certifications[0]}</p>
+                        <p className="text-xs text-gray-500">⭐ {doc.rating.toFixed(1)}</p>
+                      </div>
+                    </div>
+                    <button onClick={() => {
+                      setSelectedDoctor(doc);
+                      setChatOpen(true);
+                    }}>
+                      <MdMessage className="text-blue-400 w-6 h-6" />
+                    </button>
                   </div>
-                </div>
-                <button onClick={() => { 
-                    setSelectedDoctor(pro); 
-                    setChatOpen(true); 
-                    }} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
-                  <MdMessage className="w-5 h-5 text-blue-500" />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
+                );
+              })}
+            </div>
+          )}
+        </>
       )}
 
+      {/* Time Slot Picker */}
       {selectedDoctor && (
         <div>
-          <p className="font-semibold mb-2">Choose a Time Slot</p>
-          <input
-            type="date"
-            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-primary"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-          />
+          <p className="font-medium mb-2 text-gray-300">📅 Choose a Slot</p>
+          {loadingSlots ? (
+            <Spinner size='l'/>
+          ) : (
+            <select
+              value={selectedSlot}
+              onChange={(e) => setSelectedSlot(e.target.value)}
+              className="w-full bg-gray-800 border border-gray-600 text-white p-2 rounded"
+            >
+              <option value="" disabled>Select a time slot</option>
+              {availability.map((slot) => (
+                <option key={slot.id} value={slot.id}>
+                  {slot.startTime} - {slot.endTime}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
       )}
 
-      {selectedDate && (
-        <Button className="w-full mt-4" onClick={() => setConfirmed(true)}>Confirm Booking</Button>
+      {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
+
+      {selectedSlot && userPackageId && (
+        <Button className="w-full mt-4 bg-emerald-600 text-white" onClick={bookSlot}>
+          Confirm Booking
+        </Button>
       )}
     </div>
   );

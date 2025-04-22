@@ -1,4 +1,4 @@
-import { FaUser, FaLock, FaBell, FaChild } from "react-icons/fa";
+import { FaUser, FaChild } from "react-icons/fa";
 import { MdPersonAdd } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
 
@@ -13,22 +13,22 @@ export default function ProfileScreen() {
 
     const [isParentOpen, setIsParentOpen] =useState(false);
     const [isChildOpen, setIsChildOpen] =useState(false);
-    const [isNotificationOpen, setIsNotificationOpen] =useState(false);
-    const [isAddchildOpen, setIsAddchildOpen] =useState(false);
+    // const [isNotificationOpen, setIsNotificationOpen] =useState(false);
+    // const [isAddchildOpen, setIsAddchildOpen] =useState(false);
     
-    const [isSettingOpen, setIsSettingOpen] =useState(false);
+    // const [isSettingOpen, setIsSettingOpen] =useState(false);
     
     
-    const [isFetching, setIsFetching] = useState(false);
+    // const [isFetching, setIsFetching] = useState(false);
 
 
-    const fetchAndClose = () => {
-        setIsFetching(true);
-        setTimeout(() => {
-          setIsFetching(false);
-          setIsParentOpen(false);
-        }, 1000);
-      };
+    // const fetchAndClose = () => {
+    //     setIsFetching(true);
+    //     setTimeout(() => {
+    //       setIsFetching(false);
+    //       setIsParentOpen(false);
+    //     }, 1000);
+    //   };
   return (
     <div style={{height: '80vh'}} className="w-full g-gray-900 text-white flex flex-col">
       {/* Header */}
@@ -75,8 +75,8 @@ export default function ProfileScreen() {
       <div  style={{height: '100vh'}}  className="bg-gray-500 rounded-t-3xl p-4 flex flex-col gap-4">
         <ProfileOption onClick={() => setIsParentOpen(true)} icon={<FaUser />} label="Parent Profile" />
         <ProfileOption onClick={() => navigate('/children')} icon={<FaChild />} label="Child Profile" />
-        <ProfileOption onClick={() => setIsNotificationOpen(true)} icon={<FaBell />} label="Notification" />
-        <ProfileOption onClick={() => setIsSettingOpen(true)} icon={<FaLock />} label="Password & Security" />
+        {/* <ProfileOption onClick={() => setIsNotificationOpen(true)} icon={<FaBell />} label="Notification" /> */}
+        {/* <ProfileOption onClick={() => setIsSettingOpen(true)} icon={<FaLock />} label="Password & Security" /> */}
         <ProfileOption onClick={() => navigate('/children')} icon={<MdPersonAdd />} label="Add Child Profile" />
       </div>
 
@@ -85,7 +85,7 @@ export default function ProfileScreen() {
   );
 }
 
-function ProfileOption({ icon, label, onClick }) {
+function ProfileOption({ icon, label, onClick }: {icon: any, label: any, onClick: any}) {
    
   return (
     <div  onClick={onClick} className="flex justify-between items-center p-4 border-b border-gray-300 cursor-pointer">
@@ -98,8 +98,8 @@ function ProfileOption({ icon, label, onClick }) {
   );
 }
 
-function NavItem({ icon, active }: {icon: any, active: any}) {
-  return (
-    <button className={`text-2xl ${active ? "text-blue-400" : "text-gray-400"}`}>{icon}</button>
-  );
-}
+// function NavItem({ icon, active }: {icon: any, active: any}) {
+//   return (
+//     <button className={`text-2xl ${active ? "text-blue-400" : "text-gray-400"}`}>{icon}</button>
+//   );
+// }

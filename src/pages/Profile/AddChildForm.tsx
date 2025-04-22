@@ -1,32 +1,67 @@
-import React, { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { Button, Input, Select, Spinner } from '@telegram-apps/telegram-ui';
-import { useDispatch } from 'react-redux';
-import { addChild } from '@/redux/slices/childSlice';
+import { useState } from "react";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { Button, Input, Select, Spinner } from "@telegram-apps/telegram-ui";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { addChild } from "@/redux/slices/childSlice";
 
-const AddChildForm = ({ onClose }) => {
-  const dispatch = useDispatch();
+// ----------------------
+// Types
+// ----------------------
+interface AddChildFormProps {
+  onClose: () => void;
+}
+
+interface FormValues {
+  name: string;
+  date_of_birth: string;
+  gender: "Male" | "Female";
+  weight: number | string;
+  height: number | string;
+  muac: number | string;
+}
+
+// ----------------------
+// Component
+// ----------------------
+const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const [submitting, setSubmitting] = useState(false);
-  const parentId = "ce10dd72-07d0-48f0-a774-295f8e36fdc0";
+
+  const parentId = "4bbd6675-b550-443e-9921-22079dcd57cc";
+
   const {
     handleSubmit,
     control,
     reset,
-    formState: { errors },
-  } = useForm();
+  } = useForm<FormValues>({
+    defaultValues: {
+      name: "",
+      date_of_birth: "",
+      gender: "Male",
+      weight: "",
+      height: "",
+      muac: "",
+    },
+  });
 
-  const onSubmit = async (data) => {
-    console.log('Form Data:', data); // ✅ You’ll now see correct values
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setSubmitting(true);
-    data = {...data , parentId: parentId,  weight: parseFloat(data.weight),
-        height: parseFloat(data.height),
-        muac: parseFloat(data.muac)}
+
+    const childData = {
+      ...data,
+      parentId,
+      weight: parseFloat(data.weight.toString()),
+      height: parseFloat(data.height.toString()),
+      muac: parseFloat(data.muac.toString()),
+    };
+
     try {
-      await dispatch(addChild(data)).unwrap();
+      await dispatch(addChild(childData)).unwrap();
       reset();
-      onClose(); // close modal
+      onClose();
     } catch (error) {
-      alert('Failed to add child');
+      alert("Failed to add child");
       console.error(error);
     } finally {
       setSubmitting(false);
@@ -38,21 +73,23 @@ const AddChildForm = ({ onClose }) => {
       <Controller
         name="name"
         control={control}
-        rules={{ required: true }}
-        render={({ field }) => <Input label="Name" {...field} />}
+        rules={{ required: "Name is required" }}
+        render={({ field }) => <Input header="Name" {...field} />}
       />
 
       <Controller
         name="date_of_birth"
         control={control}
-        rules={{ required: true }}
-        render={({ field }) => <Input header="Date of Birth" type="date" {...field} />}
+        rules={{ required: "Date of birth is required" }}
+        render={({ field }) => (
+          <Input header="Date of Birth" type="date" {...field} />
+        )}
       />
 
       <Controller
         name="gender"
         control={control}
-        rules={{ required: true }}
+        rules={{ required: "Gender is required" }}
         render={({ field }) => (
           <Select header="Gender" {...field}>
             <option value="Male">Male</option>
@@ -61,33 +98,39 @@ const AddChildForm = ({ onClose }) => {
         )}
       />
 
-     
-        <Controller
-          name="weight"
-          control={control}
-          rules={{ required: true }}
-          render={({ field }) => <Input header="Weight (kg)" type="number" step="0.1" {...field} />}
-        />
-        <Controller
-          name="height"
-          control={control}
-          rules={{ required: true }}
-          render={({ field }) => <Input header="Height (cm)" type="number" step="0.1" {...field} />}
-        />
-        <Controller
-          name="muac"
-          control={control}
-          rules={{ required: true }}
-          render={({ field }) => <Input header="MUAC (cm)" type="number" step="0.1" {...field} />}
-        />
-      
+      <Controller
+        name="weight"
+        control={control}
+        rules={{ required: "Weight is required" }}
+        render={({ field }) => (
+          <Input header="Weight (kg)" type="number" step="0.1" {...field} />
+        )}
+      />
+
+      <Controller
+        name="height"
+        control={control}
+        rules={{ required: "Height is required" }}
+        render={({ field }) => (
+          <Input header="Height (cm)" type="number" step="0.1" {...field} />
+        )}
+      />
+
+      <Controller
+        name="muac"
+        control={control}
+        rules={{ required: "MUAC is required" }}
+        render={({ field }) => (
+          <Input header="MUAC (cm)" type="number" step="0.1" {...field} />
+        )}
+      />
 
       <div className="flex justify-end gap-4 mt-6">
         <Button stretched type="button" onClick={onClose}>
           Cancel
         </Button>
         <Button stretched type="submit" disabled={submitting}>
-          {submitting ? <Spinner size="s" /> : 'Add Child'}
+          {submitting ? <Spinner size="s" /> : "Add Child"}
         </Button>
       </div>
     </form>

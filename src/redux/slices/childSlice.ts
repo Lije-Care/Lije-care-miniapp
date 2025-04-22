@@ -1,10 +1,11 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import api from "@/api/axios";
-
+import { Parent } from "@/types";
+import { CreateChildDto } from "@/types/child";
 
 
 interface ChildState {
-  data: Child | null;
+  data: Child[]; // ⬅️ array instead of single
   loading: boolean;
   error: string | null;
 }
@@ -26,31 +27,35 @@ export type Child = {
 };
 
 const initialState: ChildState = {
-  data: null,
+  data: [],
   loading: false,
   error: null,
 };
-
 // Base API URL
 
-// Async Thunks for API Calls
-export const addChild = createAsyncThunk("children/addChildren", async (newParent: Omit<Parent, "id">) => {
-  const response = await api.post<Parent>(`children/create`, newParent);
-  return response.data;
-});
-
-export const fetchChildrenByParentId = createAsyncThunk("parent/fetchChildrenByParentId", async () => {
-  try {
-    const response = await api.get(
-      "children/find-all?parentId=ce10dd72-07d0-48f0-a774-295f8e36fdc0"
-    );
-
-    return response.data;
-  } catch (error: any) {
-    console.error("Error fetching data:", error);
-    throw new Error(error.response?.data?.message || "Failed to fetch parent");
+export const addChild = createAsyncThunk<Child, CreateChildDto>(
+  "children/addChild",
+  async (newChild, { rejectWithValue }) => {
+    try {
+      const response = await api.post<Child>("children/create", newChild);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error?.response?.data || "Failed to add child");
+    }
   }
-});
+);
+
+export const fetchChildrenByParentId = createAsyncThunk<Child[]>(
+  "parent/fetchChildrenByParentId",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get("children/find-all?parentId=4bbd6675-b550-443e-9921-22079dcd57cc");
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch children");
+    }
+  }
+);
 
 export const updateChild = createAsyncThunk("child/updateChild", async (updateChild: any) => {
   console.log(updateChild);
@@ -76,7 +81,7 @@ const childrenSlice = createSlice({
         state.loading = false;
         console.log("payload, acrion");
         console.log(action.payload);
-        state.data = action.payload;
+        // state.data = action.payload;
       })
       .addCase(addChild.rejected, (state, action) => {
         state.loading = false;
@@ -86,7 +91,7 @@ const childrenSlice = createSlice({
               state.loading = true;
               state.error = null;
             })
-            .addCase(fetchChildrenByParentId.fulfilled, (state, action: PayloadAction<Parent>) => {
+            .addCase(fetchChildrenByParentId.fulfilled, (state, action: PayloadAction<any>) => {
               state.loading = false;
               console.log("payload, acrion");
               console.log(action.payload);

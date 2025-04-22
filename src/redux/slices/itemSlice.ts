@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import api from '@/api/axios';
+import { ParentInfo } from "@/types";
 
 interface Parent {
   id: number;
@@ -42,7 +43,7 @@ const initialState: ParentState = {
 export const fetchParent = createAsyncThunk("parent/fetchParent", async () => {
   try {
     const response = await api.get(
-      "users/find-one/ce10dd72-07d0-48f0-a774-295f8e36fdc0");
+      "users/find-one/4bbd6675-b550-443e-9921-22079dcd57cc");
     
 
     return response.data;
@@ -61,8 +62,8 @@ export const addParent = createAsyncThunk("parent/addParent", async (newParent: 
 
 
 
-export const updateParent = createAsyncThunk("parent/updateParent", async (updatedParent: Parent) => {
-  const response = await api.patch<Parent>(`users/update/ce10dd72-07d0-48f0-a774-295f8e36fdc0)`, updatedParent);
+export const updateParent = createAsyncThunk("parent/updateParent", async (updatedParent: ParentInfo) => {
+  const response = await api.patch<Parent>(`users/update/4bbd6675-b550-443e-9921-22079dcd57cc`, updatedParent);
   return response.data;
 });
 

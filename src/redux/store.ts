@@ -1,12 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
-
-import parentReducer from "@/redux/slices/itemSlice"
-import childReducer from "@/redux/slices/childSlice"
+import specialistReducer from '@/redux/slices/specialistSlice';
+import parentReducer from "@/redux/slices/itemSlice";
+import childReducer from "@/redux/slices/childSlice";
+import articlesReducer from "@/redux/slices/articlesSlice";
 export const store = configureStore({
   reducer: {
    
     parent: parentReducer,
-    children: childReducer
+    children: childReducer,
+    articles: articlesReducer,
+    specialists: specialistReducer,
   },
 });
 

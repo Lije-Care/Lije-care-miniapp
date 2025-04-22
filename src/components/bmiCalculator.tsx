@@ -1,7 +1,6 @@
-import React from "react";
 import { FaHeartbeat, FaWeight, FaCalendarWeek } from "react-icons/fa";
 
-const BmiCalculator = ({ week, setWeek, bmi, category, setBmi }) => {
+const BmiCalculator = ({ week, setWeek, bmi, category, setBmi }: any) => {
   return (
     <div className="max-w-md mx-auto mt-8  p-6 rounded-2xl shadow-xl border border-gray-200 space-y-6 transition-all duration-300">
       <h1 className="text-2xl font-bold mb-4 text-center flex items-center justify-center gap-2">

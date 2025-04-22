@@ -1,16 +1,16 @@
-import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "@/redux/store";
-import { FaEdit, FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { Subheadline, Text } from "@telegram-apps/telegram-ui";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+// import { RootState } from "@/redux/store";
+// import { FaEdit, FaArrowLeft, FaArrowRight } from "react-icons/fa";
+// import { Subheadline, Text } from "@telegram-apps/telegram-ui";
 
-import { fetchChildrenByParentId } from "@/redux/slices/childSlice";
+// import { fetchChildrenByParentId } from "@/redux/slices/childSlice";
 
 const ChildrenDisplay = () => {
   const dispatch = useDispatch();
   
 
-  const [isEditing, setIsEditing] = useState(false);
+  // const [isEditing, setIsEditing] = useState(false);
   // const handleNext = () => {
   //   if (currentIndex < children.length - 1) {
   //     setCurrentIndex(currentIndex + 1);
@@ -46,7 +46,7 @@ const ChildrenDisplay = () => {
   //   setIsEditing(false);
   // };
   useEffect(() => {
-    dispatch(fetchChildrenByParentId());
+    // dispatch(fetchChildrenByParentId());
   }, [dispatch]);
   return (
     <div className="flex flex-col items-center p-4 w-full max-w-lg mx-auto">

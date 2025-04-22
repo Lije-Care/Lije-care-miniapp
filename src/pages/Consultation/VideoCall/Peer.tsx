@@ -6,7 +6,7 @@ import {
   useHMSStore,
 } from "@100mslive/react-sdk";
 
-function Peer({ peer }) {
+function Peer({ peer } : {peer: any}) {
   const { videoRef } = useVideo({
     trackId: peer.videoTrack,
   });

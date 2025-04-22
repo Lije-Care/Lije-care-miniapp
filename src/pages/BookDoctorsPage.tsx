@@ -5,7 +5,7 @@ import { FC,  useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
 export const BookDoctorsPage: FC = () => {
-  const themeParams = window?.Telegram?.WebApp?.themeParams || {}; // Fetch Telegram theme
+  // const themeParams = window?.Telegram?.WebApp?.themeParams || {}; // Fetch Telegram theme
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("11:00 AM");
   const navigate = useNavigate()
@@ -18,8 +18,8 @@ export const BookDoctorsPage: FC = () => {
            
            <div style={{
       padding: "20px",
-      background: themeParams.bg_color || "#001F33",
-      color: themeParams.text_color || "#fff",
+      // background: themeParams.bg_color || "#001F33",
+      // color: themeParams.text_color || "#fff",
       borderRadius: "10px",
       textAlign: "center"
     }}>
@@ -30,7 +30,7 @@ export const BookDoctorsPage: FC = () => {
 
       {/* Date Selection (using input inusestead of DatePicker) */}
       <div style={{
-        border: `2px solid ${themeParams.link_color || "#0095FF"}`,
+        // border: `2px solid ${themeParams.link_color || "#0095FF"}`,
         borderRadius: "8px",
         padding: "10px",
         marginBottom: "15px"
@@ -42,7 +42,7 @@ export const BookDoctorsPage: FC = () => {
           style={{
             width: "100%",
             background: "transparent",
-            color: themeParams.text_color || "#fff",
+            // color: themeParams.text_color || "#fff",
             border: "none",
             outline: "none",
             fontSize: "16px",
@@ -57,7 +57,7 @@ export const BookDoctorsPage: FC = () => {
       </Text>
       
       <SegmentedControl 
-        style={{ background: themeParams.secondary_bg_color || "#002244" }}
+        // style={{ background: themeParams.secondary_bg_color || "#002244" }}
       >
         {timeSlots.map((time) => (
           <SegmentedControlItem

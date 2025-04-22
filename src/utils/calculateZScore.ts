@@ -1,16 +1,16 @@
-export const calculateZScore = (observed, median, sd) => {
+export const calculateZScore = (observed: number, median: number, sd: number) => {
     return ((observed - median) / sd);
   };
 
-  const interpretZScore = (zScore) => {
-    if (zScore < -3) return { label: "Severe Stunting", color: "bg-red-600" };
-    if (zScore < -2) return { label: "Moderate Stunting", color: "bg-orange-500" };
-    if (zScore < -1) return { label: "Mild Stunting", color: "bg-yellow-500" };
-    if (zScore < 1) return { label: "Normal Height", color: "bg-green-500" };
-    if (zScore < 2) return { label: "Above Average Height", color: "bg-blue-400" };
-    if (zScore < 3) return { label: "Tall for Age", color: "bg-indigo-500" };
-    return { label: "Exceptionally Tall", color: "bg-purple-600" };
-  };
+  // const interpretZScore = (zScore: number) => {
+  //   if (zScore < -3) return { label: "Severe Stunting", color: "bg-red-600" };
+  //   if (zScore < -2) return { label: "Moderate Stunting", color: "bg-orange-500" };
+  //   if (zScore < -1) return { label: "Mild Stunting", color: "bg-yellow-500" };
+  //   if (zScore < 1) return { label: "Normal Height", color: "bg-green-500" };
+  //   if (zScore < 2) return { label: "Above Average Height", color: "bg-blue-400" };
+  //   if (zScore < 3) return { label: "Tall for Age", color: "bg-indigo-500" };
+  //   return { label: "Exceptionally Tall", color: "bg-purple-600" };
+  // };
 
   type GrowthData = {
     week: number;

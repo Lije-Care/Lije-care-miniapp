@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import api from "@/api/axios";
 import { Badge, Button, Card, Placeholder } from "@telegram-apps/telegram-ui";
 import { useNavigate } from "react-router-dom";
@@ -45,13 +45,14 @@ const MealPlanSummary = () => {
 
   return (
     <div className="p-4 space-y-4">
-      <h2 className="text-xl font-bold text-center">📋 Your Meal Plans</h2>
+      <h2 className="text-xl font-bold text-center">📋 Your Meal Recommendations</h2>
 
       {mealPlans.length > 0 ? (
         mealPlans.map((mealPlan) => (
           <Card
             key={mealPlan.id}
             className="p-4 shadow-md bg-white dark:bg-gray-800 rounded-lg w-full"
+            onClick={()=> navigate(`/mealplansummary/${mealPlan.id}`)}
           >
             <p className="text-gray-700 dark:text-gray-300">
               {mealPlan.meal_description}
@@ -60,21 +61,21 @@ const MealPlanSummary = () => {
               🔥 {mealPlan.calories} kcal | 🕒 {new Date(mealPlan.createdAt).toDateString()}
             </p>
 
-            <h3 className="mt-3 font-semibold text-gray-900 dark:text-white">👨‍⚕️ Expert</h3>
+            {/* <h3 className="mt-3 font-semibold text-gray-900 dark:text-white">👨‍⚕️ Expert</h3>
             <p className="text-sm text-gray-600 dark:text-gray-300">
               {mealPlan.expert.firstName} {mealPlan.expert.lastName} ({mealPlan.expert.role})
-            </p>
+            </p> */}
 
             <h3 className="mt-3 font-semibold text-gray-900 dark:text-white">👶 Child</h3>
             <p className="text-sm text-gray-600 dark:text-gray-300">
               {mealPlan.child.name}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            {/* <p className="text-xs text-gray-500 dark:text-gray-400">
               Dietary Restrictions: {mealPlan.child.dietary_restrictions || "None"}
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            </p> */}
+            {/* <p className="text-xs text-gray-500 dark:text-gray-400">
               Allergies: {mealPlan.child.allergies || "None"}
-            </p>
+            </p> */}
 
             <h3 className="mt-3 font-semibold text-gray-900 dark:text-white">🍽️ Meals</h3>
             <div className="mt-2 space-y-2">
@@ -86,7 +87,7 @@ const MealPlanSummary = () => {
               ))}
             </div>
 
-            <Button onClick={() => navigate(`/meal-plans/edit/${mealPlan.id}`)} className="mt-4 w-full bg-blue-500 text-white">Edit Meal Plan</Button>
+            {/* <Button onClick={() => navigate(`/meal-plans/edit/${mealPlan.id}`)} className="mt-4 w-full bg-blue-500 text-white">Edit Meal Plan</Button> */}
           </Card>
         ))
       ) : (

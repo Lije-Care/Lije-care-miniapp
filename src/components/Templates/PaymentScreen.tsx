@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { 
   SegmentedControl, 
    
@@ -11,20 +11,20 @@ import { SegmentedControlItem } from "@telegram-apps/telegram-ui/dist/components
 import { useNavigate } from "react-router-dom";
 
 const PaymentScreen = () => {
-  const themeParams = window?.Telegram?.WebApp?.themeParams || {}; // Fetch Telegram theme
+  // const themeParams = window?.Telegram?.WebApp?.themeParams || {}; // Fetch Telegram theme
   const [paymentMethod, setPaymentMethod] = useState("TeleBirr");
   const [fullName, setFullName] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const navigate = useNavigate();
-  useEffect(() => {
-    document.body.style.background = themeParams.bg_color || "#001F33";
-  }, [themeParams]);
+  // useEffect(() => {
+  //   document.body.style.background = themeParams.bg_color || "#001F33";
+  // }, [themeParams]);
 
   return (
     <div style={{
       padding: "20px",
-      background: themeParams.bg_color || "#001F33",
-      color: themeParams.text_color || "#fff",
+      // background: themeParams.bg_color || "#001F33",
+      // color: themeParams.text_color || "#fff",
       borderRadius: "10px",
       textAlign: "center"
     }}>

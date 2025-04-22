@@ -1,13 +1,11 @@
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import { Text, Button } from "@telegram-apps/telegram-ui";
 import { useNavigate } from "react-router-dom";
 
 const PaymentSuccessScreen = () => {
-  const themeParams = window?.Telegram?.WebApp?.themeParams || {}; // Fetch Telegram theme
+  // const themeParams = window?.Telegram?.WebApp?.themeParams || {}; // Fetch Telegram theme
   const navigate = useNavigate();
-  useEffect(() => {
-    document.body.style.background = themeParams.bg_color || "#001F33";
-  }, [themeParams]);
+ 
 
   return (
     <div style={{
@@ -17,8 +15,7 @@ const PaymentSuccessScreen = () => {
       justifyContent: "center",
       height: "100vh",
       textAlign: "center",
-      background: themeParams.bg_color || "#001F33",
-      color: themeParams.text_color || "#fff"
+      
     }}>
       {/* Success Icon */}
       <div style={{

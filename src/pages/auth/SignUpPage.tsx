@@ -1,10 +1,10 @@
-import React from "react";
+
 import {
   Input,
   
   Select,
   Button,
-  FixedLayout,
+ 
   Text,
   Title,
   Section,

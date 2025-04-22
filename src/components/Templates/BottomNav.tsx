@@ -1,7 +1,6 @@
 import { CartIcon, ChatIcon, HomeIcon, PersonIcon } from "@100mslive/react-icons";
 import { TabsList } from "@telegram-apps/telegram-ui"
 import { useState } from "react";
-import { BsWatch } from "react-icons/bs";
 import { IoTimeOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
