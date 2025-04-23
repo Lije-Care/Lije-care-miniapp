@@ -88,7 +88,7 @@ const MealDetails: React.FC = () => {
     <div className="max-w-3xl mx-auto px-4 py-6 text-white space-y-10">
       <Title className="text-2xl font-bold text-emerald-400">🥗 Meal Plan</Title>
 
-      {meals?.map((meal: any, index: number) => {
+      {meals?.map((meal: any) => {
         // const nutrition = typeof meal.nutritional_info === 'string'
         //   ? meal.nutritional_info
         //   : meal.nutritional_info;
