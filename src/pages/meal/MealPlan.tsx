@@ -14,6 +14,7 @@ import {
   
 } from "@telegram-apps/telegram-ui";
 import { FaCheck } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const fallbackImg = 'https://via.placeholder.com/100x80?text=No+Image';
 
@@ -46,7 +47,7 @@ const MealLibraryComponent = () => {
 
   const expertId = "ffb1c872-f128-4218-91d6-a1e8256dadd0";
   const childId = "e2c6b15f-8061-46cb-81e3-e1aa19d64b15";
-
+  const navigate = useNavigate(); 
   useEffect(() => {
     const fetchMeals = async () => {
       try {
@@ -74,7 +75,8 @@ const MealLibraryComponent = () => {
 
   const handleConfirmMealPlan = async () => {
     if (selectedMeals.length === 0) {
-      alert("Please select at least one meal.");
+      // alert("Please select at least one meal.");
+      navigate('/mealplansummary');
       return;
     }
 
@@ -89,7 +91,8 @@ const MealLibraryComponent = () => {
     try {
       setSubmitting(true);
       await api.post("/meal-plans/create", payload);
-      alert("Meal plan created successfully!");
+      // alert("Meal plan created successfully!");
+      navigate('/mealplansummary');
       setSelectedMeals([]);
     } catch (err) {
       console.error("Submission failed:", err);

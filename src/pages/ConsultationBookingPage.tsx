@@ -14,7 +14,7 @@ const concerns = ['Nutrition', 'Sleep Issues', 'Growth', 'Vaccination', 'Skin Is
 export default function ConsultationTab() {
   const dispatch = useDispatch<AppDispatch>();
   const { specialists, loading, error } = useSelector((state: RootState) => state.specialists);
-
+  console.log(specialists);
   const [selectedConcern, setSelectedConcern] = useState('');
   const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
   const [availability, setAvailability] = useState<any[]>([]);
@@ -42,7 +42,7 @@ export default function ConsultationTab() {
     try {
       setLoadingSlots(true);
       const today = new Date().toISOString().split('T')[0];
-      const res = await api.get(`/availability?userId=${expertId}&date=${today}`);
+      const res = await api.get(`/availability/findbyExpert/${expertId}`);
       setAvailability(res.data);
     } catch (e) {
       setAvailability([]);
@@ -53,7 +53,7 @@ export default function ConsultationTab() {
 
   const fetchUserPackage = async () => {
     try {
-      const res = await api.get('/user-packages/active?userId=ME'); // Replace 'ME' with real user context
+      const res = await api.get('/user-package/active?userId=4bbd6675-b550-443e-9921-22079dcd57cc'); // Replace 'ME' with real user context
       setUserPackageId(res.data.id);
     } catch (e) {
       setUserPackageId(null);
@@ -68,7 +68,7 @@ export default function ConsultationTab() {
 
     try {
       await api.post('/booking', {
-        parentId: 'PARENT_ID', // should come from auth/user context
+        parentId: '4bbd6675-b550-443e-9921-22079dcd57cc', // should come from auth/user context
         expertId: selectedDoctor.userId,
         slotId: selectedSlot,
         userPackageId,

@@ -58,14 +58,41 @@ const MealDetails: React.FC = () => {
     return <Text className="text-center mt-8">No meals found in this meal plan.</Text>;
   }
 
+  function parseNutritionalInfo(info: string) {
+    const nutrition: { [key: string]: string } = {};
+  
+    info.split(',').forEach(part => {
+      const [key, value] = part.split(':').map(str => str.trim());
+      if (key && value) {
+        switch (key.toLowerCase()) {
+          case 'calories':
+            nutrition.calories = value;
+            break;
+          case 'protein':
+            nutrition.protein = value;
+            break;
+          case 'fat':
+            nutrition.fat = value;
+            break;
+          case 'carbs':
+            nutrition.carbs = value;
+            break;
+        }
+      }
+    });
+  
+    return nutrition;
+  }
+  
   return (
     <div className="max-w-3xl mx-auto px-4 py-6 text-white space-y-10">
       <Title className="text-2xl font-bold text-emerald-400">🥗 Meal Plan</Title>
 
       {meals?.map((meal: any, index: number) => {
-        const nutrition = typeof meal.nutritional_info === 'string'
-          ? meal.nutritional_info
-          : meal.nutritional_info;
+        // const nutrition = typeof meal.nutritional_info === 'string'
+        //   ? meal.nutritional_info
+        //   : meal.nutritional_info;
+        const nutrition= parseNutritionalInfo( meal.nutritional_info);
 
         const steps = Array.isArray(meal.instructions)
           ? meal.instructions
@@ -105,14 +132,28 @@ const MealDetails: React.FC = () => {
             <Divider />
 
             <div>
-              <Title className="text-md">🧪 Nutritional Info</Title>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2 text-sm">
-                <Cell before="🔥">Calories: {nutrition?.calories || 'N/A'}</Cell>
-                <Cell before="🥩">Protein: {nutrition?.protein || 'N/A'}</Cell>
-                <Cell before="🥑">Fat: {nutrition?.fat || 'N/A'}</Cell>
-                <Cell before="🍞">Carbs: {nutrition?.carbs || 'N/A'}</Cell>
-              </div>
-            </div>
+  <Title className="text-sm">🧪 Nutritional Info</Title>
+  <div className="grid grid-cols-2 md:grid-cols-4 p-0 m-0 text-sm gap-2">
+    <div className="flex items-start gap-1 whitespace-normal break-words overflow-visible">
+      <span>🔥</span>
+      <span>Clrs: {nutrition?.calories || 'N/A'}</span>
+    </div>
+    <div className="flex items-start gap-1 whitespace-normal break-words overflow-visible">
+      <span>🥩</span>
+      <span>Prtn: {nutrition?.protein || 'N/A'}</span>
+    </div>
+    <div className="flex items-start gap-1 whitespace-normal break-words overflow-visible">
+      <span>🥑</span>
+      <span>Fat: {nutrition?.fat || 'N/A'}</span>
+    </div>
+    <div className="flex items-start gap-1 whitespace-normal break-words overflow-visible">
+      <span>🍞</span>
+      <span>Carbs: {nutrition?.carbs || 'N/A'}</span>
+    </div>
+  </div>
+</div>
+
+
 
             <Divider />
 
