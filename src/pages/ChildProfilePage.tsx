@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, ChangeEvent } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button, Input, Select, Spinner, Text, Caption, Divider, Placeholder } from '@telegram-apps/telegram-ui';
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,14 +23,7 @@ type ChildFormData = {
   medications: string;
 };
 
-type NutritionFormState = {
-  age: string;
-  sex: string;
-  weight: string;
-  height: string;
-  activity: string;
-  condition: string;
-};
+
 
 type Result = {
   bmi: string;
