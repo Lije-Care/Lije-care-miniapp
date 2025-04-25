@@ -4,7 +4,7 @@ import api from '@/api/axios';
 import {
   Title,
   Text,
-  Cell,
+  
   Divider,
   Placeholder,
   Spinner,

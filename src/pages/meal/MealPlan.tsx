@@ -4,14 +4,13 @@ import api from "@/api/axios";
 import {
   Button,
   Card,
-  List,
+  
   Placeholder,
   Text,
   Title,
   Input,
   Caption,
   Spinner,
-  
 } from "@telegram-apps/telegram-ui";
 import { FaCheck } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -23,15 +22,25 @@ type Ingredient = {
   name: string;
 };
 
+type NutritionalInfo = {
+  calories: number;
+  protein: number;
+  fat: number;
+  carbs: number;
+  iron: number;
+  calcium: number;
+  vitaminA: number;
+};
+
 type MealLibrary = {
   id: string;
   title: string;
   description: string;
-  instructions: string;
-  nutritional_info: string;
+  instructions: string[];
+  nutritional_info: NutritionalInfo;
   age_group: string;
   meal_type: string;
-  preparation_time: number;
+  preparation_time: string;
   imageUrl: string;
   ingredients: Ingredient[];
 };
@@ -43,18 +52,19 @@ const MealLibraryComponent = () => {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [mealDescription, setMealDescription] = useState("A healthy and balanced meal plan for the child.");
-  const [calories, setCalories] = useState<number>(1500);
+  const navigate = useNavigate();
 
   const expertId = "ffb1c872-f128-4218-91d6-a1e8256dadd0";
   const childId = "e2c6b15f-8061-46cb-81e3-e1aa19d64b15";
-  const navigate = useNavigate(); 
+
+  const totalCalories = selectedMeals.reduce((sum, meal) => sum + (meal.nutritional_info?.calories || 0), 0);
+
   useEffect(() => {
     const fetchMeals = async () => {
       try {
         const res = await api.get("mealLibrary/findall?skip=0");
         const data = Array.isArray(res.data) ? res.data : res.data?.data;
         setMeals(data || []);
-        console.log(data);
       } catch (err) {
         console.error("Failed to fetch meals:", err);
         setError("Failed to load meals. Please try again later.");
@@ -75,7 +85,6 @@ const MealLibraryComponent = () => {
 
   const handleConfirmMealPlan = async () => {
     if (selectedMeals.length === 0) {
-      // alert("Please select at least one meal.");
       navigate('/mealplansummary');
       return;
     }
@@ -84,14 +93,13 @@ const MealLibraryComponent = () => {
       expertId,
       childId,
       meal_description: mealDescription,
-      calories,
+      calories: totalCalories,
       meals: selectedMeals.map((m) => ({ id: m.id })),
     };
 
     try {
       setSubmitting(true);
       await api.post("/meal-plans/create", payload);
-      // alert("Meal plan created successfully!");
       navigate('/mealplansummary');
       setSelectedMeals([]);
     } catch (err) {
@@ -105,7 +113,7 @@ const MealLibraryComponent = () => {
   if (loading) {
     return (
       <Placeholder header="Loading Meals...">
-        <Spinner size={"s"}/>
+        <Spinner size={"s"} />
         <Caption>Fetching healthy meal options for your child...</Caption>
       </Placeholder>
     );
@@ -113,78 +121,106 @@ const MealLibraryComponent = () => {
 
   if (error) {
     return (
-       <div>
+      <div className="text-center">
         <Title>Error Loading Meals</Title>
         <Text>{error}</Text>
-        </div>
+      </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <Title className="mb-4">Create Meal Plan</Title>
+    <div className="p-6 max-w-5xl mx-auto text-white">
+      <Title className="mb-4 text-2xl text-emerald-400">🍽️ Create Meal Plan</Title>
 
-      <Card className="mb-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <Card className="auto w-full bg-[#1E1E2F] border border-gray-700">
+        <div className="grid grid-cols-1 sm:grid-cols-2 ">
           <Input
             header="Meal Description"
             value={mealDescription}
             onChange={(e) => setMealDescription(e.target.value)}
           />
-          <Input
-            type="number"
-            header="Calories"
-            value={calories}
-            onChange={(e) => setCalories(parseInt(e.target.value, 10))}
-          />
+          <div>
+            <Input
+              header="Total Calories"
+              type="number"
+              value={totalCalories}
+              disabled
+              className="bg-gray-800 text-white"
+            />
+          </div>
         </div>
       </Card>
 
-      <Card>
-        <Title className="text-lg mb-3">Select Meals from Library</Title>
-        <List>
-          {meals.map((meal) => {
-            const isSelected = selectedMeals.some((m) => m.id === meal.id);
-            return (
-              <li
-                key={meal.id}
-                className={`flex items-center gap-4 p-2 border rounded mb-2 transition duration-300 ${
-                  isSelected ? "bg-green-100 border-green-500" : " hover:bg-gray-100"
-                }`}
-              >
+      <div className="space-y-4">
+        <Title className="text-lg text-white">Select Meals from Library</Title>
+        {meals.map((meal) => {
+          const isSelected = selectedMeals.some((m) => m.id === meal.id);
+          return (
+            <Card
+              key={meal.id}
+              className={`flex flex-col sm:flex-row items-center justify-between p-4 border ${
+                isSelected ? "border-green-500 bg-green-100/10" : "bg-[#101827]"
+              }`}
+            >
+              <div className="flex flex-col sm:flex-row gap-4 w-full items-center">
                 <img
-                  // src={meal.imageUrl || fallbackImg}
                   src={`http://localhost:4000/uploads/images/meal${meal.imageUrl}`}
                   alt={meal.title}
-                  className="w-20 h-20 rounded object-cover"
                   onError={(e) => ((e.currentTarget.src = fallbackImg))}
+                  className="w-24 h-24 object-cover rounded-lg"
                 />
                 <div className="flex-1">
-                  <Text className="font-semibold">{meal.title}</Text>
-                  <Caption className="text-sm text-gray-600">{meal.age_group} · {meal.meal_type}</Caption>
-                  <Caption className="text-sm">Prep Time: {meal.preparation_time} min</Caption>
-                  <Caption className="text-xs text-gray-500 italic">{meal.nutritional_info}</Caption>
+                  <Text className="text-xl font-semibold">{meal.title}</Text>
+                  <Caption>{meal.age_group} · {meal.meal_type} · Prep: {meal.preparation_time} min</Caption>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2 text-sm">
+                    <div>🔥 {meal.nutritional_info.calories} kcal</div>
+                    <div>💪 {meal.nutritional_info.protein} g protein</div>
+                    <div>🍞 {meal.nutritional_info.carbs} g carbs</div>
+                    <div>🧈 {meal.nutritional_info.fat} g fat</div>
+                    <div>🩸 {meal.nutritional_info.iron} mg iron</div>
+                    <div>🦴 {meal.nutritional_info.calcium} mg calcium</div>
+                    <div>👁️ {meal.nutritional_info.vitaminA} mcg Vitamin A</div>
+                  </div>
                 </div>
                 <Button
                   onClick={() => toggleMeal(meal)}
-                  className={`text-white ${isSelected ? "bg-red-500" : "bg-blue-500"}`}
+                  className={`text-white h-10 px-5 ${
+                    isSelected ? "bg-red-500" : "bg-blue-500"
+                  }`}
                 >
                   {isSelected ? "Remove" : "Add"}
                 </Button>
-              </li>
-            );
-          })}
-        </List>
-      </Card>
+              </div>
+
+              {isSelected && (
+                <div className="mt-4 w-full">
+                  <Caption className="text-sm font-medium text-gray-400">📝 Instructions:</Caption>
+                  <ul className="text-sm list-disc list-inside text-gray-300 mt-1">
+                    {Array.isArray(meal.instructions) &&
+                      meal.instructions.map((step, idx) => (
+                        <li key={idx}>{step}</li>
+                      ))}
+                  </ul>
+                </div>
+              )}
+            </Card>
+          );
+        })}
+      </div>
 
       <Button
-        onClick={handleConfirmMealPlan}
-        disabled={submitting}
-        className="mt-6 w-full bg-green-600 text-white text-lg flex items-center justify-center gap-2"
-      >
-        <FaCheck />
-        {submitting ? "Submitting..." : "Confirm Meal Plan"}
-      </Button>
+  onClick={handleConfirmMealPlan}
+  disabled={submitting}
+  className={`mt-6 w-full flex flex-row items-center justify-center gap-2 text-white text-lg font-semibold 
+    py-3 rounded-lg transition-all duration-200
+    ${submitting ? 'bg-emerald-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700 active:scale-95'}
+  `}
+>
+  <FaCheck className="text-white text-xl" />
+  <span>{submitting ? "Submitting..." : "Confirm Meal Plan"}</span>
+</Button>
+
+
     </div>
   );
 };

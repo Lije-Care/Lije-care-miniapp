@@ -14,7 +14,7 @@ const concerns = ['Nutrition', 'Sleep Issues', 'Growth', 'Vaccination', 'Skin Is
 export default function ConsultationTab() {
   const dispatch = useDispatch<AppDispatch>();
   const { specialists, loading, error } = useSelector((state: RootState) => state.specialists);
-  console.log(specialists);
+ 
   const [selectedConcern, setSelectedConcern] = useState('');
   const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
   const [availability, setAvailability] = useState<any[]>([]);
@@ -33,7 +33,7 @@ export default function ConsultationTab() {
   // Load availability when doctor selected
   useEffect(() => {
     if (selectedDoctor) {
-      fetchAvailability(selectedDoctor.userId);
+      fetchAvailability(selectedDoctor.id);
       fetchUserPackage();
     }
   }, [selectedDoctor]);
@@ -41,7 +41,7 @@ export default function ConsultationTab() {
   const fetchAvailability = async (expertId: string) => {
     try {
       setLoadingSlots(true);
-      const today = new Date().toISOString().split('T')[0];
+    
       const res = await api.get(`/availability/findbyExpert/${expertId}`);
       setAvailability(res.data);
     } catch (e) {
@@ -53,7 +53,7 @@ export default function ConsultationTab() {
 
   const fetchUserPackage = async () => {
     try {
-      const res = await api.get('/user-package/active?userId=4bbd6675-b550-443e-9921-22079dcd57cc'); // Replace 'ME' with real user context
+      const res = await api.get('/user-package/active?userId=dc8e1deb-a6bc-41a2-8518-e3e85b83b38d'); // Replace 'ME' with real user context
       setUserPackageId(res.data.id);
     } catch (e) {
       setUserPackageId(null);
@@ -68,7 +68,7 @@ export default function ConsultationTab() {
 
     try {
       await api.post('/booking', {
-        parentId: '4bbd6675-b550-443e-9921-22079dcd57cc', // should come from auth/user context
+        parentId: 'dc8e1deb-a6bc-41a2-8518-e3e85b83b38d', // should come from auth/user context
         expertId: selectedDoctor.userId,
         slotId: selectedSlot,
         userPackageId,
@@ -126,7 +126,7 @@ export default function ConsultationTab() {
             <div className="space-y-3">
               {specialists.map((doc) => {
                 const isSelected = selectedDoctor?.id === doc.id;
-                const fullName = `${doc.user.firstName} ${doc.user.lastName}`;
+                const fullName = `${doc?.firstName} ${doc?.lastName}`;
                 return (
                   <div
                     key={doc.id}
@@ -136,14 +136,14 @@ export default function ConsultationTab() {
                   >
                     <div className="flex gap-4 cursor-pointer" onClick={() => setSelectedDoctor(doc)}>
                       <img
-                        src={doc.user.avatarUrl || '/doctors/default-avatar.png'}
+                        src={doc?.avatarUrl || '/doctors/default-avatar.png'}
                         alt={fullName}
                         className="w-12 h-12 rounded-full object-cover"
                       />
                       <div>
                         <p className="font-bold">{fullName}</p>
-                        <p className="text-sm text-gray-400">{doc.certifications[0]}</p>
-                        <p className="text-xs text-gray-500">⭐ {doc.rating.toFixed(1)}</p>
+                        {/* <p className="text-sm text-gray-400">{doc?.certifications}</p> */}
+                        {/* <p className="text-xs text-gray-500">⭐ {doc?.rating.toFixed(1)}</p> */}
                       </div>
                     </div>
                     <button onClick={() => {

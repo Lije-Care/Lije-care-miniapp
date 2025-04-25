@@ -21,6 +21,9 @@ export interface User {
 }
 
 export interface Specialist {
+  avatarUrl: string;
+  lastName: any;
+  firstName: any;
   id: string;
   userId: string;
   rating: number;

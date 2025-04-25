@@ -49,7 +49,7 @@ export const fetchChildrenByParentId = createAsyncThunk<Child[]>(
   "parent/fetchChildrenByParentId",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get("children/find-all?parentId=4bbd6675-b550-443e-9921-22079dcd57cc");
+      const response = await api.get("children/find-all?parentId=dc8e1deb-a6bc-41a2-8518-e3e85b83b38d");
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch children");

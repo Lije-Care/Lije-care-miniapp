@@ -43,7 +43,7 @@ const initialState: ParentState = {
 export const fetchParent = createAsyncThunk("parent/fetchParent", async () => {
   try {
     const response = await api.get(
-      "users/find-one/4bbd6675-b550-443e-9921-22079dcd57cc");
+      "users/find-one/dc8e1deb-a6bc-41a2-8518-e3e85b83b38d");
     
 
     return response.data;
@@ -63,7 +63,7 @@ export const addParent = createAsyncThunk("parent/addParent", async (newParent: 
 
 
 export const updateParent = createAsyncThunk("parent/updateParent", async (updatedParent: ParentInfo) => {
-  const response = await api.patch<Parent>(`users/update/4bbd6675-b550-443e-9921-22079dcd57cc`, updatedParent);
+  const response = await api.patch<Parent>(`users/update/dc8e1deb-a6bc-41a2-8518-e3e85b83b38d`, updatedParent);
   return response.data;
 });
 
