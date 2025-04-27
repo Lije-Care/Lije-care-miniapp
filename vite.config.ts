@@ -25,7 +25,7 @@ export default defineConfig({
     // Exposes your dev server and makes it accessible for the devices in the same network.
     host: true,
     allowedHosts: [
-      "cams-clinics-pirates-sims.trycloudflare.com" // Replace with your actual Cloudflare Tunnel URL
+      "does-wales-inside-pavilion.trycloudflare.com" // Replace with your actual Cloudflare Tunnel URL
     ]
   },
 });

@@ -15,6 +15,11 @@ import MealDetails from '@/pages/meal/MealView';
 // import ArticleSlider from '@/pages/knowledgebase/ArticleSlider';
 import ArticlesPage from '@/pages/knowledgebase/ArticleSlider';
 import ArticleDetail from '@/pages/knowledgebase/ArticleDetail';
+import useTelegramUser from '@/hooks/useTelegramUser';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { fetchParent } from '@/redux/slices/itemSlice';
+import { AppDispatch } from '@/redux/store';
 
 
 const Layout = ({ children }: {children: any}) => (
@@ -44,7 +49,18 @@ const Layout = ({ children }: {children: any}) => (
 export function App() {
   const lp = useLaunchParams();
   const isDark = useSignal(miniApp.isDark);
-  
+  const telegramUser = useTelegramUser();
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    if (telegramUser) {
+      dispatch(fetchParent(telegramUser.telegramId));
+      
+    }
+    console.log("telegram User fetch");
+
+  }, [telegramUser, dispatch]);
+
   return (
     <AppRoot
       appearance={isDark ? 'dark' : 'light'}

@@ -44,18 +44,18 @@ export const addChild = createAsyncThunk<Child, CreateChildDto>(
     }
   }
 );
-
-export const fetchChildrenByParentId = createAsyncThunk<Child[]>(
+export const fetchChildrenByParentId = createAsyncThunk<Child[], string>(
   "parent/fetchChildrenByParentId",
-  async (_, { rejectWithValue }) => {
+  async (parentId, { rejectWithValue }) => {
     try {
-      const response = await api.get("children/find-all?parentId=dc8e1deb-a6bc-41a2-8518-e3e85b83b38d");
+      const response = await api.get(`children/find-all?parentId=${parentId}`);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch children");
     }
   }
 );
+
 
 export const updateChild = createAsyncThunk("child/updateChild", async (updateChild: any) => {
   console.log(updateChild);

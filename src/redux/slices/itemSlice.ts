@@ -40,18 +40,19 @@ const initialState: ParentState = {
 // Base API URL
 
 // Async Thunks for API Calls
-export const fetchParent = createAsyncThunk("parent/fetchParent", async () => {
-  try {
-    const response = await api.get(
-      "users/find-one/dc8e1deb-a6bc-41a2-8518-e3e85b83b38d");
-    
-
-    return response.data;
-  } catch (error: any) {
-    console.error("Error fetching data:", error);
-    throw new Error(error.response?.data?.message || "Failed to fetch parent");
+export const fetchParent = createAsyncThunk(
+  "parent/fetchParent",
+  async (telegramId: number) => {
+    try {
+      const response = await api.get<Parent>(`users/find-one/${telegramId}`);
+      return response.data;
+    } catch (error: any) {
+      console.error("Error fetching parent:", error);
+      throw new Error(error.response?.data?.message || "Failed to fetch parent");
+    }
   }
-});
+);
+
 
 
 
@@ -63,7 +64,7 @@ export const addParent = createAsyncThunk("parent/addParent", async (newParent: 
 
 
 export const updateParent = createAsyncThunk("parent/updateParent", async (updatedParent: ParentInfo) => {
-  const response = await api.patch<Parent>(`users/update/dc8e1deb-a6bc-41a2-8518-e3e85b83b38d`, updatedParent);
+  const response = await api.patch<Parent>(`users/update/f59d7072-bfaf-42b1-aa7d-d07e1f3b3f98`, updatedParent);
   return response.data;
 });
 

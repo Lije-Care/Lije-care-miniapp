@@ -53,7 +53,7 @@ export default function ConsultationTab() {
 
   const fetchUserPackage = async () => {
     try {
-      const res = await api.get('/user-package/active?userId=dc8e1deb-a6bc-41a2-8518-e3e85b83b38d'); // Replace 'ME' with real user context
+      const res = await api.get('/user-package/active?userId=f59d7072-bfaf-42b1-aa7d-d07e1f3b3f98'); // Replace 'ME' with real user context
       setUserPackageId(res.data.id);
     } catch (e) {
       setUserPackageId(null);
@@ -68,7 +68,7 @@ export default function ConsultationTab() {
 
     try {
       await api.post('/booking', {
-        parentId: 'dc8e1deb-a6bc-41a2-8518-e3e85b83b38d', // should come from auth/user context
+        parentId: 'f59d7072-bfaf-42b1-aa7d-d07e1f3b3f98', // should come from auth/user context
         expertId: selectedDoctor.userId,
         slotId: selectedSlot,
         userPackageId,

@@ -13,6 +13,7 @@ import { fetchParent } from '@/redux/slices/itemSlice';
 import { useNavigate } from 'react-router-dom';
 import ArticleSliderWidget from '../knowledgebase/ArticleSliderWidget';
 import { fetchArticles } from '@/redux/slices/articlesSlice';
+import useTelegramUser from '@/hooks/useTelegramUser';
 
 export const IndexPage: FC = () => {
   const [value, setValue] = useState('');
@@ -20,31 +21,18 @@ export const IndexPage: FC = () => {
     const params = new URLSearchParams(window.location.search);
     const userIdFromUrl = params.get("userId");
     // const dispatch = useDispatch()
-
+    const telegramUser = useTelegramUser();
+   
     const dispatch = useDispatch<AppDispatch>();
     const { articles, loading } = useSelector((state: RootState) => state.articles);
   
-    useEffect(() => {
-        dispatch(fetchParent());
-        dispatch(fetchArticles({ page: 1, limit: 6 }));
-        console.log(articles);
-    }, [dispatch]); // Ensure dispatch is called only once on mount
-
-    useEffect(()=>{
-     
-      if(userIdFromUrl != undefined && userIdFromUrl != null)
-      {
-      dispatch(fetchParent()); 
-      // setGetId(userIdFromUrl );
-      }
-      else{
-        console.log(userIdFromUrl);
-        if(userIdFromUrl  == null){
-          dispatch(fetchParent());
-        }
-      }
-     
-    },[userIdFromUrl])
+    // useEffect(() => {
+    //     dispatch(fetchParent());
+    //     dispatch(fetchArticles({ page: 1, limit: 6 }));
+    //     console.log(articles);
+    // }, [dispatch]); 
+    
+ 
 
   if (loading) {
     return (
@@ -55,7 +43,7 @@ export const IndexPage: FC = () => {
   }
  
   return (
-    <Page back={false}>
+    <Page back={true}>
       <Section  style={{ overflow: 'scroll'}}>
         <Section
        
