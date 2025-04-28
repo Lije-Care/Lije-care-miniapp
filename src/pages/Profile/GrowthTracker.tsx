@@ -7,8 +7,9 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
+import { useEffect, useState } from "react";
 
-const classifyZ = (z: any, type: any) => {
+const classifyZ = (z: number, type: string) => {
   if (type === "BMI") {
     if (z < -3) return { label: "Severe underweight", color: "text-red-500", note: "Urgent nutritional intervention needed." };
     if (z < -2) return { label: "Moderate underweight", color: "text-orange-400", note: "May require monitoring." };
@@ -39,27 +40,37 @@ const classifyZ = (z: any, type: any) => {
   return { label: "Unknown", color: "text-gray-500", note: "Data missing." };
 };
 
-const GrowthTrackerAll = () => {
-  const child = {
-    name: "Mahi",
-    ageMonths: 36,
-    weight: 14.8,
-    height: 94,
-    muac: 13.5,
-    gender: "Female",
-  };
+// MAIN COMPONENT
+const GrowthTrackerAll = ({ childProfile }: { childProfile: any }) => {
+  const [child, setChild] = useState<any>(null);
+  const [zScores, setZScores] = useState<any>(null);
+  const [history, setHistory] = useState<any[]>([]);
 
-  const zScores = {
-    BMI: -1.7,
-    MUAC: -2.8,
-    Height: -2.2,
-  };
+  useEffect(() => {
+    if (childProfile) {
+      setChild(childProfile);
 
-  const history = [
-    { month: "Jan", BMI: 14.6, MUAC: 13.3, Height: 90 },
-    { month: "Feb", BMI: 14.9, MUAC: 13.5, Height: 91.5 },
-    { month: "Mar", BMI: 15.1, MUAC: 13.7, Height: 93 },
-  ];
+      // Example: Calculate Z-scores dynamically if needed
+      const calculatedZScores = {
+        BMI: calculateBMIzScore(childProfile.weight, childProfile.height, childProfile.ageMonths, childProfile.gender),
+        MUAC: calculateMUACzScore(childProfile.muac, childProfile.ageMonths, childProfile.gender),
+        Height: calculateHeightZScore(childProfile.height, childProfile.ageMonths, childProfile.gender),
+      };
+      setZScores(calculatedZScores);
+
+      // Example: fetch or prepare BMI history here
+      const sampleHistory = [
+        { month: "Jan", BMI: 14.6, MUAC: 13.3, Height: 90 },
+        { month: "Feb", BMI: 14.9, MUAC: 13.5, Height: 91.5 },
+        { month: "Mar", BMI: 15.1, MUAC: 13.7, Height: 93 },
+      ];
+      setHistory(sampleHistory);
+    }
+  }, [childProfile]);
+
+  if (!child || !zScores) {
+    return <div className="text-center text-gray-400">Loading...</div>;
+  }
 
   const indicators = [
     { key: "BMI", label: "BMI-for-Age", value: zScores.BMI },
@@ -74,10 +85,7 @@ const GrowthTrackerAll = () => {
       {indicators.map(({ key, label, value }) => {
         const result = classifyZ(value, key);
         return (
-          <div
-            key={key}
-            className="rounded-xl bg-[#1E1E2F] border border-gray-700 p-5 shadow-md"
-          >
+          <div key={key} className="rounded-xl bg-[#1E1E2F] border border-gray-700 p-5 shadow-md">
             <h3 className="text-md font-semibold text-gray-300">{label}</h3>
             <div className="flex justify-between mt-2 text-sm">
               <span className="text-gray-400">Z-Score:</span>
@@ -114,12 +122,26 @@ const GrowthTrackerAll = () => {
         <h3 className="text-md font-semibold text-center text-gray-300">👶 Child Profile</h3>
         {Object.entries(child).map(([k, v]) => (
           <p key={k} className="text-sm text-gray-400">
-            <span className="font-medium text-gray-300 capitalize">{k}:</span> {v}
+            <span className="font-medium text-gray-300 capitalize">{k}:</span> {String(v)}
           </p>
         ))}
+
       </div>
     </div>
   );
+};
+
+// Dummy Z-score calculators (replace with your real formula or API call)
+const calculateBMIzScore = (weight: number, height: number, ageMonths: number, gender: string) => {
+  return -1.5; // placeholder
+};
+
+const calculateMUACzScore = (muac: number, ageMonths: number, gender: string) => {
+  return -2.0; // placeholder
+};
+
+const calculateHeightZScore = (height: number, ageMonths: number, gender: string) => {
+  return -1.0; // placeholder
 };
 
 export default GrowthTrackerAll;
