@@ -106,7 +106,7 @@ const GrowthTrackerAll = ({ childProfile }: { childProfile: any }) => {
   ];
 
   return (
-    <div className="p-4 max-w-3xl mx-auto font-sans text-white space-y-8">
+    <div className=" max-w-3xl mx-auto font-sans text-white space-y-8">
       <h2 className="text-2xl font-bold text-center text-emerald-400">📈 Growth Tracker</h2>
 
       {/* Current Z-scores */}
