@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 const ArticleCard = ({ article, showButton = true }: any) => {
   const navigate = useNavigate();
-  console.log(article);
+ 
   return (
     <div className="rounded-xl shadow-md p-4 space-y-3 flex-shrink-0 w-80">
       <img src={article.image} alt={article.title} className="w-full h-40 object-cover rounded-lg" />

@@ -1,17 +1,18 @@
 import { Section, Input, Tappable, Headline, Button, Spinner } from '@telegram-apps/telegram-ui';
-import {  useState, type FC } from 'react';
+import {  useEffect, useState, type FC } from 'react';
 import { Page } from '@/components/Page.tsx';
-import {  useSelector } from 'react-redux';
+import {  useDispatch, useSelector } from 'react-redux';
 
 import LijeCard from '@/components/Templates/LijeCard';
 import { SearchIcon } from '@100mslive/react-icons';
 import { IoClose } from 'react-icons/io5';
 import DoctorsList from '@/components/Templates/DoctorsList';
 
-import {  RootState } from '@/redux/store';
+import {  AppDispatch, RootState } from '@/redux/store';
 // import { fetchParent } from '@/redux/slices/itemSlice';
 import { useNavigate } from 'react-router-dom';
 import ArticleSliderWidget from '../knowledgebase/ArticleSliderWidget';
+import { fetchArticles } from '@/redux/slices/articlesSlice';
 // import { fetchArticles } from '@/redux/slices/articlesSlice';
 // import useTelegramUser from '@/hooks/useTelegramUser';
 
@@ -23,14 +24,14 @@ export const IndexPage: FC = () => {
     // const dispatch = useDispatch()
     // const telegramUser = useTelegramUser();
    
-    // const dispatch = useDispatch<AppDispatch>();
+    const dispatch = useDispatch<AppDispatch>();
     const { articles, loading } = useSelector((state: RootState) => state.articles);
   
-    // useEffect(() => {
+    useEffect(() => {
     //     dispatch(fetchParent());
-    //     dispatch(fetchArticles({ page: 1, limit: 6 }));
+        dispatch(fetchArticles({ page: 1, limit: 6 }));
     //     console.log(articles);
-    // }, [dispatch]); 
+    }, [dispatch]); 
     
  
 
