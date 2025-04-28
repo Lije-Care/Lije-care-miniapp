@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 
 import { updateChild, Child } from '@/redux/slices/childSlice';
 import type { RootState, AppDispatch } from '@/redux/store';
-import GrowthTracker from './Profile/GrowthTracker';
+// import GrowthTracker from './Profile/GrowthTracker';
 import GrowthTrackerAll from './Profile/GrowthTracker';
 
 type ChildFormData = {
