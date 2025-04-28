@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+
 import { BackendUser, TelegramUser } from '@/types';
+import api from '@/api/axios';
+const dummyTelegramUser: TelegramUser = {
+  id: '9e1adb13-3908-47cf-aeab-91b0376acf29',
+  first_name: 'John',
+  last_name: 'Doe',
+  username: 'johndoe_dev',
+  // If your TelegramUser type expects other fields like `photo_url`, you can add them here
+};
 
 const useTelegramUser = () => {
   const [user, setUser] = useState<BackendUser | null>(null);
@@ -9,37 +17,37 @@ const useTelegramUser = () => {
     const init = async () => {
       try {
         const telegramUser = (window as any).Telegram?.WebApp?.initDataUnsafe?.user as TelegramUser | undefined;
-
-
-        if (!telegramUser) {
-          console.error('Telegram user not found');
-          return;
-        }
-
-        // const telegramId = telegramUser.id;
-
+        
+       
+        // --- If Telegram user is not found, use the dummy user ---
+        const userToUse = telegramUser || dummyTelegramUser;
+        console.log("userToUse");
+        console.log(userToUse);
+        
         const storedUser = localStorage.getItem('telegramUser');
+       
+        
         if (storedUser) {
           setUser(JSON.parse(storedUser) as BackendUser);
           return;
         }
 
         // Try to get user from backend
-        const { data } = await axios.get<BackendUser>(`/api/users/f59d7072-bfaf-42b1-aa7d-d07e1f3b3f98`);
-
+        const { data } = await api.get<BackendUser>(`users/find-one/${userToUse.id}`);
+         
         if (data && data.id) {
           localStorage.setItem('telegramUser', JSON.stringify(data));
           setUser(data);
         } else {
           // User not found, create one
           const newUserPayload = {
-            telegramId: telegramUser.id,
-            firstName: telegramUser.first_name,
-            lastName: telegramUser.last_name,
-            username: telegramUser.username,
+            telegramId: userToUse.id,
+            firstName: userToUse.first_name,
+            lastName: userToUse.last_name,
+            username: userToUse.username,
           };
 
-          const createResponse = await axios.post<BackendUser>('/api/users', newUserPayload);
+          const createResponse = await api.post('https://lije-care-api-dev.zikollab.com/api/v1/api/users', newUserPayload);
 
           localStorage.setItem('telegramUser', JSON.stringify(createResponse.data));
           setUser(createResponse.data);

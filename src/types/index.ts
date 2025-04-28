@@ -78,7 +78,7 @@ export type Child = {
 
 // Types for Telegram WebApp user
 export interface TelegramUser {
-  id: number;
+  id: string;
   first_name: string;
   last_name?: string;
   username?: string;
@@ -87,7 +87,7 @@ export interface TelegramUser {
 // Types for your backend user
 export interface BackendUser {
   id: string;
-  telegramId: number;
+  telegramId: string;
   firstName: string;
   lastName?: string;
   username?: string;

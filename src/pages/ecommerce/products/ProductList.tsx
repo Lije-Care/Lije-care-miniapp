@@ -15,11 +15,11 @@ const products = [
 
 const ProductCard = ({ product }: {product: any}) => {
   return (
-    <div className="bg-white p-2 rounded-lg shadow-md w-40">
+    <div className="p-2 rounded-lg shadow-md w-40">
       <img src={product.img} alt={product.name} className="w-full h-24 object-cover" />
-      <Headline className="text-sm text-black font-semibold mt-2">{product.name}</Headline>
-      <p className="text-xs text-black">{product.description}</p>
-      <p className="text-blue-500 text-black font-bold">${product.price}</p>
+      <Headline className="text-sm font-semibold mt-2">{product.name}</Headline>
+      <p className="text-xs ">{product.description}</p>
+      <p className="text-blue-500 font-bold">${product.price}</p>
       <button className="bg-blue-500 text-white text-xs py-1 px-2 rounded w-full mt-2">Add to Cart</button>
     </div>
   );

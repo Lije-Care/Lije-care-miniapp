@@ -6,6 +6,7 @@ import { FaEdit } from "react-icons/fa";
 import { updateParent } from "@/redux/slices/itemSlice";
 
 import type { ParentInfo } from "@/types"; // Adjust the import path to where you define types
+import useTelegramUser from "@/hooks/useTelegramUser";
 
 const ParentProfile = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -35,14 +36,21 @@ const ParentProfile = () => {
     }));
   };
 
+  const telegramUser= useTelegramUser();
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      console.log(formData);
-     const response =  await dispatch(updateParent(formData));
-     console.log(response);
+    //  const response =  await dispatch(updateParent({formData, telegramUser?.id}));
+     
+     const response = await dispatch(updateParent({ 
+      updatedParent: formData, 
+      userID: telegramUser?.id ?? '' 
+    }));
+    // console.log(response);
 
+    
     } finally {
       setLoading(false);
       setIsEditing(false);

@@ -4,7 +4,6 @@ import api from '@/api/axios';
 import {
   Title,
   Text,
-  
   Divider,
   Placeholder,
   Spinner,
@@ -58,47 +57,18 @@ const MealDetails: React.FC = () => {
     return <Text className="text-center mt-8">No meals found in this meal plan.</Text>;
   }
 
-  function parseNutritionalInfo(info: string) {
-    const nutrition: { [key: string]: string } = {};
-  
-    info.split(',').forEach(part => {
-      const [key, value] = part.split(':').map(str => str.trim());
-      if (key && value) {
-        switch (key.toLowerCase()) {
-          case 'calories':
-            nutrition.calories = value;
-            break;
-          case 'protein':
-            nutrition.protein = value;
-            break;
-          case 'fat':
-            nutrition.fat = value;
-            break;
-          case 'carbs':
-            nutrition.carbs = value;
-            break;
-        }
-      }
-    });
-  
-    return nutrition;
-  }
-  
   return (
     <div className="max-w-3xl mx-auto px-4 py-6 text-white space-y-10">
       <Title className="text-2xl font-bold text-emerald-400">🥗 Meal Plan</Title>
 
-      {meals?.map((meal: any) => {
-        // const nutrition = typeof meal.nutritional_info === 'string'
-        //   ? meal.nutritional_info
-        //   : meal.nutritional_info;
-        const nutrition= parseNutritionalInfo( meal.nutritional_info);
+      {meals.map((meal: any) => {
+        const nutrition = meal.nutritional_info || {};
 
         const steps = Array.isArray(meal.instructions)
           ? meal.instructions
           : typeof meal.instructions === 'string'
-            ? meal.instructions.split(/\d+\./).filter(Boolean)
-            : [];
+          ? meal.instructions.split(/\d+\./).filter(Boolean)
+          : [];
 
         return (
           <div
@@ -107,7 +77,7 @@ const MealDetails: React.FC = () => {
           >
             <div className="flex flex-col md:flex-row gap-4 items-start">
               <img
-                src={`http://localhost:4000/uploads/images/meal${meal.imageUrl}` || fallbackImage}
+                src={meal.imageUrl ? `http://localhost:4000/uploads/images/meal${meal.imageUrl}` : fallbackImage}
                 alt={meal.title}
                 onError={(e) => (e.currentTarget.src = fallbackImage)}
                 className="w-full md:w-72 h-48 object-cover rounded-lg"
@@ -132,28 +102,26 @@ const MealDetails: React.FC = () => {
             <Divider />
 
             <div>
-  <Title className="text-sm">🧪 Nutritional Info</Title>
-  <div className="grid grid-cols-2 md:grid-cols-4 p-0 m-0 text-sm gap-2">
-    <div className="flex items-start gap-1 whitespace-normal break-words overflow-visible">
-      <span>🔥</span>
-      <span>Clrs: {nutrition?.calories || 'N/A'}</span>
-    </div>
-    <div className="flex items-start gap-1 whitespace-normal break-words overflow-visible">
-      <span>🥩</span>
-      <span>Prtn: {nutrition?.protein || 'N/A'}</span>
-    </div>
-    <div className="flex items-start gap-1 whitespace-normal break-words overflow-visible">
-      <span>🥑</span>
-      <span>Fat: {nutrition?.fat || 'N/A'}</span>
-    </div>
-    <div className="flex items-start gap-1 whitespace-normal break-words overflow-visible">
-      <span>🍞</span>
-      <span>Carbs: {nutrition?.carbs || 'N/A'}</span>
-    </div>
-  </div>
-</div>
-
-
+              <Title className="text-sm">🧪 Nutritional Info</Title>
+              <div className="grid grid-cols-2 md:grid-cols-4 p-0 m-0 text-sm gap-2">
+                <div className="flex items-start gap-1 whitespace-normal break-words overflow-visible">
+                  <span>🔥</span>
+                  <span>Clrs: {nutrition?.calories ?? 'N/A'}</span>
+                </div>
+                <div className="flex items-start gap-1 whitespace-normal break-words overflow-visible">
+                  <span>🥩</span>
+                  <span>Prtn: {nutrition?.protein ?? 'N/A'}</span>
+                </div>
+                <div className="flex items-start gap-1 whitespace-normal break-words overflow-visible">
+                  <span>🥑</span>
+                  <span>Fat: {nutrition?.fat ?? 'N/A'}</span>
+                </div>
+                <div className="flex items-start gap-1 whitespace-normal break-words overflow-visible">
+                  <span>🍞</span>
+                  <span>Carbs: {nutrition?.carbs ?? 'N/A'}</span>
+                </div>
+              </div>
+            </div>
 
             <Divider />
 
@@ -181,15 +149,17 @@ const MealDetails: React.FC = () => {
       </div>
 
       {/* Child Info */}
-      <div className="bg-[#1f1f2b] border border-gray-700 rounded-xl p-4">
+      {/* <div className="bg-[#1f1f2b] border border-gray-700 rounded-xl p-4">
         <Title className="text-md text-sky-400">👶 Child Info</Title>
         <ul className="text-sm mt-2 text-gray-300 space-y-1">
           <li><strong>Name:</strong> {data?.child?.name}</li>
+          <li><strong>Date of Birth:</strong> {new Date(data?.child?.date_of_birth).toLocaleDateString()}</li>
           <li><strong>Gender:</strong> {data?.child?.gender}</li>
           <li><strong>Weight:</strong> {data?.child?.weight} kg</li>
           <li><strong>Height:</strong> {data?.child?.height} cm</li>
+          <li><strong>MUAC:</strong> {data?.child?.muac} cm</li>
         </ul>
-      </div>
+      </div> */}
     </div>
   );
 };

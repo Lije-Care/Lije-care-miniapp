@@ -36,7 +36,8 @@ const MealPlanSummary = () => {
     api
       .get("meal-Plans/find-all")
       .then((response) => {
-        setMealPlans(response.data);
+        setMealPlans(response.data.data);
+        console.log(response.data.data);
       })
       .catch((error) => {
         console.error("Error fetching meal plans:", error);

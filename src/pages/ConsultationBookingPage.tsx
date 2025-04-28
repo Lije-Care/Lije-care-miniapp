@@ -8,6 +8,7 @@ import { RootState, AppDispatch } from '@/redux/store';
 import { fetchSpecialists } from '@/redux/slices/specialistSlice';
 import ChatComponent from './Consultation/ChatComponent';
 import api from '@/api/axios';
+import useTelegramUser from '@/hooks/useTelegramUser';
 
 const concerns = ['Nutrition', 'Sleep Issues', 'Growth', 'Vaccination', 'Skin Issues'];
 
@@ -51,9 +52,10 @@ export default function ConsultationTab() {
     }
   };
 
+  const telegramuser = useTelegramUser();
   const fetchUserPackage = async () => {
     try {
-      const res = await api.get('/user-package/active?userId=f59d7072-bfaf-42b1-aa7d-d07e1f3b3f98'); // Replace 'ME' with real user context
+      const res = await api.get(`/user-package/active?userId=${telegramuser?.id}`); // Replace 'ME' with real user context
       setUserPackageId(res.data.id);
     } catch (e) {
       setUserPackageId(null);
@@ -68,7 +70,7 @@ export default function ConsultationTab() {
 
     try {
       await api.post('/booking', {
-        parentId: 'f59d7072-bfaf-42b1-aa7d-d07e1f3b3f98', // should come from auth/user context
+        parentId: telegramuser?.id, // should come from auth/user context
         expertId: selectedDoctor.userId,
         slotId: selectedSlot,
         userPackageId,

@@ -47,6 +47,9 @@ export const addChild = createAsyncThunk<Child, CreateChildDto>(
 export const fetchChildrenByParentId = createAsyncThunk<Child[], string>(
   "parent/fetchChildrenByParentId",
   async (parentId, { rejectWithValue }) => {
+    console.log(parentId);
+
+    console.log("...............parnet");
     try {
       const response = await api.get(`children/find-all?parentId=${parentId}`);
       return response.data;

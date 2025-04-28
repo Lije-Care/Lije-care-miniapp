@@ -4,6 +4,7 @@ import { Button, Input, Select, Spinner } from "@telegram-apps/telegram-ui";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { addChild } from "@/redux/slices/childSlice";
+import useTelegramUser from "@/hooks/useTelegramUser";
 
 // ----------------------
 // Types
@@ -19,6 +20,9 @@ interface FormValues {
   weight: number | string;
   height: number | string;
   muac: number | string;
+  dietary_restrictions: string;
+  allergies: string;
+  medications: string;
 }
 
 // ----------------------
@@ -27,8 +31,8 @@ interface FormValues {
 const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [submitting, setSubmitting] = useState(false);
-
-  const parentId = "f59d7072-bfaf-42b1-aa7d-d07e1f3b3f98";
+  const telegramUser = useTelegramUser();
+  const parentId = telegramUser?.id;// ✅ Corrected your parentId (you had typo)
 
   const {
     handleSubmit,
@@ -42,6 +46,9 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
       weight: "",
       height: "",
       muac: "",
+      dietary_restrictions: "",
+      allergies: "",
+      medications: "",
     },
   });
 
@@ -50,7 +57,7 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
 
     const childData = {
       ...data,
-      parentId,
+      parentId: parentId ?? '',
       weight: parseFloat(data.weight.toString()),
       height: parseFloat(data.height.toString()),
       muac: parseFloat(data.muac.toString()),
@@ -69,7 +76,10 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col space-y-4 max-h-[80vh] overflow-y-auto px-2"
+    >
       <Controller
         name="name"
         control={control}
@@ -125,8 +135,33 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
         )}
       />
 
+      {/* New Fields for Dietary Info */}
+      <Controller
+        name="dietary_restrictions"
+        control={control}
+        render={({ field }) => (
+          <Input header="Dietary Restrictions" placeholder="e.g., Lactose Intolerance" {...field} />
+        )}
+      />
+
+      <Controller
+        name="allergies"
+        control={control}
+        render={({ field }) => (
+          <Input header="Allergies" placeholder="e.g., Peanuts" {...field} />
+        )}
+      />
+
+      <Controller
+        name="medications"
+        control={control}
+        render={({ field }) => (
+          <Input header="Medications" placeholder="e.g., Vitamin D Supplements" {...field} />
+        )}
+      />
+
       <div className="flex justify-end gap-4 mt-6">
-        <Button stretched type="button" onClick={onClose}>
+        <Button stretched type="button" onClick={onClose} >
           Cancel
         </Button>
         <Button stretched type="submit" disabled={submitting}>

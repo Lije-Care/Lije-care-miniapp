@@ -42,9 +42,13 @@ const initialState: ParentState = {
 // Async Thunks for API Calls
 export const fetchParent = createAsyncThunk(
   "parent/fetchParent",
-  async (telegramId: number) => {
+  async (telegramId: string) => {
+    console.log(telegramId)
+    console.log("telegramId redux invoke")
+
     try {
       const response = await api.get<Parent>(`users/find-one/${telegramId}`);
+      console.log(response);
       return response.data;
     } catch (error: any) {
       console.error("Error fetching parent:", error);
@@ -63,11 +67,12 @@ export const addParent = createAsyncThunk("parent/addParent", async (newParent: 
 
 
 
-export const updateParent = createAsyncThunk("parent/updateParent", async (updatedParent: ParentInfo) => {
-  const response = await api.patch<Parent>(`users/update/f59d7072-bfaf-42b1-aa7d-d07e1f3b3f98`, updatedParent);
-  return response.data;
-});
-
+export const updateParent = createAsyncThunk(
+  "parent/updateParent",
+  async ({ updatedParent, userID }: { updatedParent: ParentInfo; userID: string }) => {
+    const response = await api.patch<Parent>(`users/update/${userID}`, updatedParent);
+    return response.data;
+  });
 
 
 

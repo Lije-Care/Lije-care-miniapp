@@ -54,8 +54,8 @@ const MealLibraryComponent = () => {
   const [mealDescription, setMealDescription] = useState("A healthy and balanced meal plan for the child.");
   const navigate = useNavigate();
 
-  const expertId = "ffb1c872-f128-4218-91d6-a1e8256dadd0";
-  const childId = "e2c6b15f-8061-46cb-81e3-e1aa19d64b15";
+  const expertId = "0188e7a3-29c6-4a33-9071-5c846a9d6c4c";
+  const childId = "dba8d146-93a0-4870-80cc-acd5fd2e437a";
 
   const totalCalories = selectedMeals.reduce((sum, meal) => sum + (meal.nutritional_info?.calories || 0), 0);
 

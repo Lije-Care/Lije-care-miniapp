@@ -17,12 +17,17 @@ const ChildrenListPage: React.FC = () => {
 
   const { loading, error } = useSelector((state: RootState) => state.children);
   const telegramUser = useTelegramUser();
+
   useEffect(() => {
-    const telegramId = telegramUser?.telegramId?.toString() ?? '';
-    dispatch(fetchChildrenByParentId(telegramId)).then((res) => {
+    if (!telegramUser?.id) return; // Don't dispatch until user is ready
+  
+    console.log(telegramUser.id);
+  
+    dispatch(fetchChildrenByParentId(telegramUser.id)).then((res) => {
       setChildrenData(res.payload as Child[]);
     });
-  }, [dispatch, telegramUser?.telegramId]);
+  }, [dispatch, telegramUser]);
+  
 
   const handleViewChild = (childId: string) => {
     navigate(`/child/${childId}`);
