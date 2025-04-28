@@ -48,7 +48,7 @@ export const fetchParent = createAsyncThunk(
 
     try {
       const response = await api.get<Parent>(`users/find-one/${telegramId}`);
-      console.log(response);
+     
       return response.data;
     } catch (error: any) {
       console.error("Error fetching parent:", error);

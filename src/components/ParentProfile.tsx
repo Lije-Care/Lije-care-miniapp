@@ -44,7 +44,7 @@ const ParentProfile = () => {
     try {
     //  const response =  await dispatch(updateParent({formData, telegramUser?.id}));
      
-     const response = await dispatch(updateParent({ 
+      await dispatch(updateParent({ 
       updatedParent: formData, 
       userID: telegramUser?.id ?? '' 
     }));
