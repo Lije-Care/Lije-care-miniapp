@@ -1,29 +1,29 @@
 import { Section, Input, Tappable, Headline, Button, Spinner } from '@telegram-apps/telegram-ui';
-import { useEffect, useState, type FC } from 'react';
+import {  useState, type FC } from 'react';
 import { Page } from '@/components/Page.tsx';
-import { useDispatch, useSelector } from 'react-redux';
+import {  useSelector } from 'react-redux';
 
 import LijeCard from '@/components/Templates/LijeCard';
 import { SearchIcon } from '@100mslive/react-icons';
 import { IoClose } from 'react-icons/io5';
 import DoctorsList from '@/components/Templates/DoctorsList';
 
-import { AppDispatch, RootState } from '@/redux/store';
-import { fetchParent } from '@/redux/slices/itemSlice';
+import {  RootState } from '@/redux/store';
+// import { fetchParent } from '@/redux/slices/itemSlice';
 import { useNavigate } from 'react-router-dom';
 import ArticleSliderWidget from '../knowledgebase/ArticleSliderWidget';
-import { fetchArticles } from '@/redux/slices/articlesSlice';
-import useTelegramUser from '@/hooks/useTelegramUser';
+// import { fetchArticles } from '@/redux/slices/articlesSlice';
+// import useTelegramUser from '@/hooks/useTelegramUser';
 
 export const IndexPage: FC = () => {
   const [value, setValue] = useState('');
   const navigate = useNavigate();
-    const params = new URLSearchParams(window.location.search);
-    const userIdFromUrl = params.get("userId");
+    // const params = new URLSearchParams(window.location.search);
+    // const userIdFromUrl = params.get("userId");
     // const dispatch = useDispatch()
-    const telegramUser = useTelegramUser();
+    // const telegramUser = useTelegramUser();
    
-    const dispatch = useDispatch<AppDispatch>();
+    // const dispatch = useDispatch<AppDispatch>();
     const { articles, loading } = useSelector((state: RootState) => state.articles);
   
     // useEffect(() => {

@@ -16,7 +16,7 @@ const useTelegramUser = () => {
           return;
         }
 
-        const telegramId = telegramUser.id;
+        // const telegramId = telegramUser.id;
 
         const storedUser = localStorage.getItem('telegramUser');
         if (storedUser) {

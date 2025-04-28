@@ -7,6 +7,7 @@ import { fetchChildrenByParentId } from "@/redux/slices/childSlice";
 import AddChildForm from "./Profile/AddChildForm";
 import type { RootState, AppDispatch } from "@/redux/store";
 import { Child } from "@/types";
+import useTelegramUser from "@/hooks/useTelegramUser";
 
 const ChildrenListPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -15,12 +16,13 @@ const ChildrenListPage: React.FC = () => {
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
 
   const { loading, error } = useSelector((state: RootState) => state.children);
-
+  const telegramUser = useTelegramUser();
   useEffect(() => {
-    dispatch(fetchChildrenByParentId()).then((res) => {
+    const telegramId = telegramUser?.telegramId?.toString() ?? '';
+    dispatch(fetchChildrenByParentId(telegramId)).then((res) => {
       setChildrenData(res.payload as Child[]);
     });
-  }, [dispatch]);
+  }, [dispatch, telegramUser?.telegramId]);
 
   const handleViewChild = (childId: string) => {
     navigate(`/child/${childId}`);
