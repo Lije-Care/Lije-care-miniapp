@@ -77,7 +77,7 @@ const MealDetails: React.FC = () => {
           >
             <div className="flex flex-col md:flex-row gap-4 items-start">
               <img
-                src={meal.imageUrl ? `http://localhost:4000/uploads/images/meal${meal.imageUrl}` : fallbackImage}
+                src={meal.imageUrl ? `https://lije-care-api-dev.zikollab.com/uploads/images/meal${meal.imageUrl}` : fallbackImage}
                 alt={meal.title}
                 onError={(e) => (e.currentTarget.src = fallbackImage)}
                 className="w-full md:w-72 h-48 object-cover rounded-lg"
