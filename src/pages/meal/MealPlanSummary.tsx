@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import api from "@/api/axios";
 import { Badge, Button, Card, Placeholder } from "@telegram-apps/telegram-ui";
 import { useNavigate } from "react-router-dom";
@@ -25,22 +25,25 @@ type MealPlan = {
     dietary_restrictions: string;
     allergies: string;
   };
-  meals: Meal[];
+  meals?: Meal[];
 };
 
 const MealPlanSummary = () => {
-  const [mealPlans, setMealPlans] = useState<MealPlan[]>([]);
+  const [mealPlans, setMealPlans] = useState<MealPlan[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     api
       .get("meal-Plans/find-all")
       .then((response) => {
-        setMealPlans(response.data.data);
-        console.log(response.data.data);
+        const data = response.data?.data ?? [];
+        setMealPlans(data);
       })
       .catch((error) => {
         console.error("Error fetching meal plans:", error);
+        setError("Failed to fetch meal plans. Please try again later.");
+        setMealPlans([]);
       });
   }, []);
 
@@ -48,63 +51,65 @@ const MealPlanSummary = () => {
     <div className="p-4 space-y-4">
       <h2 className="text-xl font-bold text-center">📋 Your Meal Recommendations</h2>
 
-      {mealPlans.length > 0 ? (
+      {error && (
+        <div className="text-red-500 text-center">
+          {error}
+        </div>
+      )}
+
+      {mealPlans === null ? (
+        <Placeholder />
+      ) : mealPlans.length > 0 ? (
         mealPlans.map((mealPlan) => (
           <Card
             key={mealPlan.id}
             className="p-4 shadow-md bg-white dark:bg-gray-800 rounded-lg w-full"
-            onClick={()=> navigate(`/mealplansummary/${mealPlan.id}`)}
+            onClick={() => navigate(`/mealplansummary/${mealPlan.id}`)}
           >
             <p className="text-gray-700 dark:text-gray-300">
-              {mealPlan.meal_description}
+              {mealPlan.meal_description || "No description available."}
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              🔥 {mealPlan.calories} kcal | 🕒 {new Date(mealPlan.createdAt).toDateString()}
+              🔥 {mealPlan.calories} kcal | 🕒{" "}
+              {new Date(mealPlan.createdAt).toDateString()}
             </p>
-
-            {/* <h3 className="mt-3 font-semibold text-gray-900 dark:text-white">👨‍⚕️ Expert</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              {mealPlan.expert.firstName} {mealPlan.expert.lastName} ({mealPlan.expert.role})
-            </p> */}
 
             <h3 className="mt-3 font-semibold text-gray-900 dark:text-white">👶 Child</h3>
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              {mealPlan.child.name}
+              {mealPlan.child?.name || "No name provided"}
             </p>
-            {/* <p className="text-xs text-gray-500 dark:text-gray-400">
-              Dietary Restrictions: {mealPlan.child.dietary_restrictions || "None"}
-            </p> */}
-            {/* <p className="text-xs text-gray-500 dark:text-gray-400">
-              Allergies: {mealPlan.child.allergies || "None"}
-            </p> */}
 
             <h3 className="mt-3 font-semibold text-gray-900 dark:text-white">🍽️ Meals</h3>
-            <div className="mt-2 space-y-2">
-              {mealPlan.meals.map((meal) => (
-                <div key={meal.id} className="flex items-center justify-between">
-                  <span className="text-gray-800 dark:text-gray-200">{meal.title}</span>
-                  <Badge type="dot">{meal.meal_type}</Badge>
-                </div>
-              ))}
-            </div>
-
-            {/* <Button onClick={() => navigate(`/meal-plans/edit/${mealPlan.id}`)} className="mt-4 w-full bg-blue-500 text-white">Edit Meal Plan</Button> */}
+            {Array.isArray(mealPlan.meals) && mealPlan.meals.length > 0 ? (
+              <div className="mt-2 space-y-2">
+                {mealPlan.meals.map((meal) => (
+                  <div key={meal.id} className="flex items-center justify-between">
+                    <span className="text-gray-800 dark:text-gray-200">
+                      {meal.title || "Untitled"}
+                    </span>
+                    <Badge type="dot">{meal.meal_type || "Unknown"}</Badge>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-gray-500 mt-1">No meals listed.</p>
+            )}
           </Card>
         ))
       ) : (
-        <>
-        <Placeholder/>
-          </>
-      )}
-    <div className="text-center">
-              
-          <Button
-            className="mt-4 w-full bg-green-500 text-white"
-            onClick={() => navigate("/meal")}
-          >
-            Create a Meal Plan
-          </Button>
+        <div className="text-center text-gray-500">
+          No meal plans found. You can create one below!
         </div>
+      )}
+
+      <div className="text-center">
+        <Button
+          className="mt-4 w-full bg-green-500 text-white"
+          onClick={() => navigate("/meal")}
+        >
+          Create a Meal Plan
+        </Button>
+      </div>
     </div>
   );
 };
