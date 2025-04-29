@@ -57,7 +57,7 @@ const MealLibraryComponent = () => {
   const navigate = useNavigate();
   const { data } = useSelector((state: RootState) => state.children);
   const { specialists } = useSelector((state: RootState) => state.specialists);
-  const expertId = "0188e7a3-29c6-4a33-9071-5c846a9d6c4c";
+  // const expertId = "0188e7a3-29c6-4a33-9071-5c846a9d6c4c";
   // const childId = "dba8d146-93a0-4870-80cc-acd5fd2e437a";
 
   const totalCalories = selectedMeals.reduce((sum, meal) => sum + (meal.nutritional_info?.calories || 0), 0);

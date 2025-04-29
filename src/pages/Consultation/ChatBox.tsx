@@ -50,7 +50,7 @@ const ChatBox: React.FC = () => {
 
   return (
     <div className="border p-4 w-full max-w-md mx-auto mt-10 rounded shadow-md">
-      <MessageList messages={messages} currentUserId={currentUserId} />
+      <MessageList messages={messages} currentUserId={currentUserId ?? ''} />
       <div className="flex mt-4 gap-2">
         <input
           type="text"

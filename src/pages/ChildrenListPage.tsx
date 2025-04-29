@@ -24,10 +24,7 @@ const ChildrenListPage: React.FC = () => {
   
     console.log(telegramUser.id);
   
-    dispatch(fetchChildrenByParentId(telegramUser.id)).then((res) => {
-      // setChildrenData(res.payload.data as Child[]);
-      
-    });
+    dispatch(fetchChildrenByParentId(telegramUser.id))
   }, [dispatch, telegramUser]);
   
  useEffect(()=>{
