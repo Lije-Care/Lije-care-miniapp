@@ -3,7 +3,7 @@ import api from "@/api/axios";
 import { Badge, Button, Card, Placeholder } from "@telegram-apps/telegram-ui";
 import { useNavigate } from "react-router-dom";
 
-// Define TypeScript interfaces based on API response
+
 type Meal = {
   id: string;
   title: string;

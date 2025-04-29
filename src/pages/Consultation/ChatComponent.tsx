@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  
   useHMSActions,
   useHMSStore,
   selectIsConnectedToRoom,
@@ -21,22 +20,23 @@ import { FaMicrophone, FaPaperPlane } from 'react-icons/fa';
 import api from '@/api/axios';
 import { Modal } from '@telegram-apps/telegram-ui';
 import { useEffect, useState } from 'react';
-
 import socket from '@/utils/socket';
 import MessageList from './MessageList';
 import { Message } from '@/types';
+import useTelegramUser from '@/hooks/useTelegramUser';
 
 const ChatScreen = ({selectedDoctor}: {selectedDoctor:any}) => {
   const [isParentOpen, setIsParentOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState('');
-  const chatRoomId = '8b365a37-7c90-4bc5-a45c-6f1d07c8e5df';
-  const currentUserId = 'c1ab7fd6-c31e-4921-b101-d77c28784672';
-
+  const telegramUser = useTelegramUser();
+  const chatRoomId = '2a8692c9-4852-4b41-b8de-f3d377b2247f';
+  const currentUserId = telegramUser?.id;
   const hmsActions = useHMSActions();
   const isConnected = useHMSStore(selectIsConnectedToRoom);
   const isVideoOn = useHMSStore(selectIsLocalVideoEnabled);
   const peers = useHMSStore(selectPeers);
+
 
   const PeerView = ({ peer }: { peer: any }) => {
     const { videoRef } = useVideo({ trackId: peer.videoTrack });
@@ -190,7 +190,7 @@ const ChatScreen = ({selectedDoctor}: {selectedDoctor:any}) => {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto space-y-1">
-        <MessageList messages={messages} currentUserId={currentUserId} />
+        <MessageList messages={messages} currentUserId={currentUserId ?? ''} />
       </div>
 
       {/* Input */}

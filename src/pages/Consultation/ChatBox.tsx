@@ -5,12 +5,14 @@ import api from '@/api/axios';
 import MessageList from './MessageList';
 import { Message } from '@/types';
 import socket from '@/utils/socket';
+import useTelegramUser from '@/hooks/useTelegramUser';
 
 const ChatBox: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const chatRoomId = '8b365a37-7c90-4bc5-a45c-6f1d07c8e5df'; // example
-  const currentUserId = 'c1ab7fd6-c31e-4921-b101-d77c28784672'; // Replace with your logged-in user id
+  const telegramUser = useTelegramUser();
+  const chatRoomId = '2a8692c9-4852-4b41-b8de-f3d377b2247f'; // example
+  const currentUserId = telegramUser?.id; // Replace with your logged-in user id
 
   // Fetch previous messages
   useEffect(() => {

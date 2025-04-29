@@ -98,7 +98,7 @@ const childrenSlice = createSlice({
               state.loading = false;
               console.log("payload, acrion");
               console.log(action.payload);
-              state.data = action.payload;
+              state.data = action.payload.data;
             })
             .addCase(fetchChildrenByParentId.rejected, (state, action) => {
               state.loading = false;

@@ -15,7 +15,8 @@ const ChildrenListPage: React.FC = () => {
   const [childrenData, setChildrenData] = useState<Child[] | null>(null);
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
 
-  const { loading, error } = useSelector((state: RootState) => state.children);
+  const { data,loading, error } = useSelector((state: RootState) => state.children);
+ 
   const telegramUser = useTelegramUser();
 
   useEffect(() => {
@@ -24,11 +25,16 @@ const ChildrenListPage: React.FC = () => {
     console.log(telegramUser.id);
   
     dispatch(fetchChildrenByParentId(telegramUser.id)).then((res) => {
-      setChildrenData(res.payload as Child[]);
+      // setChildrenData(res.payload.data as Child[]);
+      
     });
   }, [dispatch, telegramUser]);
   
+ useEffect(()=>{
+  console.log();
+  setChildrenData(data);
 
+ },[data])
   const handleViewChild = (childId: string) => {
     navigate(`/child/${childId}`);
   };

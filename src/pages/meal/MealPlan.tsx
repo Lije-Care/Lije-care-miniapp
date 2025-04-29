@@ -14,6 +14,8 @@ import {
 } from "@telegram-apps/telegram-ui";
 import { FaCheck } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const fallbackImg = 'https://via.placeholder.com/100x80?text=No+Image';
 
@@ -53,13 +55,15 @@ const MealLibraryComponent = () => {
   const [submitting, setSubmitting] = useState(false);
   const [mealDescription, setMealDescription] = useState("A healthy and balanced meal plan for the child.");
   const navigate = useNavigate();
-
+  const { data } = useSelector((state: RootState) => state.children);
+  const { specialists } = useSelector((state: RootState) => state.specialists);
   const expertId = "0188e7a3-29c6-4a33-9071-5c846a9d6c4c";
-  const childId = "dba8d146-93a0-4870-80cc-acd5fd2e437a";
+  // const childId = "dba8d146-93a0-4870-80cc-acd5fd2e437a";
 
   const totalCalories = selectedMeals.reduce((sum, meal) => sum + (meal.nutritional_info?.calories || 0), 0);
 
   useEffect(() => {
+    console.log(data)
     const fetchMeals = async () => {
       try {
         const res = await api.get("mealLibrary/findall?skip=0");
@@ -90,13 +94,15 @@ const MealLibraryComponent = () => {
     }
 
     const payload = {
-      expertId,
-      childId,
+      expertId: specialists[0].id,
+      childId: data[0]?.id,
       meal_description: mealDescription,
       calories: totalCalories,
       meals: selectedMeals.map((m) => ({ id: m.id })),
     };
-
+    console.log("submitting meal");
+    console.log(payload);
+    
     try {
       setSubmitting(true);
       await api.post("/meal-plans/create", payload);
