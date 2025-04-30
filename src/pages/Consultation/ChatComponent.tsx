@@ -224,9 +224,15 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
         <button className="p-2">
           <PhotoIcon className="h-6 w-6 text-gray-500" />
         </button>
-        <button className="p-2 text-teal-600" onClick={sendMessage}>
-          <FaPaperPlane className="h-6 w-6" />
-        </button>
+        <button
+            type="button"
+            className="p-2 text-teal-600"
+            onClick={sendMessage}
+            onTouchStart={sendMessage}
+          >
+            <FaPaperPlane className="h-6 w-6" />
+          </button>
+
       </div>
     </div>
   );

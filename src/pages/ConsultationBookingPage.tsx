@@ -69,9 +69,18 @@ export default function ConsultationTab() {
     }
 
     try {
+      // console.log(selectedDoctor);
+      console.log(
+       {
+          parentId: telegramuser?.id, // should come from auth/user context
+          expertId: selectedDoctor.id,
+          slotId: selectedSlot,
+          userPackageId,
+        }
+      )
       await api.post('/booking', {
         parentId: telegramuser?.id, // should come from auth/user context
-        expertId: selectedDoctor.userId,
+        expertId: selectedDoctor.id,
         slotId: selectedSlot,
         userPackageId,
       });
