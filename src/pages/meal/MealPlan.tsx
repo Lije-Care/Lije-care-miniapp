@@ -63,7 +63,7 @@ const MealLibraryComponent = () => {
   const totalCalories = selectedMeals.reduce((sum, meal) => sum + (meal.nutritional_info?.calories || 0), 0);
 
   useEffect(() => {
-    console.log(data)
+   
     const fetchMeals = async () => {
       try {
         const res = await api.get("mealLibrary/findall?skip=0");
@@ -100,8 +100,8 @@ const MealLibraryComponent = () => {
       calories: totalCalories,
       meals: selectedMeals.map((m) => ({ id: m.id })),
     };
-    console.log("submitting meal");
-    console.log(payload);
+    
+ 
     
     try {
       setSubmitting(true);

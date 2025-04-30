@@ -21,7 +21,7 @@ export default function VideoCall() {
   const isConnected = useHMSStore(selectIsConnectedToRoom);
   const roomState = useHMSStore(selectRoomState);
   const hmsActions = useHMSActions();
-  console.log("video started");
+ 
   useEffect(() => {
     window.onunload = () => {
       if (isConnected) {

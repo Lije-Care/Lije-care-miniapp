@@ -13,7 +13,7 @@ export interface User {
   city: string | null;
   phone: string;
   password: string;
-  role: 'NUTRITIONIST' | 'PEDIATRICIAN' | 'CULINARIAN';
+  role: 'NUTRITIONIST' | 'PEDIATRICIAN' | 'CULINARIAN' | 'PARENT';
   status: string;
   createdAt: string;
   updatedAt: string;

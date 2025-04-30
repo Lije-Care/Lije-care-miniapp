@@ -43,8 +43,7 @@ const initialState: ParentState = {
 export const fetchParent = createAsyncThunk(
   "parent/fetchParent",
   async (telegramId: string) => {
-    console.log(telegramId)
-    console.log("telegramId redux invoke")
+
 
     try {
       const response = await api.get<Parent>(`users/find-one/${telegramId}`);
@@ -94,8 +93,7 @@ const parentSlice = createSlice({
       })
       .addCase(fetchParent.fulfilled, (state, action: PayloadAction<Parent>) => {
         state.loading = false;
-        console.log("payload, acrion");
-        console.log(action.payload);
+    
         state.parent = action.payload;
       })
       .addCase(fetchParent.rejected, (state, action) => {

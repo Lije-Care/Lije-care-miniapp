@@ -99,7 +99,7 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
 
   // 💬 Send Message via API + Socket
   const sendMessage = async () => {
-    console.log("test");
+
     if (!message.trim() || !chatRoomId || !currentUserId) return;
 
     const payload = {

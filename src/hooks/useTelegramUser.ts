@@ -1,14 +1,23 @@
 import { useEffect, useState } from 'react';
+import { AxiosError } from 'axios';
 
-import { BackendUser, TelegramUser } from '@/types';
 import api from '@/api/axios';
+import { BackendUser, TelegramUser } from '@/types';
+import { User } from '@/redux/slices/specialistSlice';
+
 const dummyTelegramUser: TelegramUser = {
-  id: '6d5343b3-eab2-4fef-a924-b5f9730cd898',
-  // id: '4d4adf16-02c9-488f-8f01-2dba7138e050',
-  first_name: 'John',
-  last_name: 'Doe',
-  username: 'johndoe_dev',
-  // If your TelegramUser type expects other fields like `photo_url`, you can add them here
+  id: '6d5343b3-eab2-4fef-a924-b5f9730cd899',
+  firstName: 'John',
+  lastName: 'Doe',
+  telegram_username: 'john_doe_telegram',
+  gender: 'MALE',
+  avatarUrl: 'https://i.pravatar.cc/150?img=10',
+  address: '123 Main St',
+  city: 'Addis Ababa',
+  phone: '+251973636223',
+  password: 'securePassword123',
+  role: 'PARENT',
+  status: 'ACTIVE',
 };
 
 const useTelegramUser = () => {
@@ -16,45 +25,49 @@ const useTelegramUser = () => {
 
   useEffect(() => {
     const init = async () => {
-      try {
-        const telegramUser = (window as any).Telegram?.WebApp?.initDataUnsafe?.user as TelegramUser | undefined;
-        
-       
-        // --- If Telegram user is not found, use the dummy user ---
-        const userToUse = telegramUser || dummyTelegramUser;
-        console.log("userToUse");
-        console.log(userToUse);
-        
-        const storedUser = localStorage.getItem('telegramUser');
-       
-        
-        if (storedUser) {
-          setUser(JSON.parse(storedUser) as BackendUser);
-          return;
-        }
+      const telegramUser = (window as any)?.Telegram?.WebApp?.initDataUnsafe?.user as TelegramUser | undefined;
+      const userToUse = telegramUser || dummyTelegramUser;
+      const storedUser = localStorage.getItem('telegramUser');
 
-        // Try to get user from backend
+      if (storedUser) {
+        setUser(JSON.parse(storedUser) as BackendUser);
+        return;
+      }
+
+      try {
         const { data } = await api.get<BackendUser>(`users/find-one/${userToUse.id}`);
-         
-        if (data && data.id) {
-          localStorage.setItem('telegramUser', JSON.stringify(data));
-          setUser(data);
-        } else {
-          // User not found, create one
-          const newUserPayload = {
-            telegramId: userToUse.id,
-            firstName: userToUse.first_name,
-            lastName: userToUse.last_name,
-            username: userToUse.username,
+        console.log('Fetched existing user:', data);
+        localStorage.setItem('telegramUser', JSON.stringify(data));
+        setUser(data);
+      } catch (error) {
+        const err = error as AxiosError<{ message: string }>;
+
+        if (err.response?.data?.message === 'User not found') {
+          const newUserPayload: TelegramUser = {
+            id: userToUse.id,
+            firstName: userToUse.firstName,
+            lastName: userToUse.lastName,
+            telegram_username: userToUse.telegram_username,
+            gender: userToUse.gender,
+            avatarUrl: userToUse.avatarUrl,
+            address: userToUse.address,
+            city: userToUse.city,
+            phone: userToUse.phone,
+            password: userToUse.password,
+            role: userToUse.role || 'PARENT',
+            status: userToUse.status || 'ACTIVE',
           };
 
-          const createResponse = await api.post('https://lije-care-api-dev.zikollab.com/api/v1/api/users', newUserPayload);
+          const createResponse = await api.post<BackendUser>(
+            'https://lije-care-api-dev.zikollab.com/api/v1/users/create',
+            newUserPayload
+          );
 
           localStorage.setItem('telegramUser', JSON.stringify(createResponse.data));
           setUser(createResponse.data);
+        } else {
+          console.error('Unexpected error during user fetch or create:', err.message);
         }
-      } catch (error) {
-        console.error('Error initializing Telegram user:', error);
       }
     };
 

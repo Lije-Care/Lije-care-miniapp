@@ -53,8 +53,7 @@ export function App() {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    console.log("telegram User fetch");
-    console.log(telegramUser);
+
     if (telegramUser) {
       dispatch(fetchParent(telegramUser.id));
       
