@@ -39,7 +39,7 @@ const useTelegramUser = () => {
       }
 
       try {
-        const { data } = await api.get<BackendUser>(`users/find-one/${userToUse.id}`);
+        const { data } = await api.get<BackendUser>(`users/find-one/6d5343b3-eab2-4fef-a924-b5f9730cd898`);
         console.log('Fetched existing user:', data);
         localStorage.setItem('telegramUser', JSON.stringify(data));
         setUser(data);
