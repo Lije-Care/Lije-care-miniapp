@@ -9,6 +9,7 @@ import {
   useVideo,
   selectIsPeerVideoEnabled,
   selectIsPeerAudioEnabled,
+  selectIsLocalAudioEnabled,
 } from '@100mslive/react-sdk';
 import {
   ArrowLeftRightIcon,
@@ -16,7 +17,7 @@ import {
   PhotoIcon,
 } from '@100mslive/react-icons';
 import { MdVideoCameraFront } from 'react-icons/md';
-import { FaMicrophone, FaPaperPlane } from 'react-icons/fa';
+import { FaMicrophone, FaMicrophoneSlash, FaPaperPlane } from 'react-icons/fa';
 import api from '@/api/axios';
 import { Modal } from '@telegram-apps/telegram-ui';
 import { useEffect, useState } from 'react';
@@ -30,7 +31,7 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState('');
   const [chatRoomId, setChatRoomId] = useState<string | null>(null);
-
+  const isAudioOn = useHMSStore(selectIsLocalAudioEnabled);
   const telegramUser = useTelegramUser();
   const currentUserId = telegramUser?.id;
 
@@ -38,7 +39,7 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
   const isConnected = useHMSStore(selectIsConnectedToRoom);
   const isVideoOn = useHMSStore(selectIsLocalVideoEnabled);
   const peers = useHMSStore(selectPeers);
-
+  
   // 📹 Peer video view
   const PeerView = ({ peer }: { peer: any }) => {
     const { videoRef } = useVideo({ trackId: peer.videoTrack });
@@ -79,7 +80,7 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
     });
     try {
       await hmsActions.join({
-        userName: telegramUser?.id || 'Guest',
+        userName:'Parent',
         authToken,
       });
       setIsParentOpen(true);
@@ -94,6 +95,7 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
   };
 
   const toggleVideo = async () => {
+    console.log(isVideoOn);
     await hmsActions.setLocalVideoEnabled(!isVideoOn);
   };
 
@@ -165,6 +167,15 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
     }
   }, [isParentOpen]);
 
+
+
+
+ 
+
+  const toggleAudio = async () => {
+    await hmsActions.setLocalAudioEnabled(!isAudioOn);
+  };
+
   return (
     <div className="flex flex-col h-[91vh]">
       <Modal open={isParentOpen} onOpenChange={setIsParentOpen}>
@@ -177,6 +188,47 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
               {peers.map((peer) => (
                 <PeerView key={peer.id} peer={peer} />
               ))}
+               <div className="flex justify-center gap-6">
+                {/* Mic toggle */}
+                <button
+                  type="button"
+                  title="Toggle Mic"
+                  className="bg-white border rounded-full p-3 shadow-md"
+                  onClick={toggleAudio}
+                  onTouchStart={toggleAudio}
+                >
+                  {isAudioOn ? (
+                    <FaMicrophone className="h-6 w-6 text-black" />
+                  ) : (
+                    <FaMicrophoneSlash className="h-6 w-6 text-red-500" />
+                  )}
+                </button>
+
+                {/* Camera toggle */}
+                <button
+                  type="button"
+                  title="Toggle Camera"
+                  className="bg-white border rounded-full p-3 shadow-md"
+                  onClick={toggleVideo}
+                  onTouchStart={toggleVideo}
+                >
+                  <MdVideoCameraFront
+                    className={`h-6 w-6 ${isVideoOn ? 'text-green-500' : 'text-gray-500'}`}
+                  />
+                </button>
+
+                {/* End Call */}
+                <button
+                  type="button"
+                  title="End Call"
+                  className="bg-red-600 text-white rounded-full p-3 shadow-md"
+                  onClick={leaveRoom}
+                  onTouchStart={leaveRoom}
+                >
+                  <PhoneIcon className="h-6 w-6" />
+                </button>
+              </div>
+
             </div>
           </div>
         )}

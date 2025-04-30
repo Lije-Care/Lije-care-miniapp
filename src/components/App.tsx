@@ -20,6 +20,8 @@ import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { fetchParent } from '@/redux/slices/itemSlice';
 import { AppDispatch } from '@/redux/store';
+import { fetchChildrenByParentId } from '@/redux/slices/childSlice';
+import { fetchSpecialists } from '@/redux/slices/specialistSlice';
 
 
 const Layout = ({ children }: {children: any}) => (
@@ -55,7 +57,10 @@ export function App() {
   useEffect(() => {
 
     if (telegramUser) {
-      dispatch(fetchParent(telegramUser.id));
+      dispatch(fetchParent(telegramUser.id)).then(()=>{
+        dispatch(fetchChildrenByParentId(telegramUser.id));
+        dispatch(fetchSpecialists({ page: 1, limit: 10 }));
+      });
       
     }
    
