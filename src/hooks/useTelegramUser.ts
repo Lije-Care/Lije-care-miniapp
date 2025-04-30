@@ -3,10 +3,9 @@ import { AxiosError } from 'axios';
 
 import api from '@/api/axios';
 import { BackendUser, TelegramUser } from '@/types';
-import { User } from '@/redux/slices/specialistSlice';
 
-const dummyTelegramUser: TelegramUser = {
-  id: '6d5343b3-eab2-4fef-a924-b5f9730cd899',
+const defaultTelegramUser: TelegramUser = {
+  id: 'fallback-id',
   firstName: 'John',
   lastName: 'Doe',
   telegram_username: 'john_doe_telegram',
@@ -26,9 +25,14 @@ const useTelegramUser = () => {
   useEffect(() => {
     const init = async () => {
       const telegramUser = (window as any)?.Telegram?.WebApp?.initDataUnsafe?.user as TelegramUser | undefined;
-      const userToUse = telegramUser || dummyTelegramUser;
-      const storedUser = localStorage.getItem('telegramUser');
+      const userToUse: TelegramUser = telegramUser ?? defaultTelegramUser;
 
+      if (!userToUse?.id) {
+        console.error('No Telegram user ID found.');
+        return;
+      }
+
+      const storedUser = localStorage.getItem('telegramUser');
       if (storedUser) {
         setUser(JSON.parse(storedUser) as BackendUser);
         return;
@@ -44,18 +48,8 @@ const useTelegramUser = () => {
 
         if (err.response?.data?.message === 'User not found') {
           const newUserPayload: TelegramUser = {
-            id: userToUse.id,
-            firstName: userToUse.firstName,
-            lastName: userToUse.lastName,
-            telegram_username: userToUse.telegram_username,
-            gender: userToUse.gender,
-            avatarUrl: userToUse.avatarUrl,
-            address: userToUse.address,
-            city: userToUse.city,
-            phone: userToUse.phone,
-            password: userToUse.password,
-            role: userToUse.role || 'PARENT',
-            status: userToUse.status || 'ACTIVE',
+            ...userToUse,
+            id: userToUse.id ?? crypto.randomUUID(), // fallback if no ID
           };
 
           const createResponse = await api.post<BackendUser>(
