@@ -25,19 +25,21 @@ import MessageList from './MessageList';
 import { Message } from '@/types';
 import useTelegramUser from '@/hooks/useTelegramUser';
 
-const ChatScreen = ({selectedDoctor}: {selectedDoctor:any}) => {
+const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
   const [isParentOpen, setIsParentOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState('');
+  const [chatRoomId, setChatRoomId] = useState<string | null>(null);
+
   const telegramUser = useTelegramUser();
-  const chatRoomId = '2a8692c9-4852-4b41-b8de-f3d377b2247f';
   const currentUserId = telegramUser?.id;
+
   const hmsActions = useHMSActions();
   const isConnected = useHMSStore(selectIsConnectedToRoom);
   const isVideoOn = useHMSStore(selectIsLocalVideoEnabled);
   const peers = useHMSStore(selectPeers);
 
-
+  // 📹 Peer video view
   const PeerView = ({ peer }: { peer: any }) => {
     const { videoRef } = useVideo({ trackId: peer.videoTrack });
     const isVideoEnabled = useHMSStore(selectIsPeerVideoEnabled(peer.id));
@@ -70,14 +72,14 @@ const ChatScreen = ({selectedDoctor}: {selectedDoctor:any}) => {
     );
   };
 
-  // Join Room
+  // 🎥 Join/Leave Room
   const joinRoom = async () => {
     const authToken = await hmsActions.getAuthTokenByRoomCode({
       roomCode: 'nzk-qbsn-ppv',
     });
     try {
       await hmsActions.join({
-        userName: 'Mintesnot',
+        userName: telegramUser?.id || 'Guest',
         authToken,
       });
       setIsParentOpen(true);
@@ -95,8 +97,10 @@ const ChatScreen = ({selectedDoctor}: {selectedDoctor:any}) => {
     await hmsActions.setLocalVideoEnabled(!isVideoOn);
   };
 
-  const sendMessage = () => {
-    if (!message.trim()) return;
+  // 💬 Send Message via API + Socket
+  const sendMessage = async () => {
+    console.log("test");
+    if (!message.trim() || !chatRoomId || !currentUserId) return;
 
     const payload = {
       content: message,
@@ -104,19 +108,46 @@ const ChatScreen = ({selectedDoctor}: {selectedDoctor:any}) => {
       senderId: currentUserId,
     };
 
-    socket.emit('send_message', payload);
-    setMessage('');
+    try {
+      const res = await api.post('/chat/message', payload);
+      setMessages((prev) => [...prev, res.data]);
+      setMessage('');
+      socket.emit('send_message', res.data);
+    } catch (err) {
+      console.error('Failed to send message:', err);
+    }
   };
 
+  // 🔄 Load/Create ChatRoom
   useEffect(() => {
+    const fetchOrCreateChatRoom = async () => {
+      if (!telegramUser?.id || !selectedDoctor?.id) return;
+
+      try {
+        const res = await api.post('/chat/rooms/find-or-create', {
+          parentId: telegramUser.id,
+          expertId: selectedDoctor.id,
+        });
+        setChatRoomId(res.data.id);
+      } catch (err) {
+        console.error('Failed to load or create chat room:', err);
+      }
+    };
+
+    fetchOrCreateChatRoom();
+  }, [telegramUser?.id, selectedDoctor?.id]);
+
+  // 🧾 Fetch previous messages
+  useEffect(() => {
+    if (!chatRoomId) return;
+
     api
-      .get<Message[]>(
-        `chat/room/${chatRoomId}/messages`
-      )
+      .get<Message[]>(`/chat/room/${chatRoomId}/messages`)
       .then((res) => setMessages(res.data))
       .catch((err) => console.error(err));
   }, [chatRoomId]);
 
+  // 📡 Socket message listener
   useEffect(() => {
     socket.on('receive_message', (msg: Message) => {
       setMessages((prev) => [...prev, msg]);
@@ -127,13 +158,14 @@ const ChatScreen = ({selectedDoctor}: {selectedDoctor:any}) => {
     };
   }, []);
 
+  // 🎯 Cleanup on modal close
   useEffect(() => {
     if (!isParentOpen) {
       leaveRoom();
     }
   }, [isParentOpen]);
-  console.log(selectedDoctor);
-  return (  
+
+  return (
     <div className="flex flex-col h-[91vh]">
       <Modal open={isParentOpen} onOpenChange={setIsParentOpen}>
         {isConnected && (
@@ -157,39 +189,22 @@ const ChatScreen = ({selectedDoctor}: {selectedDoctor:any}) => {
         </button>
         <h2 className="text-lg font-semibold text-teal-700">{selectedDoctor?.name}</h2>
         <div className="flex space-x-2">
-          <button
-            className="p-2"
-            onClick={joinRoom}
-            disabled={isConnected}
-            title="Join call"
-          >
+          <button className="p-2" onClick={joinRoom} disabled={isConnected} title="Join call">
             <PhoneIcon className="h-6 w-6" />
           </button>
-          <button
-            className="p-2"
-            onClick={toggleVideo}
-            disabled={!isConnected}
-            title="Toggle Video"
-          >
+          <button className="p-2" onClick={toggleVideo} disabled={!isConnected} title="Toggle Video">
             <MdVideoCameraFront
-              className={`h-6 w-6 ${
-                isVideoOn ? 'text-green-500' : 'text-gray-500'
-              }`}
+              className={`h-6 w-6 ${isVideoOn ? 'text-green-500' : 'text-gray-500'}`}
             />
           </button>
-          <button
-            className="p-2 text-red-600"
-            onClick={leaveRoom}
-            disabled={!isConnected}
-            title="Leave call"
-          >
+          <button className="p-2 text-red-600" onClick={leaveRoom} disabled={!isConnected} title="Leave call">
             Leave
           </button>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto space-y-1">
+      <div className="flex-1 overflow-y-auto space-y-1 px-4 py-2">
         <MessageList messages={messages} currentUserId={currentUserId ?? ''} />
       </div>
 

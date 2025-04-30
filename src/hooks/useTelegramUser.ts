@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { BackendUser, TelegramUser } from '@/types';
 import api from '@/api/axios';
 const dummyTelegramUser: TelegramUser = {
-  // id: '9e1adb13-3908-47cf-aeab-91b0376acf29',
-  id: '4d4adf16-02c9-488f-8f01-2dba7138e050',
+  id: '6d5343b3-eab2-4fef-a924-b5f9730cd898',
+  // id: '4d4adf16-02c9-488f-8f01-2dba7138e050',
   first_name: 'John',
   last_name: 'Doe',
   username: 'johndoe_dev',

@@ -82,9 +82,7 @@ const childrenSlice = createSlice({
       })
       .addCase(addChild.fulfilled, (state, action: PayloadAction<Parent>) => {
         state.loading = false;
-        console.log("payload, acrion");
-        console.log(action.payload);
-        // state.data = action.payload;
+        state.data.push(action.payload as Child);
       })
       .addCase(addChild.rejected, (state, action) => {
         state.loading = false;
@@ -96,8 +94,6 @@ const childrenSlice = createSlice({
             })
             .addCase(fetchChildrenByParentId.fulfilled, (state, action: PayloadAction<any>) => {
               state.loading = false;
-              console.log("payload, acrion");
-              console.log(action.payload);
               state.data = action.payload.data;
             })
             .addCase(fetchChildrenByParentId.rejected, (state, action) => {
