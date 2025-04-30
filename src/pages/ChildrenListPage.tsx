@@ -21,8 +21,6 @@ const ChildrenListPage: React.FC = () => {
 
   useEffect(() => {
     if (!telegramUser?.id) return; // Don't dispatch until user is ready
-  
-  
     dispatch(fetchChildrenByParentId(telegramUser.id))
   }, [dispatch, telegramUser]);
   

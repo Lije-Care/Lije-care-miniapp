@@ -93,7 +93,6 @@ const parentSlice = createSlice({
       })
       .addCase(fetchParent.fulfilled, (state, action: PayloadAction<Parent>) => {
         state.loading = false;
-    
         state.parent = action.payload;
       })
       .addCase(fetchParent.rejected, (state, action) => {

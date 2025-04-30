@@ -5,7 +5,7 @@ import api from '@/api/axios';
 import { BackendUser, TelegramUser } from '@/types';
 
 const defaultTelegramUser: TelegramUser = {
-  id: 'fallback-id',
+  id: '6d5343b3-eab2-4fef-a924-b5f9730cd898',
   firstName: 'John',
   lastName: 'Doe',
   telegram_username: 'john_doe_telegram',
