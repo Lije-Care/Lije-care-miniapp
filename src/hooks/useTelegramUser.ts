@@ -5,7 +5,11 @@ import { BackendUser, TelegramUser } from '@/types';
 
 const useTelegramUser = () => {
   const [user, setUser] = useState<BackendUser | null>(null);
-
+  const generateDummyPhone = () => {
+    const randomSuffix = Math.floor(1000000 + Math.random() * 9000000); // random 7-digit
+    return `+25191${randomSuffix}`; // 911 is a common prefix for mobile numbers in Ethiopia
+  };
+  
   useEffect(() => {
     const fetchOrCreateUser = async () => {
       const telegramUser = (window as any)?.Telegram?.WebApp?.initDataUnsafe?.user as TelegramUser | undefined;
@@ -44,13 +48,13 @@ const useTelegramUser = () => {
             gender: telegramUser?.gender || 'MALE',
             city: 'Addis Ababa',
             address: '123 Main St',
-            phone: '+251911000000', // ensure uniqueness in production
+            phone: generateDummyPhone(), // ✅ now dynamic and valid
             password: 'securePassword123',
             role: 'PARENT',
-            avatarUrl: telegramUser?.avatarUrl || '', // optional
-            status: 'ACTIVE', // optional
+            avatarUrl: telegramUser?.avatarUrl || '',
+            status: 'ACTIVE',
           };
-
+          
           try {
             const { data: createdUser } = await api.post<BackendUser>('users/create', fallbackUser);
             localStorage.setItem('telegramUser', JSON.stringify(createdUser));
