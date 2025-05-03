@@ -11,7 +11,6 @@ import api from '@/api/axios';
 import useTelegramUser from '@/hooks/useTelegramUser';
 import BookingsList from '@/components/booking/BookingsList';
 
-const concerns = ['Nutrition', 'Sleep Issues', 'Growth', 'Vaccination', 'Skin Issues'];
 
 export default function ConsultationTab() {
   const dispatch = useDispatch<AppDispatch>();
