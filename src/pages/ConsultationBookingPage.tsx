@@ -9,14 +9,16 @@ import { fetchSpecialists } from '@/redux/slices/specialistSlice';
 import ChatComponent from './Consultation/ChatComponent';
 import api from '@/api/axios';
 import useTelegramUser from '@/hooks/useTelegramUser';
+import BookingsList from '@/components/booking/BookingsList';
 
 const concerns = ['Nutrition', 'Sleep Issues', 'Growth', 'Vaccination', 'Skin Issues'];
 
 export default function ConsultationTab() {
   const dispatch = useDispatch<AppDispatch>();
   const { specialists, loading, error } = useSelector((state: RootState) => state.specialists);
- 
-  const [selectedConcern, setSelectedConcern] = useState('');
+
+  const [activeTab, setActiveTab] = useState<'bookings' | 'consult'>('consult');
+
   const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
   const [availability, setAvailability] = useState<any[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<string>('');
@@ -26,12 +28,10 @@ export default function ConsultationTab() {
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // Load specialists on mount
   useEffect(() => {
     dispatch(fetchSpecialists({ page: 1, limit: 10 }));
   }, [dispatch]);
 
-  // Load availability when doctor selected
   useEffect(() => {
     if (selectedDoctor) {
       fetchAvailability(selectedDoctor.id);
@@ -42,7 +42,6 @@ export default function ConsultationTab() {
   const fetchAvailability = async (expertId: string) => {
     try {
       setLoadingSlots(true);
-    
       const res = await api.get(`/availability/findbyExpert/${expertId}`);
       setAvailability(res.data);
     } catch (e) {
@@ -53,9 +52,10 @@ export default function ConsultationTab() {
   };
 
   const telegramuser = useTelegramUser();
+
   const fetchUserPackage = async () => {
     try {
-      const res = await api.get(`/user-package/active?userId=${telegramuser?.id}`); // Replace 'ME' with real user context
+      const res = await api.get(`/user-package/active?userId=${telegramuser?.id}`);
       setUserPackageId(res.data.id);
     } catch (e) {
       setUserPackageId(null);
@@ -69,17 +69,8 @@ export default function ConsultationTab() {
     }
 
     try {
-      // console.log(selectedDoctor);
-      console.log(
-       {
-          parentId: telegramuser?.id, // should come from auth/user context
-          expertId: selectedDoctor.id,
-          slotId: selectedSlot,
-          userPackageId,
-        }
-      )
       await api.post('/booking', {
-        parentId: telegramuser?.id, // should come from auth/user context
+        parentId: telegramuser?.id,
         expertId: selectedDoctor.id,
         slotId: selectedSlot,
         userPackageId,
@@ -90,6 +81,7 @@ export default function ConsultationTab() {
       setErrorMsg('Booking failed. Try again.');
     }
   };
+  
 
   if (chatOpen && selectedDoctor) {
     return <ChatComponent selectedDoctor={selectedDoctor} />;
@@ -100,7 +92,10 @@ export default function ConsultationTab() {
       <div className="p-6 text-center text-white space-y-4">
         <h2 className="text-2xl font-semibold text-green-400">🎉 Consultation Confirmed</h2>
         <p>
-          Session booked with <span className="font-bold">{selectedDoctor?.user?.firstName} {selectedDoctor?.user?.lastName}</span>
+          Session booked with{' '}
+          <span className="font-bold">
+            {selectedDoctor?.user?.firstName} {selectedDoctor?.user?.lastName}
+          </span>
         </p>
         <Button className="bg-indigo-600 text-white mt-4">Join Video Call</Button>
       </div>
@@ -109,28 +104,38 @@ export default function ConsultationTab() {
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6 text-white">
-      <h1 className="text-2xl font-bold text-emerald-400">Consult a Specialist</h1>
-
-      <div>
-        <p className="font-medium mb-2 text-gray-300">🩺 Select a Concern</p>
-        <select
-          value={selectedConcern}
-          onChange={(e) => setSelectedConcern(e.target.value)}
-          className="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white"
+      <div className="flex gap-4 mb-6">
+        <Button
+          className={`flex-1 ${activeTab === 'consult' ? 'bg-emerald-600' : 'bg-gray-700'}`}
+          onClick={() => setActiveTab('consult')}
         >
-          <option value="" disabled>Select a concern</option>
-          {concerns.map((concern) => (
-            <option key={concern} value={concern}>{concern}</option>
-          ))}
-        </select>
+          Consult Now
+        </Button>
+        <Button
+          className={`flex-1 ${activeTab === 'bookings' ? 'bg-emerald-600' : 'bg-gray-700'}`}
+          onClick={() => setActiveTab('bookings')}
+        >
+          Booked Sessions
+        </Button>
       </div>
 
-      {selectedConcern && (
-        <>
-          <p className="font-medium text-gray-300">👩‍⚕️ Choose a Specialist</p>
+      {activeTab === 'bookings' && (
+        <div className="text-white">
+          {/* Replace this placeholder with real data */}
+          <h2 className="text-xl font-semibold mb-4">📅 Your Booked Sessions</h2>
+         <BookingsList/>
+        </div>
+      )}
 
+      {activeTab === 'consult' && (
+        <>
+          <h1 className="text-2xl font-bold text-emerald-400">Consult a Specialist</h1>
+
+          <p className="font-medium text-gray-300">👩‍⚕️ Choose a Specialist</p>
           {loading ? (
-            <div className="flex justify-center py-4"><Spinner size="l" /></div>
+            <div className="flex justify-center py-4">
+              <Spinner size="l" />
+            </div>
           ) : error ? (
             <p className="text-red-500">{error}</p>
           ) : (
@@ -142,7 +147,9 @@ export default function ConsultationTab() {
                   <div
                     key={doc.id}
                     className={`p-4 border rounded-lg flex justify-between items-center ${
-                      isSelected ? 'border-emerald-500 bg-emerald-900/30' : 'border-gray-700 bg-gray-800'
+                      isSelected
+                        ? 'border-emerald-500 bg-emerald-900/30'
+                        : 'border-gray-700 bg-gray-800'
                     }`}
                   >
                     <div className="flex gap-4 cursor-pointer" onClick={() => setSelectedDoctor(doc)}>
@@ -153,14 +160,14 @@ export default function ConsultationTab() {
                       />
                       <div>
                         <p className="font-bold">{fullName}</p>
-                        {/* <p className="text-sm text-gray-400">{doc?.certifications}</p> */}
-                        {/* <p className="text-xs text-gray-500">⭐ {doc?.rating.toFixed(1)}</p> */}
                       </div>
                     </div>
-                    <button onClick={() => {
-                      setSelectedDoctor(doc);
-                      setChatOpen(true);
-                    }}>
+                    <button
+                      onClick={() => {
+                        setSelectedDoctor(doc);
+                        setChatOpen(true);
+                      }}
+                    >
                       <MdMessage className="text-blue-400 w-6 h-6" />
                     </button>
                   </div>
@@ -168,38 +175,39 @@ export default function ConsultationTab() {
               })}
             </div>
           )}
-        </>
-      )}
 
-      {/* Time Slot Picker */}
-      {selectedDoctor && (
-        <div>
-          <p className="font-medium mb-2 text-gray-300">📅 Choose a Slot</p>
-          {loadingSlots ? (
-            <Spinner size='l'/>
-          ) : (
-            <select
-              value={selectedSlot}
-              onChange={(e) => setSelectedSlot(e.target.value)}
-              className="w-full bg-gray-800 border border-gray-600 text-white p-2 rounded"
-            >
-              <option value="" disabled>Select a time slot</option>
-              {availability.map((slot) => (
-                <option key={slot.id} value={slot.id}>
-                  {slot.startTime} - {slot.endTime}
-                </option>
-              ))}
-            </select>
+          {selectedDoctor && (
+            <div>
+              <p className="font-medium mb-2 text-gray-300">📅 Choose a Slot</p>
+              {loadingSlots ? (
+                <Spinner size="l" />
+              ) : (
+                <select
+                  value={selectedSlot}
+                  onChange={(e) => setSelectedSlot(e.target.value)}
+                  className="w-full bg-gray-800 border border-gray-600 text-white p-2 rounded"
+                >
+                  <option value="" disabled>
+                    Select a time slot
+                  </option>
+                  {availability.map((slot) => (
+                    <option key={slot.id} value={slot.id}>
+                      {slot.startTime} - {slot.endTime}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
           )}
-        </div>
-      )}
 
-      {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
+          {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
 
-      {selectedSlot && userPackageId && (
-        <Button className="w-full mt-4 bg-emerald-600 text-white" onClick={bookSlot}>
-          Confirm Booking
-        </Button>
+          {selectedSlot && userPackageId && (
+            <Button className="w-full mt-4 bg-emerald-600 text-white" onClick={bookSlot}>
+              Confirm Booking
+            </Button>
+          )}
+        </>
       )}
     </div>
   );
