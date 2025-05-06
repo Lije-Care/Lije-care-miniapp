@@ -11,13 +11,11 @@ import api from '@/api/axios';
 import useTelegramUser from '@/hooks/useTelegramUser';
 import BookingsList from '@/components/booking/BookingsList';
 
-
 export default function ConsultationTab() {
   const dispatch = useDispatch<AppDispatch>();
   const { specialists, loading, error } = useSelector((state: RootState) => state.specialists);
 
   const [activeTab, setActiveTab] = useState<'bookings' | 'consult'>('consult');
-
   const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
   const [availability, setAvailability] = useState<any[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<string>('');
@@ -25,7 +23,10 @@ export default function ConsultationTab() {
   const [chatOpen, setChatOpen] = useState(false);
   const [userPackageId, setUserPackageId] = useState<string | null>(null);
   const [loadingSlots, setLoadingSlots] = useState(false);
+  const [loadingPackage, setLoadingPackage] = useState(false); // For package loading indicator
   const [errorMsg, setErrorMsg] = useState('');
+
+  const telegramuser = useTelegramUser();
 
   useEffect(() => {
     dispatch(fetchSpecialists({ page: 1, limit: 10 }));
@@ -34,7 +35,7 @@ export default function ConsultationTab() {
   useEffect(() => {
     if (selectedDoctor) {
       fetchAvailability(selectedDoctor.id);
-      fetchUserPackage();
+      fetchUserPackage(); // Check if user already has a package
     }
   }, [selectedDoctor]);
 
@@ -50,14 +51,41 @@ export default function ConsultationTab() {
     }
   };
 
-  const telegramuser = useTelegramUser();
-
   const fetchUserPackage = async () => {
+    setLoadingPackage(true);
     try {
+      // First, try to get active user package
       const res = await api.get(`/user-package/active?userId=${telegramuser?.id}`);
       setUserPackageId(res.data.id);
-    } catch (e) {
-      setUserPackageId(null);
+    } catch (e: any) {
+      console.warn('No active user package found. Fetching available packages...');
+      try {
+        // Fetch available packages if no active user package found
+        const packageRes = await api.get('/package/find-all');
+        const availablePackages = packageRes.data;
+
+        if (availablePackages.length === 0) {
+          setErrorMsg('No packages available. Please try again later.');
+          setLoadingPackage(false);
+          return;
+        }
+
+        // Show available packages (You can implement a UI for selection here)
+        const selectedPackage = availablePackages[0]; // Default to the first package for now
+
+        // Create a new user package with the selected package
+        const createRes = await api.post('/user-package', {
+          userId: telegramuser?.id,
+          packageId: selectedPackage.id,
+        });
+
+        setUserPackageId(createRes.data.id);
+      } catch (packageErr) {
+        console.error('Failed to fetch or create package:', packageErr);
+        setErrorMsg('Unable to assign a package. Please try again later.');
+      } finally {
+        setLoadingPackage(false);
+      }
     }
   };
 
@@ -80,7 +108,6 @@ export default function ConsultationTab() {
       setErrorMsg('Booking failed. Try again.');
     }
   };
-  
 
   if (chatOpen && selectedDoctor) {
     return <ChatComponent selectedDoctor={selectedDoctor} />;
@@ -120,9 +147,8 @@ export default function ConsultationTab() {
 
       {activeTab === 'bookings' && (
         <div className="text-white">
-          {/* Replace this placeholder with real data */}
           <h2 className="text-xl font-semibold mb-4">📅 Your Booked Sessions</h2>
-         <BookingsList/>
+          <BookingsList />
         </div>
       )}
 
@@ -205,6 +231,12 @@ export default function ConsultationTab() {
             <Button className="w-full mt-4 bg-emerald-600 text-white" onClick={bookSlot}>
               Confirm Booking
             </Button>
+          )}
+
+          {loadingPackage && (
+            <div className="flex justify-center py-4">
+              <Spinner size="l" />
+            </div>
           )}
         </>
       )}

@@ -57,7 +57,10 @@ const MealLibraryComponent = () => {
   const { specialists } = useSelector((state: RootState) => state.specialists);
 
   const totalCalories = selectedMeals.reduce((sum, meal) => sum + (meal.nutritional_info?.calories || 0), 0);
-
+  const totalProtein = selectedMeals.reduce((sum, meal) => sum + (meal.nutritional_info?.protein || 0), 0);
+  const totalCarbs = selectedMeals.reduce((sum, meal) => sum + (meal.nutritional_info?.carbs || 0), 0);
+  const totalFat = selectedMeals.reduce((sum, meal) => sum + (meal.nutritional_info?.fat || 0), 0);
+  
   useEffect(() => {
     const fetchMeals = async () => {
       try {
@@ -149,24 +152,45 @@ const MealLibraryComponent = () => {
     <div className="p-6 max-w-5xl mx-auto text-white">
       <Title className="mb-4 text-2xl text-emerald-400">🍽️ Create Meal Plan</Title>
 
-      <Card className="auto w-full bg-[#1E1E2F] border border-gray-700">
-        <div className="grid grid-cols-1 sm:grid-cols-2">
-          <Input
-            header="Meal Description"
-            value={mealDescription}
-            onChange={(e) => setMealDescription(e.target.value)}
-          />
-          <div>
-            <Input
-              header="Total Calories"
-              type="number"
-              value={totalCalories}
-              disabled
-              className="bg-gray-800 text-white"
-            />
-          </div>
-        </div>
-      </Card>
+      <Card className="auto w-full bg-[#1E1E2F] border border-gray-700 mb-6">
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ">
+    <Input
+      header="Meal Description"
+      value={mealDescription}
+      onChange={(e) => setMealDescription(e.target.value)}
+      className="col-span-1 sm:col-span-2 lg:col-span-3"
+    />
+    <Input
+      header="Total Calories"
+      type="number"
+      value={totalCalories}
+      disabled
+      className="bg-gray-800 text-white"
+    />
+    <Input
+      header="Total Protein (g)"
+      type="number"
+      value={totalProtein}
+      disabled
+      className="bg-gray-800 text-white"
+    />
+    <Input
+      header="Total Carbs (g)"
+      type="number"
+      value={totalCarbs}
+      disabled
+      className="bg-gray-800 text-white"
+    />
+    <Input
+      header="Total Fat (g)"
+      type="number"
+      value={totalFat}
+      disabled
+      className="bg-gray-800 text-white"
+    />
+  </div>
+</Card>
+
 
       <div className="space-y-4">
         <Title className="text-lg text-white">Select Meals from Library</Title>
