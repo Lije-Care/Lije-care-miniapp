@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import api from "@/api/axios";
 import { Badge, Button, Card, Placeholder } from "@telegram-apps/telegram-ui";
 import { useNavigate } from "react-router-dom";
-
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 type Meal = {
   id: string;
@@ -31,21 +32,33 @@ type MealPlan = {
 const MealPlanSummary = () => {
   const [mealPlans, setMealPlans] = useState<MealPlan[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { data } = useSelector((state: RootState) => state.children);
+  const childId = data[0]?.id;
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!childId) {
+      setMealPlans([]);
+      setError("No child profile found. Please add a child first.");
+      return;
+    }
+
     api
-      .get("meal-Plans/find-all")
+      .get(`/meal-Plans/by-child/${childId}`)
       .then((response) => {
-        const data = response.data?.data ?? [];
-        setMealPlans(data);
+        const fetchedData = response.data?.data ?? [];
+        setMealPlans(fetchedData);
+        setError(null); // clear previous errors
       })
-      .catch((error) => {
-        console.error("Error fetching meal plans:", error);
-        setError("Failed to fetch meal plans. Please try again later.");
+      .catch((err) => {
+        console.error("Error fetching meal plans:", err);
         setMealPlans([]);
+        setError(
+          err?.response?.data?.message ||
+            "Failed to fetch meal plans. Please try again later."
+        );
       });
-  }, []);
+  }, [childId]);
 
   return (
     <div className="p-4 space-y-4">
@@ -97,9 +110,11 @@ const MealPlanSummary = () => {
           </Card>
         ))
       ) : (
-        <div className="text-center text-gray-500">
-          No meal plans found. You can create one below!
-        </div>
+        !error && (
+          <div className="text-center text-gray-500">
+            No meal plans found. You can create one below!
+          </div>
+        )
       )}
 
       <div className="text-center">
