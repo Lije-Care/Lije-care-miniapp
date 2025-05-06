@@ -130,11 +130,12 @@ const MealLibraryComponent = () => {
   // ✅ Check if there is no child
   if (!data || data.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-black/90 text-white p-6">
+      <div className="min-h-screen flex flex-col items-center justify-center p-6">
         <Placeholder header="No Child Found">
-          <Text className="m-auto">You need to add a child before creating a meal plan.</Text>
+           
+            <p style={{textAlign: 'center'}}>You need to add a child before creating a meal plan.</p>
           <Button
-            className="mt-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-lg"
+            className="mt-4 font-semibold px-4 py-2 rounded-lg"
             onClick={() => navigate('/children')}
           >
             ➕ Add Child
