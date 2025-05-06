@@ -1,10 +1,8 @@
-// 📁 src/components/MealLibraryComponent.tsx
 import { useEffect, useState } from "react";
 import api from "@/api/axios";
 import {
   Button,
   Card,
-  
   Placeholder,
   Text,
   Title,
@@ -17,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
-const fallbackImg = 'https://via.placeholder.com/100x80?text=No+Image';
+const fallbackImg = 'https://placehold.co/600x400';
 
 type Ingredient = {
   id: string;
@@ -57,13 +55,10 @@ const MealLibraryComponent = () => {
   const navigate = useNavigate();
   const { data } = useSelector((state: RootState) => state.children);
   const { specialists } = useSelector((state: RootState) => state.specialists);
-  // const expertId = "0188e7a3-29c6-4a33-9071-5c846a9d6c4c";
-  // const childId = "dba8d146-93a0-4870-80cc-acd5fd2e437a";
 
   const totalCalories = selectedMeals.reduce((sum, meal) => sum + (meal.nutritional_info?.calories || 0), 0);
 
   useEffect(() => {
-   
     const fetchMeals = async () => {
       try {
         const res = await api.get("mealLibrary/findall?skip=0");
@@ -94,15 +89,13 @@ const MealLibraryComponent = () => {
     }
 
     const payload = {
-      expertId: specialists[0].id,
+      expertId: specialists[0]?.id,
       childId: data[0]?.id,
       meal_description: mealDescription,
       calories: totalCalories,
       meals: selectedMeals.map((m) => ({ id: m.id })),
     };
-    
- 
-    
+
     try {
       setSubmitting(true);
       await api.post("/meal-plans/create", payload);
@@ -134,12 +127,29 @@ const MealLibraryComponent = () => {
     );
   }
 
+  // ✅ Check if there is no child
+  if (!data || data.length === 0) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-black/90 text-white p-6">
+        <Placeholder header="No Child Found">
+          <Text className="m-auto">You need to add a child before creating a meal plan.</Text>
+          <Button
+            className="mt-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-lg"
+            onClick={() => navigate('/children')}
+          >
+            ➕ Add Child
+          </Button>
+        </Placeholder>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 max-w-5xl mx-auto text-white">
       <Title className="mb-4 text-2xl text-emerald-400">🍽️ Create Meal Plan</Title>
 
       <Card className="auto w-full bg-[#1E1E2F] border border-gray-700">
-        <div className="grid grid-cols-1 sm:grid-cols-2 ">
+        <div className="grid grid-cols-1 sm:grid-cols-2">
           <Input
             header="Meal Description"
             value={mealDescription}
@@ -215,18 +225,16 @@ const MealLibraryComponent = () => {
       </div>
 
       <Button
-  onClick={handleConfirmMealPlan}
-  disabled={submitting}
-  className={`mt-6 w-full flex flex-row items-center justify-center gap-2 text-white text-lg font-semibold 
-    py-3 rounded-lg transition-all duration-200
-    ${submitting ? 'bg-emerald-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700 active:scale-95'}
-  `}
->
-  <FaCheck className="text-white text-xl" />
-  <span>{submitting ? "Submitting..." : "Confirm Meal Plan"}</span>
-</Button>
-
-
+        onClick={handleConfirmMealPlan}
+        disabled={submitting}
+        className={`mt-6 w-full flex flex-row items-center justify-center gap-2 text-white text-lg font-semibold 
+          py-3 rounded-lg transition-all duration-200
+          ${submitting ? 'bg-emerald-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700 active:scale-95'}
+        `}
+      >
+        <FaCheck className="text-white text-xl" />
+        <span>{submitting ? "Submitting..." : "Confirm Meal Plan"}</span>
+      </Button>
     </div>
   );
 };
