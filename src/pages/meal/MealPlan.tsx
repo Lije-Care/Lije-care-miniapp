@@ -205,10 +205,10 @@ const MealLibraryComponent = () => {
             >
               <div className="flex flex-col sm:flex-row gap-4 w-full items-center">
                 <img
-                  src={`https://lije-care-api-dev.zikollab.com/uploads/images/meal${meal.imageUrl}`}
+                  src={`https://lije-care-api-dev.zikollab.com/uploads/images/MEAL/${meal.imageUrl}`}
                   alt={meal.title}
-                  onError={(e) => ((e.currentTarget.src = fallbackImg))}
-                  className="w-24 h-24 object-cover rounded-lg"
+                  // onError={(e) => ((e.currentTarget.src = fallbackImg))}
+                  className="w-54 h-24 object-cover rounded-lg"
                 />
                 <div className="flex-1">
                   <Text className="text-xl font-semibold">{meal.title}</Text>

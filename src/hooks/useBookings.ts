@@ -11,9 +11,9 @@ export const useBookings = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchBookings = async () => {
+    const fetchBookings = async (parentID: string) => {
       try {
-        const { data } = await axios.get('https://lije-care-api-dev.zikollab.com/api/v1/booking');
+        const { data } = await axios.get(`https://lije-care-api-dev.zikollab.com/api/v1/booking/my-booking/parent/${parentID}`);
         console.log(data.data)
 
         
@@ -31,7 +31,7 @@ export const useBookings = () => {
       }
     };
 
-    if (telegramUserId) fetchBookings();
+    if (telegramUserId) fetchBookings(telegramUserId?.id);
   }, [telegramUserId]);
 
   return { bookings, loading, error };

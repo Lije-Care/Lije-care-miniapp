@@ -96,7 +96,7 @@ export default function ConsultationTab() {
     }
 
     try {
-      await api.post('/booking', {
+      await api.post('/booking/create', {
         parentId: telegramuser?.id,
         expertId: selectedDoctor.id,
         slotId: selectedSlot,
@@ -128,21 +128,23 @@ export default function ConsultationTab() {
     );
   }
 
+  const categories = ["nutritionist", "Medical doctor", "Any Question(CS)"];
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6 text-white">
-      <div className="flex gap-4 mb-6">
-        <Button
+      <div className="flex space-between gap-4 mb-6 w-full">
+       <p style={{width: '50%'}}></p>
+        {/* <Button
           className={`flex-1 ${activeTab === 'consult' ? 'bg-emerald-600' : 'bg-gray-700'}`}
           onClick={() => setActiveTab('consult')}
         >
           Consult Now
-        </Button>
-        <Button
-          className={`flex-1 ${activeTab === 'bookings' ? 'bg-emerald-600' : 'bg-gray-700'}`}
+        </Button> */}
+        <button
+          className={`w-1/2 flex-1 rounded ${activeTab === 'bookings' ? 'bg-emerald-600' : 'bg-gray-700'}`}
           onClick={() => setActiveTab('bookings')}
         >
-          Booked Sessions
-        </Button>
+          my appointment
+        </button>
       </div>
 
       {activeTab === 'bookings' && (
@@ -151,6 +153,20 @@ export default function ConsultationTab() {
           <BookingsList />
         </div>
       )}
+
+<div className="flex gap-2 bg-gray-900 ">
+      {categories.map((category) => (
+        <button
+          key={category}
+          onClick={() => setActiveTab('consult')}
+          className={`px-4 py-2  font-semibold rounded-none transition-all
+            ${activeTab === category ? "bg-gray-600" : "bg-gray-500 hover:bg-red-600"}
+          `}
+        >
+          {category}
+        </button>
+      ))}
+    </div>
 
       {activeTab === 'consult' && (
         <>
