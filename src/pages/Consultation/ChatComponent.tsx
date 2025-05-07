@@ -112,8 +112,8 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
 
     try {
       const res = await api.post('/chat/message', payload);
-      setMessages((prev) => [...prev, res.data]);
-      setMessage('');
+      // setMessages((prev) => [...prev, res.data]);
+      // setMessage('');
       socket.emit('send_message', res.data);
     } catch (err) {
       console.error('Failed to send message:', err);
