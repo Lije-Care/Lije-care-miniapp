@@ -195,7 +195,7 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
                   title="Toggle Mic"
                   className="bg-white border rounded-full p-3 shadow-md"
                   onClick={toggleAudio}
-                  onTouchStart={toggleAudio}
+                  // onTouchStart={toggleAudio}
                 >
                   {isAudioOn ? (
                     <FaMicrophone className="h-6 w-6 text-black" />
@@ -210,7 +210,7 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
                   title="Toggle Camera"
                   className="bg-white border rounded-full p-3 shadow-md"
                   onClick={toggleVideo}
-                  onTouchStart={toggleVideo}
+                  // onTouchStart={toggleVideo}
                 >
                   <MdVideoCameraFront
                     className={`h-6 w-6 ${isVideoOn ? 'text-green-500' : 'text-gray-500'}`}
@@ -223,7 +223,7 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
                   title="End Call"
                   className="bg-red-600 text-white rounded-full p-3 shadow-md"
                   onClick={leaveRoom}
-                  onTouchStart={leaveRoom}
+                  // onTouchStart={leaveRoom}
                 >
                   <PhoneIcon className="h-6 w-6" />
                 </button>
@@ -244,9 +244,9 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
           <button className="p-2" onClick={joinRoom} disabled={isConnected} title="Join call">
             <PhoneIcon className="h-6 w-6" />
           </button>
-          <button className="p-2" onClick={toggleVideo} disabled={!isConnected} title="Toggle Video">
+          <button className="p-2" onClick={joinRoom} disabled={!isConnected} title="Toggle Video">
             <MdVideoCameraFront
-              className={`h-6 w-6 ${isVideoOn ? 'text-green-500' : 'text-gray-500'}`}
+              className={`h-6 w-6`}
             />
           </button>
           <button className="p-2 text-red-600" onClick={leaveRoom} disabled={!isConnected} title="Leave call">
@@ -271,7 +271,7 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
           placeholder="Write here..."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+          // onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
         />
         <button className="p-2">
           <PhotoIcon className="h-6 w-6 text-gray-500" />
@@ -280,7 +280,7 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
             type="button"
             className="p-2 text-teal-600"
             onClick={sendMessage}
-            onTouchStart={sendMessage}
+            // onTouchStart={sendMessage}
           >
             <FaPaperPlane className="h-6 w-6" />
           </button>
