@@ -10,7 +10,7 @@ import {
   Caption,
 } from '@telegram-apps/telegram-ui';
 
-const fallbackImage = 'https://via.placeholder.com/400x250?text=Meal+Image';
+// const fallbackImage = 'https://via.placeholder.com/400x250?text=Meal+Image';
 
 const MealDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -76,12 +76,12 @@ const MealDetails: React.FC = () => {
             className="bg-[#1f1f2b] border border-gray-700 rounded-xl p-4 shadow-md space-y-5"
           >
             <div className="flex flex-col md:flex-row gap-4 items-start">
-              <img
-                src={meal.imageUrl ? `https://lije-care-api-dev.zikollab.com/uploads/images/meal${meal.imageUrl}` : fallbackImage}
-                alt={meal.title}
-                onError={(e) => (e.currentTarget.src = fallbackImage)}
-                className="w-full md:w-72 h-48 object-cover rounded-lg"
-              />
+            <img
+                  src={`https://lije-care-api-dev.zikollab.com/uploads/images/MEAL/${meal.imageUrl}`}
+                  alt={meal.title}
+                  // onError={(e) => ((e.currentTarget.src = fallbackImg))}
+                  className="w-full h-24 object-cover rounded-lg"
+                />
               <div className="flex-1">
                 <Title className="text-xl">{meal.title}</Title>
                 <Text className="text-gray-300">{meal.description}</Text>
