@@ -113,7 +113,7 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
     try {
       const res = await api.post('/chat/message', payload);
       // setMessages((prev) => [...prev, res.data]);
-      // setMessage('');
+      setMessage('');
       socket.emit('send_message', res.data);
     } catch (err) {
       console.error('Failed to send message:', err);
@@ -270,7 +270,7 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
           className="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-teal-500"
           placeholder="Write here..."
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) =>  setMessage(e.target.value)}
           // onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
         />
         <button className="p-2">

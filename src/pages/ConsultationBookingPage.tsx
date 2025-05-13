@@ -231,11 +231,14 @@ export default function ConsultationTab() {
                   <option value="" disabled>
                     Select a time slot
                   </option>
-                  {availability.map((slot) => (
+                  {availability
+                  .filter((slot) => !slot.isBooked)
+                  .map((slot) => (
                     <option key={slot.id} value={slot.id}>
                       {slot.startTime} - {slot.endTime}
                     </option>
-                  ))}
+                ))}
+
                 </select>
               )}
             </div>

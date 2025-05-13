@@ -1,6 +1,6 @@
 import { io, Socket } from 'socket.io-client';
 
-const socket: Socket = io('http://68.183.216.158:1020', {
+const socket: Socket = io('wss://lije-care-api-dev.zikollab.com', {
   transports: ['websocket'],
 });
 
