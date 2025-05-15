@@ -12,7 +12,7 @@ const LijeModal=()=>{
       readOnly
       subtitle="Addis Ababa"
     >
-      LIje Cares
+      LIje Care
     </CardCell>
     <img
       alt="Dog"
