@@ -46,23 +46,7 @@ export const IndexPage: FC = () => {
   return (
     <Page back={true}>
       <Section  style={{ overflow: 'scroll'}}>
-        <Section
-       
-          
-           > 
-            <Input 
-             before={ <SearchIcon />}
-             placeholder="Search a Doctor"
-             value={value} 
-             onChange={e => setValue(e.target.value)} 
-             after={<Tappable Component="div" style={{
-             display: 'flex'
-             }} onClick={() => setValue('')}>
-              <IoClose />
-            </Tappable >} />
-          <LijeCard/>
-         
-        </Section>
+      
         <Section >
         <Headline
         style={{padding: '10px',}}

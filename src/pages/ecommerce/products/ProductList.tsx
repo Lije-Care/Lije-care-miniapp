@@ -1,5 +1,5 @@
 import { Headline } from "@telegram-apps/telegram-ui";
-import product1 from "@/assets/e-commerce/product1.jpg"
+import product1 from "@/assets/logo.png"
 
 const products = [
   { img: product1, name: "Aveeno", description: "Baby Lotion", price: 100 },
@@ -16,7 +16,7 @@ const products = [
 const ProductCard = ({ product }: {product: any}) => {
   return (
     <div className="p-2 rounded-lg shadow-md w-40">
-      <img src={product.img} alt={product.name} className="w-full h-24 object-cover" />
+      <img src={product.img} alt={product.name} className="w-full h-34 object-cover" />
       <Headline className="text-sm font-semibold mt-2">{product.name}</Headline>
       <p className="text-xs ">{product.description}</p>
       <p className="text-blue-500 font-bold">${product.price}</p>

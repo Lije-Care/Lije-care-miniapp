@@ -45,7 +45,7 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
       gender: "Male",
       weight: "",
       height: "",
-      muac: "",
+      muac: 0,
       dietary_restrictions: "",
       allergies: "",
       medications: "",
