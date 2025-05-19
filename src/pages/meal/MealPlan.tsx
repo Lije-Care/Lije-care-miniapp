@@ -10,11 +10,9 @@ import {
   Caption,
   Spinner,
 } from "@telegram-apps/telegram-ui";
-import { FaCheck } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-
 
 type Ingredient = {
   id: string;
@@ -44,9 +42,14 @@ type MealLibrary = {
   ingredients: Ingredient[];
 };
 
+type SelectedMeal = {
+  meal: MealLibrary;
+  multiplier: number;
+};
+
 const MealLibraryComponent = () => {
   const [meals, setMeals] = useState<MealLibrary[]>([]);
-  const [selectedMeals, setSelectedMeals] = useState<MealLibrary[]>([]);
+  const [selectedMeals, setSelectedMeals] = useState<SelectedMeal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -55,11 +58,12 @@ const MealLibraryComponent = () => {
   const { data } = useSelector((state: RootState) => state.children);
   const { specialists } = useSelector((state: RootState) => state.specialists);
 
-  const totalCalories = selectedMeals.reduce((sum, meal) => sum + (meal.nutritional_info?.calories || 0), 0);
-  const totalProtein = selectedMeals.reduce((sum, meal) => sum + (meal.nutritional_info?.protein || 0), 0);
-  const totalCarbs = selectedMeals.reduce((sum, meal) => sum + (meal.nutritional_info?.carbs || 0), 0);
-  const totalFat = selectedMeals.reduce((sum, meal) => sum + (meal.nutritional_info?.fat || 0), 0);
-  
+  // Calculate totals with multipliers
+  const totalCalories = selectedMeals.reduce((sum, sm) => sum + (sm.meal.nutritional_info.calories || 0) * sm.multiplier, 0);
+  const totalProtein = selectedMeals.reduce((sum, sm) => sum + (sm.meal.nutritional_info.protein || 0) * sm.multiplier, 0);
+  const totalCarbs = selectedMeals.reduce((sum, sm) => sum + (sm.meal.nutritional_info.carbs || 0) * sm.multiplier, 0);
+  const totalFat = selectedMeals.reduce((sum, sm) => sum + (sm.meal.nutritional_info.fat || 0) * sm.multiplier, 0);
+
   useEffect(() => {
     const fetchMeals = async () => {
       try {
@@ -77,16 +81,27 @@ const MealLibraryComponent = () => {
   }, []);
 
   const toggleMeal = (meal: MealLibrary) => {
+    setSelectedMeals((prev) => {
+      const exists = prev.find((m) => m.meal.id === meal.id);
+      if (exists) {
+        return prev.filter((m) => m.meal.id !== meal.id);
+      } else {
+        return [...prev, { meal, multiplier: 1 }];
+      }
+    });
+  };
+
+  const handleMultiplierChange = (mealId: string, value: number) => {
     setSelectedMeals((prev) =>
-      prev.some((m) => m.id === meal.id)
-        ? prev.filter((m) => m.id !== meal.id)
-        : [...prev, meal]
+      prev.map((m) =>
+        m.meal.id === mealId ? { ...m, multiplier: value } : m
+      )
     );
   };
 
   const handleConfirmMealPlan = async () => {
     if (selectedMeals.length === 0) {
-      navigate('/mealplansummary');
+      navigate("/mealplansummary");
       return;
     }
 
@@ -95,13 +110,16 @@ const MealLibraryComponent = () => {
       childId: data[0]?.id,
       meal_description: mealDescription,
       calories: totalCalories,
-      meals: selectedMeals.map((m) => ({ id: m.id })),
+      meals: selectedMeals.map((sm) => ({
+        id: sm.meal.id,
+        multiplier: sm.multiplier,
+      })),
     };
 
     try {
       setSubmitting(true);
       await api.post("/meal-plans/create", payload);
-      navigate('/mealplansummary');
+      navigate("/mealplansummary");
       setSelectedMeals([]);
     } catch (err) {
       console.error("Submission failed:", err);
@@ -129,16 +147,16 @@ const MealLibraryComponent = () => {
     );
   }
 
-  // ✅ Check if there is no child
   if (!data || data.length === 0) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6">
         <Placeholder header="No Child Found">
-           
-            <p style={{textAlign: 'center'}}>You need to add a child before creating a meal plan.</p>
+          <p style={{ textAlign: "center" }}>
+            You need to add a child before creating a meal plan.
+          </p>
           <Button
             className="mt-4 font-semibold px-4 py-2 rounded-lg"
-            onClick={() => navigate('/children')}
+            onClick={() => navigate("/children")}
           >
             ➕ Add Child
           </Button>
@@ -152,49 +170,49 @@ const MealLibraryComponent = () => {
       <Title className="mb-4 text-2xl text-emerald-400">🍽️ Create Meal Plan</Title>
 
       <Card className="auto w-full bg-[#1E1E2F] border border-gray-700 mb-6">
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ">
-    <Input
-      header="Meal Description"
-      value={mealDescription}
-      onChange={(e) => setMealDescription(e.target.value)}
-      className="col-span-1 sm:col-span-2 lg:col-span-3"
-    />
-    <Input
-      header="Total Calories"
-      type="number"
-      value={totalCalories}
-      disabled
-      className="bg-gray-800 text-white"
-    />
-    <Input
-      header="Total Protein (g)"
-      type="number"
-      value={totalProtein}
-      disabled
-      className="bg-gray-800 text-white"
-    />
-    <Input
-      header="Total Carbs (g)"
-      type="number"
-      value={totalCarbs}
-      disabled
-      className="bg-gray-800 text-white"
-    />
-    <Input
-      header="Total Fat (g)"
-      type="number"
-      value={totalFat}
-      disabled
-      className="bg-gray-800 text-white"
-    />
-  </div>
-</Card>
-
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ">
+          <Input
+            header="Meal Description"
+            value={mealDescription}
+            onChange={(e) => setMealDescription(e.target.value)}
+            className="col-span-1 sm:col-span-2 lg:col-span-3"
+          />
+          <Input
+            header="Total Calories"
+            type="number"
+            value={totalCalories}
+            disabled
+            className="bg-gray-800 text-white"
+          />
+          <Input
+            header="Total Protein (g)"
+            type="number"
+            value={totalProtein}
+            disabled
+            className="bg-gray-800 text-white"
+          />
+          <Input
+            header="Total Carbs (g)"
+            type="number"
+            value={totalCarbs}
+            disabled
+            className="bg-gray-800 text-white"
+          />
+          <Input
+            header="Total Fat (g)"
+            type="number"
+            value={totalFat}
+            disabled
+            className="bg-gray-800 text-white"
+          />
+        </div>
+      </Card>
 
       <div className="space-y-4">
         <Title className="text-lg text-white">Select Meals from Library</Title>
         {meals.map((meal) => {
-          const isSelected = selectedMeals.some((m) => m.id === meal.id);
+          const selected = selectedMeals.find((m) => m.meal.id === meal.id);
+          const isSelected = !!selected;
           return (
             <Card
               key={meal.id}
@@ -206,7 +224,6 @@ const MealLibraryComponent = () => {
                 <img
                   src={`https://lije-care-api-dev.zikollab.com/uploads/images/MEAL/${meal.imageUrl}`}
                   alt={meal.title}
-                  // onError={(e) => ((e.currentTarget.src = fallbackImg))}
                   className="w-54 h-24 object-cover rounded-lg"
                 />
                 <div className="flex-1">
@@ -217,10 +234,20 @@ const MealLibraryComponent = () => {
                     <div>💪 {meal.nutritional_info.protein} g protein</div>
                     <div>🍞 {meal.nutritional_info.carbs} g carbs</div>
                     <div>🧈 {meal.nutritional_info.fat} g fat</div>
-                    <div>🩸 {meal.nutritional_info.iron} mg iron</div>
-                    <div>🦴 {meal.nutritional_info.calcium} mg calcium</div>
-                    <div>👁️ {meal.nutritional_info.vitaminA} mcg Vitamin A</div>
                   </div>
+                  {isSelected && (
+                    <div className="mt-2">
+                      <Input
+                        header="Multiplier"
+                        type="number"
+                        min={1}
+                        value={selected.multiplier}
+                        onChange={(e) =>
+                          handleMultiplierChange(meal.id, Math.max(1, parseInt(e.target.value || "1")))
+                        }
+                      />
+                    </div>
+                  )}
                 </div>
                 <Button
                   onClick={() => toggleMeal(meal)}
@@ -253,11 +280,9 @@ const MealLibraryComponent = () => {
         disabled={submitting}
         className={`mt-6 w-full flex flex-row items-center justify-center gap-2 text-white text-lg font-semibold 
           py-3 rounded-lg transition-all duration-200
-          ${submitting ? 'bg-emerald-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700 active:scale-95'}
-        `}
+          ${submitting ? 'bg-emerald-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700'}`}
       >
-        <FaCheck className="text-white text-xl" />
-        <span>{submitting ? "Submitting..." : "Confirm Meal Plan"}</span>
+        {submitting ? "Submitting..." : "Confirm Meal Plan"}
       </Button>
     </div>
   );
