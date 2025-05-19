@@ -15,7 +15,6 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
-const fallbackImg = 'https://placehold.co/600x400';
 
 type Ingredient = {
   id: string;

@@ -62,7 +62,7 @@ export const deleteChildById = createAsyncThunk(
   "children/deleteChildById",
   async (childId: string, thunkAPI) => {
     try {
-      const res = await api.delete(`/children/${childId}`);
+       await api.delete(`/children/${childId}`);
       return childId;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || "Delete failed");
