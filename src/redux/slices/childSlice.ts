@@ -57,6 +57,22 @@ export const fetchChildrenByParentId = createAsyncThunk<Child[], string>(
   }
 );
 
+// Example async thunk
+export const deleteChildById = createAsyncThunk(
+  "children/deleteChildById",
+  async (childId: string, thunkAPI) => {
+    try {
+      const res = await api.delete(`/children/${childId}`);
+      return childId;
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(err.response?.data?.message || "Delete failed");
+    }
+  }
+);
+
+// Then handle this in the `extraReducers` to update state.data
+
+
 
 export const updateChild = createAsyncThunk("child/updateChild", async (updateChild: any) => {
  
