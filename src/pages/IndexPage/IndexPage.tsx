@@ -17,36 +17,28 @@ import DoctorsList from '@/components/Templates/DoctorsList';
 import ArticleSliderWidget from '../knowledgebase/ArticleSliderWidget';
 import { fetchArticles } from '@/redux/slices/articlesSlice';
 import { AppDispatch, RootState } from '@/redux/store';
-import parentAvatar from "@/assets/avatar.png";
+import parentAvatar from '@/assets/avatar.png';
 import { FaUser } from 'react-icons/fa';
 
 export const IndexPage: FC = () => {
   const [expanded, setExpanded] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+
   const { articles, loading } = useSelector((state: RootState) => state.articles);
+  const { data: children } = useSelector((state: RootState) => state.children);
+  const parentState = useSelector((state: RootState) => state.parent);
+
+  const parent = {
+    name: parentState.parent?.name ?? 'Unknown',
+    avatar: parentAvatar,
+  };
+
+  const child = children?.[0];
 
   useEffect(() => {
     dispatch(fetchArticles({ page: 1, limit: 6 }));
   }, [dispatch]);
-
-  const parentState = useSelector((state: RootState) => state.parent);
-  const parent = {
-    name: parentState.parent?.name,
-    avatar: {parentAvatar},
-  };
-
-  const child = {
-    name: 'Baby Sara',
-    avatar: 'https://i.pravatar.cc/150?img=5',
-    assessment: {
-      weight: '6.5 kg',
-      height: '65 cm',
-      
-      mood: 'Happy',
-      health: 'Excellent',
-    },
-  };
 
   if (loading) {
     return (
@@ -69,7 +61,17 @@ export const IndexPage: FC = () => {
             borderBottom: '1px solid #eee',
           }}
         >
-          <div onClick={()=> navigate('/profile') } style={{ display: 'flex', alignItems: 'center', gap: 12 ,  border: 'solid', borderRadius: '10px', padding: '5px'}}>
+          <div
+            onClick={() => navigate('/profile')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              border: 'solid',
+              borderRadius: '10px',
+              padding: '5px',
+            }}
+          >
             <FaUser className="text-6xl" />
             <div>
               <Title level="3">{parent.name}</Title>
@@ -77,60 +79,70 @@ export const IndexPage: FC = () => {
             </div>
           </div>
 
-          <div onClick={()=> navigate('/children') } style={{ display: 'flex', alignItems: 'center', gap: 12 , border: 'solid', borderRadius: '10px', padding: '5px' }}>
-            <Avatar src={child.avatar} size={48} />
-            <div>
-              <Title level="3">{child.name}</Title>
-              <Caption>Child</Caption>
-            </div>
+          <div
+            onClick={() => navigate('/children')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              border: 'solid',
+              borderRadius: '10px',
+              padding: '5px',
+            }}
+          >
+            {child ? (
+              <>
+                <Avatar src={child.avatar || <FaUser className="text-6xl" />} size={48} />
+                <div>
+                  <Title level="3">{child.name}</Title>
+                  <Caption>Child</Caption>
+                </div>
+              </>
+            ) : (
+              <div>
+                <Title level="4">No child</Title>
+                <Caption>Add a profile</Caption>
+              </div>
+            )}
           </div>
         </div>
 
         {/* 📊 Child Assessment */}
-        <div
-          style={{
-          
-            margin: '16px',
-            boxShadow: '0 1px 6px rgba(0, 0, 0, 0.05)',
-            
-          }}
-        >
-          <Headline weight="2" style={{ marginBottom: 12 }}>
-            Health Assessment
-          </Headline>
+        {child?.assessment && (
+          <div style={{ margin: '16px', boxShadow: '0 1px 6px rgba(0, 0, 0, 0.05)' }}>
+            <Headline weight="2" style={{ marginBottom: 12 }}>
+              Health Assessment
+            </Headline>
 
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-              gap: '12px',
-            }}
-          >
-            {Object.entries(child.assessment).map(([label, value]) => (
-              <div
-                key={label}
-                style={{
-                 border: '',
-                  
-                  padding: '1px',
-                  boxShadow: '0 1px 31px rgba(0,0,0,0.04)',
-                  textAlign: 'center',
-                }}
-              >
-                <Subheadline  style={{ marginBottom: 4 }}>
-                  {value}
-                </Subheadline>
-                <Caption style={{ color: '#888' }}>{label.toUpperCase()}</Caption>
-              </div>
-            ))}
-          </div>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                gap: '12px',
+              }}
+            >
+              {Object.entries(child.assessment).map(([label, value]) => (
+                <div
+                  key={label}
+                  style={{
+                    padding: '1px',
+                    boxShadow: '0 1px 31px rgba(0,0,0,0.04)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <Subheadline style={{ marginBottom: 4 }}>{value}</Subheadline>
+                  <Caption style={{ color: '#888' }}>{label.toUpperCase()}</Caption>
+                </div>
+              ))}
+            </div>
 
-          <div className="mt-4" style={{ marginTop: 16 }}>
-            <Button size="s" onClick={() => setExpanded(!expanded)}>
-              {expanded ? 'Hide Details' : 'Show Details'}
-            </Button>
+            <div className="mt-4" style={{ marginTop: 16 }}>
+              <Button size="s" onClick={() => setExpanded(!expanded)}>
+                {expanded ? 'Hide Details' : 'Show Details'}
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* 🧠 Categories & Widgets */}
         <Section>
