@@ -100,7 +100,7 @@ export const IndexPage: FC = () => {
               </>
             ) : (
               <div>
-                <Title level="4">No child</Title>
+                <Title >No child</Title>
                 <Caption>Add a profile</Caption>
               </div>
             )}
