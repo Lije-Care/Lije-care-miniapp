@@ -10,7 +10,7 @@ import {
   Caption,
 } from '@telegram-apps/telegram-ui';
 
-// const fallbackImage = 'https://via.placeholder.com/400x250?text=Meal+Image';
+const fallbackImg = 'https://via.placeholder.com/400x250?text=Meal+Image';
 
 const MealDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,7 +22,8 @@ const MealDetails: React.FC = () => {
     const fetchMealPlan = async () => {
       try {
         const res = await api.get(`/meal-plans/find-one/${id}`);
-        setData(res.data);
+        console.log('Meal Plan Data:', res.data.meals);
+        setData(res.data); // <-- Fix: properly set response data
       } catch (err: any) {
         setError(err?.response?.data?.message || 'Something went wrong');
       } finally {
@@ -54,112 +55,147 @@ const MealDetails: React.FC = () => {
   const meals = data?.meals || [];
 
   if (!meals.length) {
-    return <Text className="text-center mt-8">No meals found in this meal plan.</Text>;
+    return (
+      <Text className="text-center mt-8">
+        No meals found in this meal plan.
+      </Text>
+    );
   }
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6 text-white space-y-10">
       <Title className="text-2xl font-bold text-emerald-400">🥗 Meal Plan</Title>
 
-      {meals.map((meal: any) => {
-        const nutrition = meal.nutritional_info || {};
-
-        const steps = Array.isArray(meal.instructions)
-          ? meal.instructions
-          : typeof meal.instructions === 'string'
-          ? meal.instructions.split(/\d+\./).filter(Boolean)
-          : [];
-
-        return (
-          <div
-            key={meal.id}
-            className="bg-[#1f1f2b] border border-gray-700 rounded-xl p-4 shadow-md space-y-5"
-          >
-            <div className="flex flex-col md:flex-row gap-4 items-start">
+      {meals.map((meal: any) => (
+        <div
+          key={meal.id}
+          className="bg-[#1f1f2b] border border-gray-700 rounded-xl p-4 shadow-md space-y-5"
+        >
+          {/* Meal Image and Title */}
+          <div className="flex flex-col md:flex-row gap-4 items-start">
             <img
-                  src={`https://lije-care-api-dev.zikollab.com/uploads/images/MEAL/${meal.imageUrl}`}
-                  alt={meal.title}
-                  // onError={(e) => ((e.currentTarget.src = fallbackImg))}
-                  className="w-full h-24 object-cover rounded-lg"
-                />
-              <div className="flex-1">
-                <Title className="text-xl">{meal.title}</Title>
-                <Text className="text-gray-300">{meal.description}</Text>
-              </div>
-            </div>
-
-            <Divider />
-
-            <div>
-              <Title className="text-md">📋 Instructions</Title>
-              <ul className="list-decimal pl-5 mt-2 space-y-1 text-sm text-gray-200">
-                {steps.map((step: string, i: number) => (
-                  <li key={i}>{step.trim()}</li>
-                ))}
-              </ul>
-            </div>
-
-            <Divider />
-
-            <div>
-              <Title className="text-sm">🧪 Nutritional Info</Title>
-              <div className="grid grid-cols-2 md:grid-cols-4 p-0 m-0 text-sm gap-2">
-                <div className="flex items-start gap-1 whitespace-normal break-words overflow-visible">
-                  <span>🔥</span>
-                  <span>Clrs: {nutrition?.calories ?? 'N/A'}</span>
-                </div>
-                <div className="flex items-start gap-1 whitespace-normal break-words overflow-visible">
-                  <span>🥩</span>
-                  <span>Prtn: {nutrition?.protein ?? 'N/A'}</span>
-                </div>
-                <div className="flex items-start gap-1 whitespace-normal break-words overflow-visible">
-                  <span>🥑</span>
-                  <span>Fat: {nutrition?.fat ?? 'N/A'}</span>
-                </div>
-                <div className="flex items-start gap-1 whitespace-normal break-words overflow-visible">
-                  <span>🍞</span>
-                  <span>Carbs: {nutrition?.carbs ?? 'N/A'}</span>
-                </div>
-              </div>
-            </div>
-
-            <Divider />
-
-            <div>
-              <Title className="text-md">🧠 General Info</Title>
-              <ul className="text-sm mt-2 space-y-1 text-gray-300">
-                <li><strong>Age Group:</strong> {meal.age_group}</li>
-                <li><strong>Meal Type:</strong> {meal.meal_type}</li>
-                <li><strong>Prep Time:</strong> {meal.preparation_time} mins</li>
-              </ul>
+              src={
+                meal.imageUrl
+                  ? `https://lije-care-api-dev.zikollab.com/uploads/images/MEAL/${meal.imageUrl}`
+                  : fallbackImg
+              }
+              alt={meal.name}
+              onError={(e) => {
+                e.currentTarget.src = fallbackImg;
+              }}
+              className="w-full h-24 object-cover rounded-lg"
+            />
+            <div className="flex-1">
+              <Title className="text-xl">{meal.name}</Title>
+              <Text className="text-gray-300">{meal.description}</Text>
             </div>
           </div>
-        );
-      })}
 
-      <Divider />
+          <Divider />
 
-      {/* Expert Info */}
-      <div className="bg-[#1f1f2b] border border-gray-700 rounded-xl p-4">
-        <Title className="text-md text-emerald-400">👨‍⚕️ Expert Info</Title>
-        <ul className="text-sm mt-2 text-gray-300 space-y-1">
-          <li><strong>Name:</strong> {data?.expert?.firstName} {data?.expert?.lastName}</li>
-          <li><strong>Phone:</strong> {data?.expert?.phone}</li>
-        </ul>
-      </div>
+          {/* General Meal Info */}
+          <div>
+            <Title className="text-md">🧠 General Info</Title>
+            <ul className="text-sm mt-2 space-y-1 text-gray-300">
+              <li><strong>Meal Time:</strong> {meal.mealTime}</li>
+              <li><strong>Meal Type:</strong> {meal.mealType}</li>
+              <li><strong>Age Group:</strong> {meal.ageGroup}</li>
+              <li><strong>Total Volume:</strong> {meal.totalVolume} ml</li>
+            </ul>
+          </div>
 
-      {/* Child Info */}
-      {/* <div className="bg-[#1f1f2b] border border-gray-700 rounded-xl p-4">
-        <Title className="text-md text-sky-400">👶 Child Info</Title>
-        <ul className="text-sm mt-2 text-gray-300 space-y-1">
-          <li><strong>Name:</strong> {data?.child?.name}</li>
-          <li><strong>Date of Birth:</strong> {new Date(data?.child?.date_of_birth).toLocaleDateString()}</li>
-          <li><strong>Gender:</strong> {data?.child?.gender}</li>
-          <li><strong>Weight:</strong> {data?.child?.weight} kg</li>
-          <li><strong>Height:</strong> {data?.child?.height} cm</li>
-          <li><strong>MUAC:</strong> {data?.child?.muac} cm</li>
-        </ul>
-      </div> */}
+          {/* Allergens, Intolerance, Choking Info */}
+          {(meal.allergen || meal.intolerance || meal.choking) && (
+            <>
+              <Divider />
+              <div>
+                <Title className="text-md">⚠️ Sensitivities</Title>
+                <ul className="text-sm mt-2 space-y-1 text-gray-300">
+                  {meal.allergen && (
+                    <li><strong>Allergen:</strong> Yes - {meal.allergenDescription}</li>
+                  )}
+                  {meal.intolerance && (
+                    <li><strong>Intolerance:</strong> Yes - {meal.intoleranceDescription}</li>
+                  )}
+                  {meal.choking && (
+                    <li><strong>Choking Hazard:</strong> Yes</li>
+                  )}
+                </ul>
+              </div>
+            </>
+          )}
+
+          {/* Directions */}
+          {meal.direction && (
+            <>
+              <Divider />
+              <div>
+                <Title className="text-md">📋 Directions</Title>
+                <Text className="text-sm text-gray-300 mt-2 whitespace-pre-wrap">
+                  {meal.direction}
+                </Text>
+              </div>
+            </>
+          )}
+
+          {/* Modification Note */}
+          {meal.modificationNote && (
+            <>
+              <Divider />
+              <div>
+                <Title className="text-md">🛠️ Modification Note</Title>
+                <Text className="text-sm text-gray-300 mt-2 whitespace-pre-wrap">
+                  {meal.modificationNote}
+                </Text>
+              </div>
+            </>
+          )}
+
+          {/* How to Store */}
+          {meal.howToStore && (
+            <>
+              <Divider />
+              <div>
+                <Title className="text-md">📦 How to Store</Title>
+                <Text className="text-sm text-gray-300 mt-2 whitespace-pre-wrap">
+                  {meal.howToStore}
+                </Text>
+              </div>
+            </>
+          )}
+
+          {/* Drug Interaction */}
+          {meal.drugInteraction && (
+            <>
+              <Divider />
+              <div>
+                <Title className="text-md">💊 Drug Interaction</Title>
+                <Text className="text-sm text-gray-300 mt-2 whitespace-pre-wrap">
+                  {meal.drugInteraction}
+                </Text>
+              </div>
+            </>
+          )}
+
+          {/* Video URL */}
+          {meal.videoUrl && (
+            <>
+              <Divider />
+              <div>
+                <Title className="text-md">🎥 Video Tutorial</Title>
+                <a
+                  href={meal.videoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-sky-400 underline"
+                >
+                  Watch Video
+                </a>
+              </div>
+            </>
+          )}
+        </div>
+      ))}
     </div>
   );
 };

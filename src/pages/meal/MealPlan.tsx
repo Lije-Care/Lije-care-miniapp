@@ -1,78 +1,58 @@
 import { useEffect, useState } from "react";
 import api from "@/api/axios";
-import {
-  Button,
-  Card,
-  Placeholder,
-  Text,
-  Title,
-  Input,
-  Caption,
-  Spinner,
-} from "@telegram-apps/telegram-ui";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 
-type Ingredient = {
+export type Meal = {
   id: string;
   name: string;
-};
-
-type NutritionalInfo = {
-  calories: number;
-  protein: number;
-  fat: number;
-  carbs: number;
-  iron: number;
-  calcium: number;
-  vitaminA: number;
-};
-
-type MealLibrary = {
-  id: string;
-  title: string;
   description: string;
-  instructions: string[];
-  nutritional_info: NutritionalInfo;
-  age_group: string;
-  meal_type: string;
-  preparation_time: string;
+  mealTime: "BREAKFAST" | "SNACK" | "LUNCH" | "DINNER";
+  mealType: "SOLID" | "DRINK" | "SEMI_SOLID";
+  ageGroup: '0-5' | '6-12' | '13-18' | 'ADULT' | string;
+  allergen: boolean;
+  intolerance: boolean;
+  choking: boolean;
+  allergenDescription: string;
+  intoleranceDescription: string;
+  drugInteraction: string;
+  totalVolume: number;
+  direction: string;
+  modificationNote: string;
+  howToStore: string | null;
+  videoUrl: string;
   imageUrl: string;
-  ingredients: Ingredient[];
+  createdAt: string;
+  updatedAt: string;
 };
 
 type SelectedMeal = {
-  meal: MealLibrary;
+  meal: Meal;
   multiplier: number;
 };
 
 const MealLibraryComponent = () => {
-  const [meals, setMeals] = useState<MealLibrary[]>([]);
+  const [meals, setMeals] = useState<Meal[]>([]);
   const [selectedMeals, setSelectedMeals] = useState<SelectedMeal[]>([]);
+  const [mealDescription, setMealDescription] = useState("A healthy and balanced meal plan for the child.");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [mealDescription, setMealDescription] = useState("A healthy and balanced meal plan for the child.");
-  const navigate = useNavigate();
-  const { data } = useSelector((state: RootState) => state.children);
-  const { specialists } = useSelector((state: RootState) => state.specialists);
 
-  // Calculate totals with multipliers
-  const totalCalories = selectedMeals.reduce((sum, sm) => sum + (sm.meal.nutritional_info.calories || 0) * sm.multiplier, 0);
-  const totalProtein = selectedMeals.reduce((sum, sm) => sum + (sm.meal.nutritional_info.protein || 0) * sm.multiplier, 0);
-  const totalCarbs = selectedMeals.reduce((sum, sm) => sum + (sm.meal.nutritional_info.carbs || 0) * sm.multiplier, 0);
-  const totalFat = selectedMeals.reduce((sum, sm) => sum + (sm.meal.nutritional_info.fat || 0) * sm.multiplier, 0);
+  const navigate = useNavigate();
+  const { data: children } = useSelector((state: RootState) => state.children);
+  const { specialists } = useSelector((state: RootState) => state.specialists);
 
   useEffect(() => {
     const fetchMeals = async () => {
       try {
-        const res = await api.get("mealLibrary/findall?skip=0");
-        const data = Array.isArray(res.data) ? res.data : res.data?.data;
-        setMeals(data || []);
+        const res = await api.get("meal/find-all?skip=0");
+        const responseData = Array.isArray(res.data) ? res.data : res.data?.data;
+        setMeals(responseData || []);
       } catch (err) {
-        console.error("Failed to fetch meals:", err);
-        setError("Failed to load meals. Please try again later.");
+        console.error("Error fetching meals:", err);
+        setError("Could not load meals. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -80,50 +60,46 @@ const MealLibraryComponent = () => {
     fetchMeals();
   }, []);
 
-  const toggleMeal = (meal: MealLibrary) => {
+  const toggleMeal = (meal: Meal) => {
     setSelectedMeals((prev) => {
       const exists = prev.find((m) => m.meal.id === meal.id);
-      if (exists) {
-        return prev.filter((m) => m.meal.id !== meal.id);
-      } else {
-        return [...prev, { meal, multiplier: 1 }];
-      }
+      return exists
+        ? prev.filter((m) => m.meal.id !== meal.id)
+        : [...prev, { meal, multiplier: 1 }];
     });
   };
 
   const handleMultiplierChange = (mealId: string, value: number) => {
     setSelectedMeals((prev) =>
-      prev.map((m) =>
-        m.meal.id === mealId ? { ...m, multiplier: value } : m
-      )
+      prev.map((m) => (m.meal.id === mealId ? { ...m, multiplier: Math.max(1, value) } : m))
     );
   };
 
+  const total = (field: keyof Meal) =>
+    selectedMeals.reduce((sum, sm) => {
+      const val = (sm.meal[field] as unknown as number) || 0;
+      return sum + val * sm.multiplier;
+    }, 0);
+
   const handleConfirmMealPlan = async () => {
-    if (selectedMeals.length === 0) {
-      navigate("/mealplansummary");
-      return;
-    }
+    if (!children.length) return navigate("/children");
 
     const payload = {
       expertId: specialists[0]?.id,
-      childId: data[0]?.id,
+      childId: children[0]?.id,
       meal_description: mealDescription,
-      calories: totalCalories,
-      meals: selectedMeals.map((sm) => ({
-        id: sm.meal.id,
-        multiplier: sm.multiplier,
-      })),
+      calories: total("totalVolume"),
+      meals: selectedMeals.map(({ meal, multiplier }) => ({ id: meal.id, multiplier })),
     };
 
     try {
       setSubmitting(true);
       await api.post("/meal-plans/create", payload);
-      navigate("/mealplansummary");
       setSelectedMeals([]);
-    } catch (err) {
-      console.error("Submission failed:", err);
-      alert("Failed to create meal plan. Please try again later.");
+      navigate("/mealplansummary");
+    } catch (error) {
+      console.error("Submit failed:", error);
+      alert("Something went wrong. Try again.");
     } finally {
       setSubmitting(false);
     }
@@ -131,159 +107,120 @@ const MealLibraryComponent = () => {
 
   if (loading) {
     return (
-      <Placeholder header="Loading Meals...">
-        <Spinner size={"s"} />
-        <Caption>Fetching healthy meal options for your child...</Caption>
-      </Placeholder>
+      <div className="flex flex-col items-center justify-center min-h-screen text-center p-6 text-white">
+        <p className="text-lg font-semibold mb-2">Loading Meals...</p>
+        <p className="text-sm text-gray-400">Fetching healthy meal options for your child...</p>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center">
-        <Title>Error Loading Meals</Title>
-        <Text>{error}</Text>
+      <div className="text-center p-6 text-red-500 font-semibold">
+        {error}
       </div>
     );
   }
 
-  if (!data || data.length === 0) {
+  if (!children.length) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6">
-        <Placeholder header="No Child Found">
-          <p style={{ textAlign: "center" }}>
-            You need to add a child before creating a meal plan.
-          </p>
-          <Button
-            className="mt-4 font-semibold px-4 py-2 rounded-lg"
-            onClick={() => navigate("/children")}
-          >
-            ➕ Add Child
-          </Button>
-        </Placeholder>
+      <div className="flex flex-col items-center justify-center min-h-screen text-center text-white p-6">
+        <p className="text-xl font-semibold mb-2">No child profile found</p>
+        <p className="text-sm mb-4 text-gray-400">Add a child to create a meal plan</p>
+        <button
+          onClick={() => navigate("/children")}
+          className="bg-emerald-600 hover:bg-emerald-700 px-5 py-2 rounded-md font-semibold text-white"
+        >
+          ➕ Add Child
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-5xl mx-auto text-white">
-      <Title className="mb-4 text-2xl text-emerald-400">🍽️ Create Meal Plan</Title>
+    <div className="p-4 max-w-3xl mx-auto text-white space-y-6">
+      <h1 className="text-2xl font-bold text-emerald-400">🍽️ Create Meal Plan</h1>
 
-      <Card className="auto w-full bg-[#1E1E2F] border border-gray-700 mb-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 ">
-          <Input
-            header="Meal Description"
-            value={mealDescription}
-            onChange={(e) => setMealDescription(e.target.value)}
-            className="col-span-1 sm:col-span-2 lg:col-span-3"
-          />
-          <Input
-            header="Total Calories"
-            type="number"
-            value={totalCalories}
-            disabled
-            className="bg-gray-800 text-white"
-          />
-          <Input
-            header="Total Protein (g)"
-            type="number"
-            value={totalProtein}
-            disabled
-            className="bg-gray-800 text-white"
-          />
-          <Input
-            header="Total Carbs (g)"
-            type="number"
-            value={totalCarbs}
-            disabled
-            className="bg-gray-800 text-white"
-          />
-          <Input
-            header="Total Fat (g)"
-            type="number"
-            value={totalFat}
-            disabled
-            className="bg-gray-800 text-white"
-          />
+      {/* Description & Totals */}
+      <div className="bg-[#1E1E2F] p-4 rounded-lg shadow space-y-3">
+        <textarea
+          className="w-full p-2 bg-gray-800 text-white rounded"
+          rows={2}
+          value={mealDescription}
+          onChange={(e) => setMealDescription(e.target.value)}
+          placeholder="Describe the meal plan..."
+        />
+        <div className="grid grid-cols-2 gap-3 text-sm">
+          <div>📊 Total Volume: <strong>{total("totalVolume")} ml</strong></div>
+          <div>📆 Meals Selected: <strong>{selectedMeals.length}</strong></div>
         </div>
-      </Card>
+      </div>
 
+      {/* Meal Cards */}
       <div className="space-y-4">
-        <Title className="text-lg text-white">Select Meals from Library</Title>
         {meals.map((meal) => {
           const selected = selectedMeals.find((m) => m.meal.id === meal.id);
-          const isSelected = !!selected;
           return (
-            <Card
+            <div
               key={meal.id}
-              className={`flex flex-col sm:flex-row items-center justify-between p-4 border ${
-                isSelected ? "border-green-500 bg-green-100/10" : "bg-[#101827]"
+              className={`p-4 rounded-lg border transition-all duration-200 ${
+                selected ? "border-emerald-400 bg-emerald-900/10" : "border-gray-700 bg-[#101827]"
               }`}
             >
-              <div className="flex flex-col sm:flex-row gap-4 w-full items-center">
+              <div className="flex gap-4 items-start">
                 <img
                   src={`https://lije-care-api-dev.zikollab.com/uploads/images/MEAL/${meal.imageUrl}`}
-                  alt={meal.title}
-                  className="w-54 h-24 object-cover rounded-lg"
+                  alt={meal.name}
+                  className="w-24 h-24 object-cover rounded"
                 />
-                <div className="flex-1">
-                  <Text className="text-xl font-semibold">{meal.title}</Text>
-                  <Caption>{meal.age_group} · {meal.meal_type} · Prep: {meal.preparation_time} min</Caption>
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 mt-2 text-sm">
-                    <div>🔥 {meal.nutritional_info.calories} kcal</div>
-                    <div>💪 {meal.nutritional_info.protein} g protein</div>
-                    <div>🍞 {meal.nutritional_info.carbs} g carbs</div>
-                    <div>🧈 {meal.nutritional_info.fat} g fat</div>
-                  </div>
-                  {isSelected && (
-                    <div className="mt-2">
-                      <Input
-                        header="Multiplier"
+                <div className="flex-1 space-y-1">
+                  <h2 className="text-lg font-semibold">{meal.name}</h2>
+                  <p className="text-xs text-gray-400">{meal.ageGroup} · {meal.mealType} · {meal.mealTime}</p>
+                  <p className="text-sm text-gray-300">{meal.description}</p>
+
+                  {selected && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <label className="text-sm text-gray-300">Multiplier:</label>
+                      <input
                         type="number"
                         min={1}
                         value={selected.multiplier}
                         onChange={(e) =>
-                          handleMultiplierChange(meal.id, Math.max(1, parseInt(e.target.value || "1")))
+                          handleMultiplierChange(meal.id, parseInt(e.target.value) || 1)
                         }
+                        className="w-16 px-2 py-1 bg-gray-800 text-white rounded"
                       />
                     </div>
                   )}
                 </div>
-                <Button
-                  onClick={() => toggleMeal(meal)}
-                  className={`text-white h-10 px-5 ${
-                    isSelected ? "bg-red-500" : "bg-blue-500"
-                  }`}
-                >
-                  {isSelected ? "Remove" : "Add"}
-                </Button>
               </div>
 
-              {isSelected && (
-                <div className="mt-4 w-full">
-                  <Caption className="text-sm font-medium text-gray-400">📝 Instructions:</Caption>
-                  <ul className="text-sm list-disc list-inside text-gray-300 mt-1">
-                    {Array.isArray(meal.instructions) &&
-                      meal.instructions.map((step, idx) => (
-                        <li key={idx}>{step}</li>
-                      ))}
-                  </ul>
-                </div>
-              )}
-            </Card>
+              <div className="mt-3 flex justify-between items-center">
+                <button
+                  onClick={() => toggleMeal(meal)}
+                  className={`text-sm px-4 py-2 rounded font-semibold ${
+                    selected ? "bg-red-500" : "bg-blue-500"
+                  }`}
+                >
+                  {selected ? "Remove" : "Add"}
+                </button>
+              </div>
+            </div>
           );
         })}
       </div>
 
-      <Button
+      <button
         onClick={handleConfirmMealPlan}
         disabled={submitting}
-        className={`mt-6 w-full flex flex-row items-center justify-center gap-2 text-white text-lg font-semibold 
-          py-3 rounded-lg transition-all duration-200
-          ${submitting ? 'bg-emerald-400 cursor-not-allowed' : 'bg-emerald-600 hover:bg-emerald-700'}`}
+        className={`w-full py-3 rounded-lg text-white text-lg font-semibold transition-all ${
+          submitting
+            ? "bg-emerald-400 cursor-not-allowed"
+            : "bg-emerald-600 hover:bg-emerald-700"
+        }`}
       >
-        {submitting ? "Submitting..." : "Confirm Meal Plan"}
-      </Button>
+        {submitting ? "Submitting..." : "✅ Confirm Meal Plan"}
+      </button>
     </div>
   );
 };

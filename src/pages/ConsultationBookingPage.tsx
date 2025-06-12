@@ -21,7 +21,7 @@ export default function ConsultationTab() {
   const [selectedSlot, setSelectedSlot] = useState<string>('');
   const [confirmed, setConfirmed] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
-  const [userPackageId, setUserPackageId] = useState<string | null>(null);
+  // const [userPackageId, setUserPackageId] = useState<string | null>(null);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [loadingPackage, setLoadingPackage] = useState(false); // For package loading indicator
   const [errorMsg, setErrorMsg] = useState('');
@@ -35,7 +35,7 @@ export default function ConsultationTab() {
   useEffect(() => {
     if (selectedDoctor) {
       fetchAvailability(selectedDoctor.id);
-      fetchUserPackage(); // Check if user already has a package
+      // fetchUserPackage(); // Check if user already has a package
     }
   }, [selectedDoctor]);
 
@@ -56,7 +56,7 @@ export default function ConsultationTab() {
     try {
       // First, try to get active user package
       const res = await api.get(`/user-package/active?userId=${telegramuser?.id}`);
-      setUserPackageId(res.data.id);
+      // setUserPackageId(res.data.id);
     } catch (e: any) {
       console.warn('No active user package found. Fetching available packages...');
       try {
@@ -79,7 +79,7 @@ export default function ConsultationTab() {
           packageId: selectedPackage.id,
         });
 
-        setUserPackageId(createRes.data.id);
+        // setUserPackageId(createRes.data.id);
       } catch (packageErr) {
         console.error('Failed to fetch or create package:', packageErr);
         setErrorMsg('Unable to assign a package. Please try again later.');
@@ -90,7 +90,9 @@ export default function ConsultationTab() {
   };
 
   const bookSlot = async () => {
-    if (!selectedSlot || !selectedDoctor || !userPackageId) {
+    if (!selectedSlot || !selectedDoctor 
+      // || !userPackageId
+      ) {
       setErrorMsg('Please complete all fields or purchase a package.');
       return;
     }
@@ -100,7 +102,7 @@ export default function ConsultationTab() {
         parentId: telegramuser?.id,
         expertId: selectedDoctor.id,
         slotId: selectedSlot,
-        userPackageId,
+        // userPackageId,
       });
 
       setConfirmed(true);
@@ -246,7 +248,9 @@ export default function ConsultationTab() {
 
           {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
 
-          {selectedSlot && userPackageId && (
+          {selectedSlot && 
+          // userPackageId && 
+          (
             <Button className="w-full mt-4 bg-emerald-600 text-white" onClick={bookSlot}>
               Confirm Booking
             </Button>

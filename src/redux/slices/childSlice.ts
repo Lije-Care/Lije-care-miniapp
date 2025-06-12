@@ -11,6 +11,8 @@ interface ChildState {
 }
 
 export type Child = {
+  avatar: any;
+  assessment: any;
   id: string;
   parent_id: string;
   name: string;
