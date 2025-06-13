@@ -13,7 +13,7 @@ import { Page } from "@/components/Page";
 
 const SignUpPage = () => {
   return (
-    <Page>
+    <Page back={true}>
       <Section>
         <Title>Create New Account</Title>
         <Text>Full Name</Text>

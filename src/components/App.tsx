@@ -22,6 +22,9 @@ import { fetchParent } from '@/redux/slices/itemSlice';
 import { AppDispatch } from '@/redux/store';
 import { fetchChildrenByParentId } from '@/redux/slices/childSlice';
 import { fetchSpecialists } from '@/redux/slices/specialistSlice';
+import ProtectedRoute from './ProtectedRoute';
+import RequireChildren from './RequireChildren';
+import AddChildPage from './AddChildPage';
 
 
 const Layout = ({ children }: {children: any}) => (
@@ -74,20 +77,40 @@ export function App() {
     >
       <HashRouter>
         <Layout>
-        <Routes>
-          {routes.map((route) => <Route key={route.path} {...route} />)}
-          <Route path="*" element={<Navigate to="/"/>}/>
-         
-          <Route path="/meal" element={<MealComponent />} />
-          <Route path="/articles" element={<ArticlesPage />} />
-          <Route path="/articles/:id" element={<ArticleDetail />} />
-          <Route path="/mealplansummary" element={<MealPlanSummary />} />
-          <Route path="/meal-plans/edit/:id" element={<EditMealPlan />} />
-          <Route path="/mealplansummary/:id" element={<MealDetails />} />
-          <Route path="/chat" element={<ConsultationTab />} />
-          <Route path="/video-call" element={<VideoCall />} />
-          
-          </Routes>
+       <Routes>
+  {routes.map(({ path, Component, protected: isProtected }) => {
+    const isChildProtected = !['/signin', '/signup', '/add-child'].includes(path);
+
+    const wrapped = isProtected ? (
+      <ProtectedRoute>
+        {isChildProtected ? (
+          <RequireChildren>
+            <Component />
+          </RequireChildren>
+        ) : (
+          <Component />
+        )}
+      </ProtectedRoute>
+    ) : (
+      <Component />
+    );
+
+    return <Route key={path} path={path} element={wrapped} />;
+  })}
+
+  <Route path="/add-child" element={<AddChildPage />} />
+  <Route path="/meal" element={<ProtectedRoute><RequireChildren><MealComponent /></RequireChildren></ProtectedRoute>} />
+  <Route path="/articles" element={<ArticlesPage />} />
+  <Route path="/articles/:id" element={<ArticleDetail />} />
+  <Route path="/mealplansummary" element={<ProtectedRoute><RequireChildren><MealPlanSummary /></RequireChildren></ProtectedRoute>} />
+  <Route path="/meal-plans/edit/:id" element={<ProtectedRoute><RequireChildren><EditMealPlan /></RequireChildren></ProtectedRoute>} />
+  <Route path="/mealplansummary/:id" element={<ProtectedRoute><RequireChildren><MealDetails /></RequireChildren></ProtectedRoute>} />
+  <Route path="/chat" element={<ProtectedRoute><RequireChildren><ConsultationTab /></RequireChildren></ProtectedRoute>} />
+  <Route path="/video-call" element={<ProtectedRoute><RequireChildren><VideoCall /></RequireChildren></ProtectedRoute>} />
+
+  <Route path="*" element={<Navigate to="/" />} />
+</Routes>
+
         </Layout>
       </HashRouter>
     </AppRoot>

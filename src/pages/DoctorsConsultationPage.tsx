@@ -4,6 +4,7 @@ import docIcon1 from "@/assets/images/docicon1.png";
 // import docIcon2 from "@/assets/images/docicon2.png";
 import docIcon3 from "@/assets/images/docicon3.png";
 import { IoMic, IoSearch } from 'react-icons/io5';
+import { Page } from '@/components/Page';
 
 interface Doctor {
   id: number;
@@ -58,6 +59,7 @@ const DoctorsConsultationPage: React.FC = () => {
   const [search, setSearch] = useState("");
 
   return (
+     <Page back={true}>
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-6">Doctor Consultations</h1>
        {/* Search */}
@@ -114,6 +116,7 @@ const DoctorsConsultationPage: React.FC = () => {
       </div>
       </div>
     </div>
+    </Page>
   );
 };
 

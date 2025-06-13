@@ -1,4 +1,5 @@
 // import { useEffect } from "react";
+import { Page } from "@/components/Page";
 import { Text, Button } from "@telegram-apps/telegram-ui";
 import { useNavigate } from "react-router-dom";
 
@@ -8,6 +9,7 @@ const PaymentSuccessScreen = () => {
  
 
   return (
+    <Page back={true}>
     <div style={{
       display: "flex",
       flexDirection: "column",
@@ -50,6 +52,7 @@ const PaymentSuccessScreen = () => {
         Back
         </Button>
     </div>
+    </Page>
   );
 };
 

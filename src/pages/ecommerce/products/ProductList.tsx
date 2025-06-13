@@ -1,5 +1,6 @@
 import { Headline } from "@telegram-apps/telegram-ui";
 import product1 from "@/assets/logo.png"
+import { Page } from "@/components/Page";
 
 const products = [
   { img: product1, name: "Coming", description: "Soon..", price: 100 },
@@ -27,6 +28,7 @@ const ProductCard = ({ product }: {product: any}) => {
 
 const ProductList = () => {
     return (
+      <Page back={true}>
       <div className="p-4 ">
       <h2 className="text-white text-lg font-bold mb-3">Products</h2>
       <div className="grid grid-cols-2 gap-4">
@@ -36,6 +38,7 @@ const ProductList = () => {
       </div>
      
     </div>
+    </Page>
     );
   };
   

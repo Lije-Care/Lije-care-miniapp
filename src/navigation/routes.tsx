@@ -13,26 +13,29 @@ import MealPlanPage from '@/pages/meal/MealPlanPage';
 import ConsultationBookingPage from '@/pages/ConsultationBookingPage';
 import ChildProfilePage from '@/pages/ChildProfilePage';
 import ChildrenListPage from '@/pages/ChildrenListPage';
+import UserOnboardingForm from '@/components/UserOnboardingForm';
 
 interface Route {
-  path: string;
-  Component: ComponentType;
-  title?: string;
-  icon?: JSX.Element;
+   path: string;
+    Component: ComponentType;
+    protected?: boolean; // <-- new field
+    title?: string;
+    icon?: JSX.Element;
 }
 
 export const routes: Route[] = [
-  { path: '/', Component: IndexPage },
-  { path: '/book', Component: BookDoctorsPage, title: 'Booking Page' },
-  { path: '/payment', Component: PaymentScreen, title: 'payment page' },
-  { path: '/checkout', Component: PaymentSuccessScreen, title: 'payment page' },
+  { path: '/', Component: IndexPage, protected: true  },
+  { path: '/onboarding', Component: UserOnboardingForm, protected: false },
+  { path: '/book', Component: BookDoctorsPage, title: 'Booking Page', protected: true },
+  { path: '/payment', Component: PaymentScreen, title: 'payment page', protected: true },
+  { path: '/checkout', Component: PaymentSuccessScreen, title: 'payment page', protected: true },
   { path: '/signin', Component: SigninPage, title: 'SignIn' },
   { path: '/signup', Component: SignUpPage, title: 'SignUp' },
-  { path: '/profile', Component: ProfileScreen, title: 'Profile' },
-  { path: '/ecommerce', Component: ProductList, title: 'Products' },
-  { path: '/consultation', Component: DoctorsConsultationPage, title: 'Doctor Consultation' },
-  { path: '/consultation/:doctorId', Component: ConsultationBookingPage, title: 'Book Consultation' },
-  { path: '/meal-plans', Component: MealPlanPage, title: 'Meal Plans' },
-  { path: '/children', Component: ChildrenListPage, title: 'My Children' },
-  { path: '/child/:childId', Component: ChildProfilePage, title: 'Child Profile' },
+  { path: '/profile', Component: ProfileScreen, title: 'Profile', protected: true },
+  { path: '/ecommerce', Component: ProductList, title: 'Products', protected: true },
+  { path: '/consultation', Component: DoctorsConsultationPage, title: 'Doctor Consultation', protected: true },
+  { path: '/consultation/:doctorId', Component: ConsultationBookingPage, title: 'Book Consultation', protected: true },
+  { path: '/meal-plans', Component: MealPlanPage, title: 'Meal Plans', protected: true },
+  { path: '/children', Component: ChildrenListPage, title: 'My Children', protected: true },
+  { path: '/child/:childId', Component: ChildProfilePage, title: 'Child Profile', protected: true },
 ];

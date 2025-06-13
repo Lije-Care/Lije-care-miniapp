@@ -9,6 +9,7 @@ import {
 } from "@telegram-apps/telegram-ui";
 import { SegmentedControlItem } from "@telegram-apps/telegram-ui/dist/components/Navigation/SegmentedControl/components/SegmentedControlItem/SegmentedControlItem";
 import { useNavigate } from "react-router-dom";
+import { Page } from "../Page";
 
 const PaymentScreen = () => {
   // const themeParams = window?.Telegram?.WebApp?.themeParams || {}; // Fetch Telegram theme
@@ -21,6 +22,7 @@ const PaymentScreen = () => {
   // }, [themeParams]);
 
   return (
+     <Page back={true}>
     <div style={{
       padding: "20px",
       // background: themeParams.bg_color || "#001F33",
@@ -84,6 +86,7 @@ const PaymentScreen = () => {
       >Pay now</Button>
 
     </div>
+    </Page>
   );
 };
 

@@ -14,7 +14,7 @@ export const BookDoctorsPage: FC = () => {
 
 
     return (
-          <Page>
+           <Page back={true}>
            
            <div style={{
       padding: "20px",

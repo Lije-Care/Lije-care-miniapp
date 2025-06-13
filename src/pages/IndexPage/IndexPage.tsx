@@ -19,6 +19,7 @@ import { fetchArticles } from '@/redux/slices/articlesSlice';
 import { AppDispatch, RootState } from '@/redux/store';
 import parentAvatar from '@/assets/avatar.png';
 import { FaUser } from 'react-icons/fa';
+import GrowthTrackerHome from '../Profile/GrowthTrackerHome';
 
 export const IndexPage: FC = () => {
   const [expanded, setExpanded] = useState(true);
@@ -28,12 +29,10 @@ export const IndexPage: FC = () => {
   const { articles, loading } = useSelector((state: RootState) => state.articles);
   const { data: children } = useSelector((state: RootState) => state.children);
   const parentState = useSelector((state: RootState) => state.parent);
-
   const parent = {
-    name: parentState.parent?.name ?? 'Unknown',
+    name: parentState.parent?.firstName ?? 'Unknown',
     avatar: parentAvatar,
   };
-
   const child = children?.[0];
 
   useEffect(() => {
@@ -50,49 +49,29 @@ export const IndexPage: FC = () => {
 
   return (
     <Page back={true}>
-      <Section style={{ overflow: 'auto', paddingBottom: 30 }}>
-        {/* 👤 Parent & Child Profile Row */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '16px',
-            borderBottom: '1px solid #eee',
-          }}
-        >
+      <Section className="overflow-y-auto pb-8">
+        {/* 👨‍👩‍👧 Profile Cards */}
+        <div className="flex gap-4 px-4 py-3 justify-between">
+          {/* Parent Card */}
           <div
             onClick={() => navigate('/profile')}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-              border: 'solid',
-              borderRadius: '10px',
-              padding: '5px',
-            }}
+            className="flex items-center gap-3 border rounded-xl px-3 py-2 shadow-sm cursor-pointer"
           >
-            <FaUser className="text-6xl" />
+            <FaUser size={36} />
             <div>
               <Title level="3">{parent.name}</Title>
               <Caption>Parent</Caption>
             </div>
           </div>
 
+          {/* Child Card */}
           <div
             onClick={() => navigate('/children')}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 12,
-              border: 'solid',
-              borderRadius: '10px',
-              padding: '5px',
-            }}
+            className="flex items-center gap-3 border rounded-xl px-3 py-2 shadow-sm cursor-pointer"
           >
             {child ? (
               <>
-                <Avatar src={child.avatar || <FaUser className="text-6xl" />} size={48} />
+                <Avatar src={child.avatar} size={48} />
                 <div>
                   <Title level="3">{child.name}</Title>
                   <Caption>Child</Caption>
@@ -100,43 +79,31 @@ export const IndexPage: FC = () => {
               </>
             ) : (
               <div>
-                <Title >No child</Title>
+                <Title level="4">No child</Title>
                 <Caption>Add a profile</Caption>
               </div>
             )}
           </div>
         </div>
 
-        {/* 📊 Child Assessment */}
+        {/* 📊 Assessment Summary */}
         {child?.assessment && (
-          <div style={{ margin: '16px', boxShadow: '0 1px 6px rgba(0, 0, 0, 0.05)' }}>
-            <Headline weight="2" style={{ marginBottom: 12 }}>
-              Health Assessment
-            </Headline>
+          <div className="mx-4 my-4 p-4 rounded-xl shadow-md border">
+            <Headline weight="2" className="mb-2">Health Assessment</Headline>
 
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-                gap: '12px',
-              }}
-            >
+            <div className="grid grid-cols-2 gap-4">
               {Object.entries(child.assessment).map(([label, value]) => (
                 <div
                   key={label}
-                  style={{
-                    padding: '1px',
-                    boxShadow: '0 1px 31px rgba(0,0,0,0.04)',
-                    textAlign: 'center',
-                  }}
+                  className="text-center p-2 border rounded-lg shadow-sm"
                 >
-                  <Subheadline style={{ marginBottom: 4 }}>{value}</Subheadline>
-                  <Caption style={{ color: '#888' }}>{label.toUpperCase()}</Caption>
+                  <Subheadline>{value}</Subheadline>
+                  <Caption className="text-gray-500">{label.toUpperCase()}</Caption>
                 </div>
               ))}
             </div>
 
-            <div className="mt-4" style={{ marginTop: 16 }}>
+            <div className="mt-4">
               <Button size="s" onClick={() => setExpanded(!expanded)}>
                 {expanded ? 'Hide Details' : 'Show Details'}
               </Button>
@@ -144,21 +111,19 @@ export const IndexPage: FC = () => {
           </div>
         )}
 
-        {/* 🧠 Categories & Widgets */}
-        <Section>
-          <Headline weight="2" style={{ padding: '10px' }}>
-            Categories
-          </Headline>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, margin: '10px' }}>
-            <Button size="m">Meal Plan</Button>
-            <Button size="m">Baby Growth</Button>
-            <Button size="m" onClick={() => navigate('/article')}>
-              Articles
-            </Button>
+        {/* 📈 Growth Tracker & 🧠 Articles */}
+        <Section className="mt-4">
+          <GrowthTrackerHome childProfile={child} />
+
+          {/* 📰 Articles Carousel */}
+          <div className="mt-4">
+            <ArticleSliderWidget articles={articles} />
           </div>
 
-          <ArticleSliderWidget articles={articles} />
-          <DoctorsList />
+          {/* 🧑‍⚕️ Doctors */}
+          <div className="mt-4">
+            <DoctorsList />
+          </div>
         </Section>
       </Section>
     </Page>

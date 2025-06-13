@@ -6,6 +6,7 @@ import { Modal } from "@telegram-apps/telegram-ui";
 import { useState } from "react";
 import ParentProfile from "@/components/ParentProfile";
 import ChildProfile from "@/components/ChildProfile";
+import { Page } from "@/components/Page";
 
 export default function ProfileScreen() {
 
@@ -30,6 +31,7 @@ export default function ProfileScreen() {
     //     }, 1000);
     //   };
   return (
+     <Page back={true}>
     <div style={{height: '80vh'}} className="w-full g-gray-900 text-white flex flex-col">
       {/* Header */}
       {/* <header className="flex justify-between items-center p-4 bg-gray-800">
@@ -82,6 +84,7 @@ export default function ProfileScreen() {
 
      
     </div>
+    </Page>
   );
 }
 
