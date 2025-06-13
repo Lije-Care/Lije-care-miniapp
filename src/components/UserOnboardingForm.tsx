@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import api from '@/api/axios';
 import { useNavigate } from 'react-router-dom';
+import { Page } from './Page';
 
 const UserOnboardingForm = () => {
   const [formData, setFormData] = useState({
@@ -72,6 +73,7 @@ const UserOnboardingForm = () => {
   };
 
   return (
+     <Page back={true}>
     <div className="max-w-md mx-auto mt-10 rounded-2xl shadow-xl p-6 border border-gray-200">
       <h2 className="text-2xl font-semibold mb-6 text-center ">👋 Welcome! Set up your account</h2>
 
@@ -183,6 +185,7 @@ const UserOnboardingForm = () => {
         </button>
       </form>
     </div>
+    </Page>
   );
 };
 

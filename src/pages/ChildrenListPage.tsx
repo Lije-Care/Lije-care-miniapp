@@ -8,6 +8,7 @@ import AddChildForm from "./Profile/AddChildForm";
 import type { RootState, AppDispatch } from "@/redux/store";
 import { Child } from "@/types";
 import useTelegramUser from "@/hooks/useTelegramUser";
+import { Page } from "@/components/Page";
 
 const ChildrenListPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -57,6 +58,7 @@ const ChildrenListPage: React.FC = () => {
   };
 
   return (
+     <Page back={true}>
     <div className="p-4 bg-gray-900 min-h-screen text-white">
       <div className="flex justify-between items-center mb-6">
         <Headline>My Children</Headline>
@@ -142,6 +144,7 @@ const ChildrenListPage: React.FC = () => {
         </div>
       )}
     </div>
+    </Page>
   );
 };
 

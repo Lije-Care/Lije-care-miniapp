@@ -10,6 +10,7 @@ import ChatComponent from './Consultation/ChatComponent';
 import api from '@/api/axios';
 import useTelegramUser from '@/hooks/useTelegramUser';
 import BookingsList from '@/components/booking/BookingsList';
+import { Page } from '@/components/Page';
 
 export default function ConsultationTab() {
   const dispatch = useDispatch<AppDispatch>();
@@ -117,6 +118,7 @@ export default function ConsultationTab() {
 
   if (confirmed) {
     return (
+       <Page back={true}>
       <div className="p-6 text-center text-white space-y-4">
         <h2 className="text-2xl font-semibold text-green-400">🎉 Consultation Confirmed</h2>
         <p>
@@ -127,6 +129,7 @@ export default function ConsultationTab() {
         </p>
         <Button className="bg-indigo-600 text-white mt-4">Join Video Call</Button>
       </div>
+      </Page>
     );
   }
 

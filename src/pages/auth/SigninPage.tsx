@@ -60,7 +60,7 @@ export const SignInPage = () => {
   };
 
   return (
-    <Page back>
+     <Page back={true}>
       <Section
         style={{
           padding: "20px",

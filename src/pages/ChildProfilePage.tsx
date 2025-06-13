@@ -11,6 +11,7 @@ import { updateChild, Child } from '@/redux/slices/childSlice';
 import type { RootState, AppDispatch } from '@/redux/store';
 // import GrowthTracker from './Profile/GrowthTracker';
 import GrowthTrackerAll from './Profile/GrowthTracker';
+import { Page } from '@/components/Page';
 
 type ChildFormData = {
   name: string;
@@ -186,6 +187,7 @@ const ChildProfilePage: React.FC = () => {
   }
 
   return (
+     <Page back={true}>
     <div className="max-w-4xl mx-auto p-4 text-white">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-emerald-400">Child Profile</h1>
@@ -261,6 +263,7 @@ const ChildProfilePage: React.FC = () => {
         )}
       </form>
     </div>
+    </Page>
   );
 };
 

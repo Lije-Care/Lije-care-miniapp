@@ -1,3 +1,4 @@
+import { Page } from '@/components/Page';
 import { Button } from '@telegram-apps/telegram-ui';
 import React, { useState } from 'react';
 
@@ -62,6 +63,7 @@ const MealPlanPage: React.FC = () => {
   );
 
   return (
+     <Page back={true}>
     <div className="p-4 max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold">Child&apos;s Meal Plan</h1>
       <div className="flex justify-between items-center mb-6">
@@ -150,6 +152,7 @@ const MealPlanPage: React.FC = () => {
         ))}
       </div>
     </div>
+    </Page>
   );
 };
 
