@@ -1,15 +1,10 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import api from "@/api/axios";
-import { Parent } from "@/types";
 import { CreateChildDto } from "@/types/child";
 
-
-interface ChildState {
-  data: Child[]; // ⬅️ array instead of single
-  loading: boolean;
-  error: string | null;
-}
-
+// -----------------------------------
+// Types
+// -----------------------------------
 export type Child = {
   avatar: any;
   assessment: any;
@@ -28,13 +23,24 @@ export type Child = {
   updatedAt: string;
 };
 
+interface ChildState {
+  data: Child[];
+  loading: boolean;
+  error: string | null;
+}
+
+// -----------------------------------
+// Initial State
+// -----------------------------------
 const initialState: ChildState = {
   data: [],
   loading: false,
   error: null,
 };
-// Base API URL
 
+// -----------------------------------
+// Async Thunks
+// -----------------------------------
 export const addChild = createAsyncThunk<Child, CreateChildDto>(
   "children/addChild",
   async (newChild, { rejectWithValue }) => {
@@ -46,25 +52,24 @@ export const addChild = createAsyncThunk<Child, CreateChildDto>(
     }
   }
 );
+
 export const fetchChildrenByParentId = createAsyncThunk<Child[], string>(
-  "parent/fetchChildrenByParentId",
+  "children/fetchChildrenByParentId",
   async (parentId, { rejectWithValue }) => {
-   
     try {
-      const response = await api.get(`children/find-all?parentId=${parentId}`);
-      return response.data;
+      const response = await api.get<{ data: Child[] }>(`children/find-all?parentId=${parentId}`);
+      return response.data.data; // only return the array
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || "Failed to fetch children");
     }
   }
 );
 
-// Example async thunk
-export const deleteChildById = createAsyncThunk(
+export const deleteChildById = createAsyncThunk<string, string>(
   "children/deleteChildById",
-  async (childId: string, thunkAPI) => {
+  async (childId, thunkAPI) => {
     try {
-       await api.delete(`/children/${childId}`);
+      await api.delete(`/children/${childId}`);
       return childId;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err.response?.data?.message || "Delete failed");
@@ -72,52 +77,67 @@ export const deleteChildById = createAsyncThunk(
   }
 );
 
-// Then handle this in the `extraReducers` to update state.data
+export const updateChild = createAsyncThunk<Child, Partial<Child>>(
+  "children/updateChild",
+  async (updateChildData, { rejectWithValue }) => {
+    try {
+      const response = await api.patch<Child>(`children/${updateChildData.id}`, updateChildData);
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || "Update failed");
+    }
+  }
+);
 
-
-
-export const updateChild = createAsyncThunk("child/updateChild", async (updateChild: any) => {
- 
-  const response = await api.patch<Parent>(`children/${updateChild.id}`, updateChild);
-  return response.data;
-});
-
-
-
-
-// Redux Slice
+// -----------------------------------
+// Slice
+// -----------------------------------
 const childrenSlice = createSlice({
-  name: "childred",
+  name: "children",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
+      // Add child
       .addCase(addChild.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(addChild.fulfilled, (state, action: PayloadAction<Parent>) => {
+      .addCase(addChild.fulfilled, (state, action: PayloadAction<Child>) => {
         state.loading = false;
-        state.data.push(action.payload as Child);
+        state.data.push(action.payload);
       })
       .addCase(addChild.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Failed to fetch parent";
+        state.error = String(action.payload || action.error.message || "Failed to add child");
       })
-       .addCase(fetchChildrenByParentId.pending, (state) => {
-              state.loading = true;
-              state.error = null;
-            })
-            .addCase(fetchChildrenByParentId.fulfilled, (state, action: PayloadAction<any>) => {
-              state.loading = false;
-              state.data = action.payload.data;
-            })
-            .addCase(fetchChildrenByParentId.rejected, (state, action) => {
-              state.loading = false;
-              state.error = action.error.message || "Failed to fetch parent";
-            })
 
-     
+      // Fetch children
+      .addCase(fetchChildrenByParentId.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchChildrenByParentId.fulfilled, (state, action: PayloadAction<Child[]>) => {
+        state.loading = false;
+        state.data = action.payload;
+      })
+      .addCase(fetchChildrenByParentId.rejected, (state, action) => {
+        state.loading = false;
+        state.error = String(action.payload || action.error.message || "Failed to fetch children");
+      })
+
+      // Delete child
+      .addCase(deleteChildById.fulfilled, (state, action: PayloadAction<string>) => {
+        state.data = state.data.filter((child) => child.id !== action.payload);
+      })
+
+      // Update child
+      .addCase(updateChild.fulfilled, (state, action: PayloadAction<Child>) => {
+        const index = state.data.findIndex((child) => child.id === action.payload.id);
+        if (index !== -1) {
+          state.data[index] = action.payload;
+        }
+      });
   },
 });
 

@@ -133,8 +133,18 @@ export default function ConsultationTab() {
     );
   }
 
-  const categories = ["nutritionist", "Medical doctor", "Any Question(CS)"];
-  return (
+  const categories = ['All', 'nutritionist', 'Medical doctor', 'Any Question(CS)'];
+const [activeCategory, setActiveCategory] = useState('All');
+
+// Filter the specialists based on the selected category
+const filteredSpecialists =
+  activeCategory === 'All'
+    ? specialists
+    : specialists.filter(
+        (doc) => doc?.SpecialistProfile.specialty.toLowerCase() === activeCategory.toLowerCase()
+      );
+      
+      return (
     <div className="p-6 max-w-3xl mx-auto space-y-6 text-white">
       <div className="flex space-between gap-4 mb-6 w-full">
        <p style={{width: '50%'}}></p>
@@ -159,14 +169,19 @@ export default function ConsultationTab() {
         </div>
       )}
 
-<div className="flex gap-2 bg-gray-900 ">
+<div className="flex bg-gray-900 ">
       {categories.map((category) => (
         <button
           key={category}
-          onClick={() => setActiveTab('consult')}
-          className={`px-4 py-2  font-semibold rounded-none transition-all
-            ${activeTab === category ? "bg-gray-600" : "bg-gray-500 hover:bg-red-600"}
-          `}
+           onClick={() => {
+            setActiveTab('consult');
+            setActiveCategory(category);
+          }}
+          className={`px-2 font-semibold rounded transition-all ${
+            activeCategory === category
+              ? 'bg-emerald-600 text-white'
+              : 'bg-gray-600 text-gray-100 text-[13px] hover:bg-gray-500'
+          }`}
         >
           {category}
         </button>
@@ -186,7 +201,7 @@ export default function ConsultationTab() {
             <p className="text-red-500">{error}</p>
           ) : (
             <div className="space-y-3">
-              {specialists.map((doc) => {
+              {filteredSpecialists.map((doc) => {
                 const isSelected = selectedDoctor?.id === doc.id;
                 const fullName = `${doc?.firstName} ${doc?.lastName}`;
                 return (

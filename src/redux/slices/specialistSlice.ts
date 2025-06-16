@@ -1,56 +1,19 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import api from '@/api/axios';
+import { Meta, User } from '@/types/specialist';
 
-// Types
-export interface User {
-  id: string;
-  telegram_username: string | null;
-  firstName: string;
-  lastName: string;
-  gender: string | null;
-  avatarUrl: string | null;
-  address: string | null;
-  city: string | null;
-  phone: string;
-  password: string;
-  role: 'NUTRITIONIST' | 'PEDIATRICIAN' | 'CULINARIAN' | 'PARENT';
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-}
 
-export interface Specialist {
-  avatarUrl: string;
-  lastName: any;
-  firstName: any;
-  id: string;
-  userId: string;
-  rating: number;
-  bio: string;
-  experience: number;
-  certifications: string[];
-  tags: string[];
-  createdAt: string;
-  updatedAt: string;
-  user: User;
-}
 
-export interface SpecialistPagination {
-  total: number;
-  skip: number;
-  limit: number;
-  page: number;
-  totalPages: number;
-}
+
 
 interface SpecialistState {
-  specialists: Specialist[];
+  specialists: User[];
   loading: boolean;
   error: string | null;
-  pagination: SpecialistPagination | null;
+  pagination: Meta | null;
 }
 
+// ✅ Then define initialState
 const initialState: SpecialistState = {
   specialists: [],
   loading: false,
@@ -58,9 +21,9 @@ const initialState: SpecialistState = {
   pagination: null,
 };
 
-// 🔁 Async Thunk to fetch specialists
+
 export const fetchSpecialists = createAsyncThunk<
-  { data: Specialist[]; pagination: SpecialistPagination },
+  { data: User[]; pagination: Meta },
   { page?: number; limit?: number },
   { rejectValue: string }
 >('specialists/fetchAll', async ({ page = 1, limit = 10 }, thunkAPI) => {
@@ -68,7 +31,7 @@ export const fetchSpecialists = createAsyncThunk<
     const response = await api.get(`/specialists/find-all?page=${page}&limit=${limit}`);
     return {
       data: response.data.data,
-      pagination: response.data.pagination,
+      pagination: response.data.meta,
     };
   } catch (error: any) {
     return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch specialists');
@@ -86,7 +49,7 @@ const specialistSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchSpecialists.fulfilled, (state, action: PayloadAction<{ data: Specialist[]; pagination: SpecialistPagination }>) => {
+     .addCase(fetchSpecialists.fulfilled, (state, action: PayloadAction<{ data: User[]; pagination: Meta }>) => {
         state.loading = false;
         state.specialists = action.payload.data;
         state.pagination = action.payload.pagination;

@@ -207,7 +207,7 @@ const ChildProfilePage: React.FC = () => {
             >
                 <div >
             <Text className="text-emerald-400 text-lg font-semibold text-center">Nutrition Summary</Text>
-            <div className="flex justify-between"><Text>BMI:</Text><Text>{result.bmi}</Text></div>
+           
             <div className="flex justify-between"><Text>Status:</Text><Text>{result.status}</Text></div>
             <Divider />
             <div className="flex justify-between"><Text>🔥 Calories:</Text><Text>{result.calories} kcal</Text></div>
@@ -225,43 +225,80 @@ const ChildProfilePage: React.FC = () => {
             <Caption>Fill all fields above to calculate your child's needs.</Caption>
             </Placeholder>
         )}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <Input {...register('name')} placeholder="Name" disabled={!isEditing} />
-              <Input type="date" {...register('date_of_birth')} disabled={!isEditing} />
-              <Select {...register('gender')} disabled={!isEditing}>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </Select>
-            </div>
-            <div className="space-y-4">
-              <Input type="number" step="0.1" {...register('weight')} placeholder="Weight (kg)" disabled={!isEditing} />
-              <Input type="number" step="0.1" {...register('height')} placeholder="Height (cm)" disabled={!isEditing} />
-              <Input type="number" step="0.1" {...register('muac')} placeholder="MUAC (cm)" disabled={!isEditing} />
-            </div>
-          </div>
+   <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-6">
+  <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl p-6 space-y-4">
+    <Text className="text-xl font-semibold text-emerald-300">Basic Information</Text>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-4">
+        <div>
+          <label className="text-sm text-gray-400 mb-1 block">Name</label>
+          <Input {...register('name')} placeholder="Enter child’s name" disabled={!isEditing} />
         </div>
 
-        <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl p-6">
-          <h2 className="text-xl font-semibold mb-4 text-emerald-300">Health Information</h2>
-          <Input {...register('dietary_restrictions')} placeholder="Dietary Restrictions" disabled={!isEditing} />
-          <Input {...register('allergies')} placeholder="Allergies" disabled={!isEditing} />
-          <Input {...register('medications')} placeholder="Medications" disabled={!isEditing} />
+        <div>
+          <label className="text-sm text-gray-400 mb-1 block">Date of Birth</label>
+          <Input type="date" {...register('date_of_birth')} disabled={!isEditing} />
         </div>
 
-       
-        
+        <div>
+          <label className="text-sm text-gray-400 mb-1 block">Gender</label>
+          <Select {...register('gender')} disabled={!isEditing}>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </Select>
+        </div>
+      </div>
 
-        {isEditing && (
-          <div className="flex justify-end gap-4">
-            <Button type="submit" stretched disabled={submitting} className="bg-emerald-600">
-              {submitting ? <Spinner size="s" /> : 'Save Changes'}
-            </Button>
-          </div>
-        )}
-      </form>
+      <div className="space-y-4">
+        <div>
+          <label className="text-sm text-gray-400 mb-1 block">Weight (kg)</label>
+          <Input type="number" step="0.1" {...register('weight')} placeholder="e.g. 12.5" disabled={!isEditing} />
+        </div>
+
+        <div>
+          <label className="text-sm text-gray-400 mb-1 block">Height (cm)</label>
+          <Input type="number" step="0.1" {...register('height')} placeholder="e.g. 85" disabled={!isEditing} />
+        </div>
+
+        <div>
+          <label className="text-sm text-gray-400 mb-1 block">MUAC (cm)</label>
+          <Input type="number" step="0.1" {...register('muac')} placeholder="e.g. 13.2" disabled={!isEditing} />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl p-6 space-y-4">
+    <Text className="text-xl font-semibold text-emerald-300">Health Details</Text>
+
+    <div className="space-y-4">
+      <div>
+        <label className="text-sm text-gray-400 mb-1 block">Dietary Restrictions</label>
+        <Input {...register('dietary_restrictions')} placeholder="e.g. Lactose intolerance" disabled={!isEditing} />
+      </div>
+
+      <div>
+        <label className="text-sm text-gray-400 mb-1 block">Allergies</label>
+        <Input {...register('allergies')} placeholder="e.g. Peanuts, eggs" disabled={!isEditing} />
+      </div>
+
+      <div>
+        <label className="text-sm text-gray-400 mb-1 block">Medications</label>
+        <Input {...register('medications')} placeholder="e.g. Vitamin D supplement" disabled={!isEditing} />
+      </div>
+    </div>
+  </div>
+
+  {isEditing && (
+    <div className="flex justify-end mt-4">
+      <Button type="submit" stretched disabled={submitting} className="bg-emerald-600 text-white">
+        {submitting ? <Spinner size="s" /> : 'Save Changes'}
+      </Button>
+    </div>
+  )}
+</form>
+
     </div>
     </Page>
   );

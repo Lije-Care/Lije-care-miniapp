@@ -10,6 +10,8 @@ import { Child } from "@/types";
 import useTelegramUser from "@/hooks/useTelegramUser";
 import { Page } from "@/components/Page";
 
+const FAVORITE_CHILD_KEY = "favorite_child_id";
+
 const ChildrenListPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -18,6 +20,9 @@ const ChildrenListPage: React.FC = () => {
   const [selectedChild, setSelectedChild] = useState<Child | null>(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState<boolean>(false);
   const [deleting, setDeleting] = useState<boolean>(false);
+  const [favoriteChildId, setFavoriteChildId] = useState<string | null>(
+    localStorage.getItem(FAVORITE_CHILD_KEY)
+  );
 
   const { data, loading, error } = useSelector((state: RootState) => state.children);
   const telegramUser = useTelegramUser();
@@ -46,10 +51,14 @@ const ChildrenListPage: React.FC = () => {
       setDeleting(true);
       await dispatch(deleteChildById(selectedChild.id)).unwrap();
 
-      // Remove from local state
       setChildrenData((prev) => prev?.filter((c) => c.id !== selectedChild.id) || []);
       setShowConfirmDelete(false);
       setSelectedChild(null);
+
+      if (favoriteChildId === selectedChild.id) {
+        localStorage.removeItem(FAVORITE_CHILD_KEY);
+        setFavoriteChildId(null);
+      }
     } catch (err) {
       alert("Failed to delete child. Please try again.");
     } finally {
@@ -57,93 +66,113 @@ const ChildrenListPage: React.FC = () => {
     }
   };
 
+  const toggleFavorite = (childId: string) => {
+    if (favoriteChildId === childId) {
+      localStorage.removeItem(FAVORITE_CHILD_KEY);
+      setFavoriteChildId(null);
+    } else {
+      localStorage.setItem(FAVORITE_CHILD_KEY, childId);
+      setFavoriteChildId(childId);
+    }
+  };
+
   return (
-     <Page back={true}>
-    <div className="p-4 bg-gray-900 min-h-screen text-white">
-      <div className="flex justify-between items-center mb-6">
-        <Headline>My Children</Headline>
-        <Button className="flex items-center gap-2" onClick={() => setShowAddModal(true)}>
-          <FaPlus /> <span>Add Child</span>
-        </Button>
-      </div>
-
-      {loading && (
-        <div className="flex justify-center py-6">
-          <Spinner size="s" />
+    <Page back={true}>
+      <div className="p-4 bg-gray-900 min-h-screen text-white">
+        <div className="flex justify-between items-center mb-6">
+          <Headline>My Children</Headline>
+          <Button className="flex items-center gap-2" onClick={() => setShowAddModal(true)}>
+            <FaPlus /> <span>Add Child</span>
+          </Button>
         </div>
-      )}
 
-      {error && (
-        <div className="bg-red-600 text-white p-3 rounded-lg flex items-center mb-4">
-          <FaExclamationTriangle className="mr-2" /> {error}
-        </div>
-      )}
+        {loading && (
+          <div className="flex justify-center py-6">
+            <Spinner size="s" />
+          </div>
+        )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {childrenData?.map((child) => (
-          <div
-            key={child.id}
-            className="bg-gray-800 rounded-lg p-6 shadow-md border border-gray-700 hover:shadow-lg transition-all"
-          >
-            <div className="flex justify-between items-start mb-4">
+        {error && (
+          <div className="bg-red-600 text-white p-3 rounded-lg flex items-center mb-4">
+            <FaExclamationTriangle className="mr-2" /> {error}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {childrenData?.map((child) => (
+            <div
+              key={child.id}
+              className="bg-gray-800 rounded-xl p-5 shadow-md border border-gray-700 hover:shadow-xl transition-all relative"
+            >
+              {/* Favorite icon */}
+              <button
+                className="absolute top-3 right-3 text-2xl"
+                onClick={() => toggleFavorite(child.id)}
+                title={favoriteChildId === child.id ? "Unmark Favorite" : "Mark as Favorite"}
+              >
+                {favoriteChildId === child.id ? "❤️" : "🤍"}
+              </button>
+
               <div onClick={() => handleViewChild(child.id)} className="cursor-pointer">
-                <h2 className="text-lg font-semibold text-gray-200">{child.name}</h2>
-                <div className="flex items-center gap-2 mt-1 px-3 py-1 rounded bg-blue-600 text-white text-sm w-fit">
+                <h2 className="text-lg font-bold text-gray-100 mb-1">{child.name}</h2>
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-600 text-white">
                   {child.gender === "Male" ? "👦 Boy" : "👧 Girl"}
-                </div>
+                </span>
               </div>
-              <button
-                className="text-red-500 hover:text-red-300 transition"
-                onClick={() => confirmDelete(child)}
-              >
-                <FaTrash />
-              </button>
+
+              <div className="mt-4 flex justify-end">
+                <button
+                  className="text-red-500 hover:text-red-300 transition"
+                  onClick={() => confirmDelete(child)}
+                >
+                  <FaTrash />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Add Child Modal */}
+        {showAddModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-gray-800 rounded-lg p-6 max-w-md w-full shadow-xl">
+              <h2 className="text-xl font-semibold mb-4">Add New Child</h2>
+              <AddChildForm onClose={() => setShowAddModal(false)} />
             </div>
           </div>
-        ))}
+        )}
+
+        {/* Confirm Delete Modal */}
+        {showConfirmDelete && selectedChild && (
+          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 px-4">
+            <div className="bg-gray-800 text-white p-6 rounded-lg max-w-md w-full shadow-xl">
+              <h2 className="text-lg font-bold mb-3 text-red-500">Confirm Delete</h2>
+              <p className="mb-4">
+                Are you sure you want to delete <strong>{selectedChild.name}</strong>?
+              </p>
+              <div className="flex justify-end gap-4">
+                <button
+                  className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500"
+                  onClick={() => {
+                    setShowConfirmDelete(false);
+                    setSelectedChild(null);
+                  }}
+                  disabled={deleting}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="px-4 py-2 bg-red-600 rounded hover:bg-red-500"
+                  onClick={handleDeleteChild}
+                  disabled={deleting}
+                >
+                  {deleting ? "Deleting..." : "Delete"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Add Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-lg p-6 max-w-md w-full shadow-xl">
-            <h2 className="text-xl font-semibold mb-4">Add New Child</h2>
-            <AddChildForm onClose={() => setShowAddModal(false)} />
-          </div>
-        </div>
-      )}
-
-      {/* Confirm Delete Modal */}
-      {showConfirmDelete && selectedChild && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 px-4">
-          <div className="bg-gray-800 text-white p-6 rounded-lg max-w-md w-full shadow-xl">
-            <h2 className="text-lg font-bold mb-3 text-red-500">Confirm Delete</h2>
-            <p className="mb-4">
-              Are you sure you want to delete <strong>{selectedChild.name}</strong>?
-            </p>
-            <div className="flex justify-end gap-4">
-              <button
-                className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500"
-                onClick={() => {
-                  setShowConfirmDelete(false);
-                  setSelectedChild(null);
-                }}
-                disabled={deleting}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-2 bg-red-600 rounded hover:bg-red-500"
-                onClick={handleDeleteChild}
-                disabled={deleting}
-              >
-                {deleting ? "Deleting..." : "Delete"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
     </Page>
   );
 };

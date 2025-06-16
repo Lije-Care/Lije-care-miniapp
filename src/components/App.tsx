@@ -80,7 +80,7 @@ export function App() {
        <Routes>
   {routes.map(({ path, Component, protected: isProtected }) => {
     const isChildProtected = !['/signin', '/signup', '/add-child'].includes(path);
-
+    console.log(isChildProtected, 'isChildProtected', path);
     const wrapped = isProtected ? (
       <ProtectedRoute>
         {isChildProtected ? (

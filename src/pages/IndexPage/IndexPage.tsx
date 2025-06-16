@@ -33,7 +33,9 @@ export const IndexPage: FC = () => {
     name: parentState.parent?.firstName ?? 'Unknown',
     avatar: parentAvatar,
   };
-  const child = children?.[0];
+  const favoriteChildId = localStorage.getItem("favorite_child_id");
+  const child = children?.find((c) => c.id === favoriteChildId) ?? children?.[0];
+
 
   useEffect(() => {
     dispatch(fetchArticles({ page: 1, limit: 6 }));

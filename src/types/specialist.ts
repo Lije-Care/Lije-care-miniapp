@@ -1,0 +1,57 @@
+export interface SpecialistProfile {
+  email: string;
+  dateOfBirth: string; // ISO date string
+  nationality: string;
+  countryOfResidence: string;
+  timeZone: string;
+  specialty: string;
+  licenseNumber: string;
+  issuingAuthority: string;
+  yearsOfExperience: number;
+  cvUrl: string;
+  certificatesUrl: string;
+  licenseProofUrl: string;
+  linkedIn: string;
+  passportPhotoUrl: string;
+  profilePhotoUrl: string;
+  languages: string[];
+  consultationTopics: string[];
+  communicationChannels: string[];
+  bio: string;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+  userId: string;
+}
+
+export interface User {
+  id: string;
+  telegram_username: string;
+  firstName: string;
+  lastName: string;
+  gender: 'MALE' | 'FEMALE' | string;
+  avatarUrl: string;
+  address: string;
+  city: string;
+  phone: string;
+  password: string;
+  role: 'NUTRITIONIST' | 'CONTENT_MANAGER' | string;
+  status: 'ACTIVE' | 'INACTIVE' | string;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+  deletedAt: string | null;
+  SpecialistProfile: SpecialistProfile;
+}
+
+export interface Meta {
+  total: number;
+  lastPage: number;
+  currentPage: number;
+  perPage: number;
+  prev: number | null;
+  next: number | null;
+}
+
+export interface UserListResponse {
+  data: User[];
+  meta: Meta;
+}
