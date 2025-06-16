@@ -56,13 +56,15 @@ export function App() {
   const isDark = useSignal(miniApp.isDark);
   const telegramUser = useTelegramUser();
   const dispatch = useDispatch<AppDispatch>();
+const storedUser = localStorage.getItem('user');
 
   useEffect(() => {
 
     if (telegramUser) {
+      dispatch(fetchChildrenByParentId(telegramUser.id));
+      dispatch(fetchSpecialists({ page: 1, limit: 10 }));
       dispatch(fetchParent(telegramUser.id)).then(()=>{
-        dispatch(fetchChildrenByParentId(telegramUser.id));
-        dispatch(fetchSpecialists({ page: 1, limit: 10 }));
+        
       });
       
     }
