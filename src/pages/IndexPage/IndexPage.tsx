@@ -112,7 +112,7 @@ export const IndexPage: FC = () => {
             </div>
           </div>
         )}
-        <div>
+        <div style={{margin: 'auto'}}> 
           Anthropometric
         </div>
         {/* 📈 Growth Tracker & 🧠 Articles */}
