@@ -67,11 +67,9 @@ export function App() {
   useEffect(() => {
 
     if (storedUser) {
-      dispatch(fetchChildrenByParentId(val?.id));
-      dispatch(fetchSpecialists({ page: 1, limit: 10 }));
-      dispatch(fetchParent(val?.id)).then(()=>{
-        
-      });
+      
+     
+     
       
     }
    

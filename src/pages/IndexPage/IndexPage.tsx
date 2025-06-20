@@ -20,6 +20,9 @@ import { AppDispatch, RootState } from '@/redux/store';
 import parentAvatar from '@/assets/avatar.png';
 import { FaUser } from 'react-icons/fa';
 import GrowthTrackerHome from '../Profile/GrowthTrackerHome';
+import { fetchParent } from '@/redux/slices/itemSlice';
+import { fetchChildrenByParentId } from '@/redux/slices/childSlice';
+import { fetchSpecialists } from '@/redux/slices/specialistSlice';
 
 export const IndexPage: FC = () => {
   const [expanded, setExpanded] = useState(true);
@@ -29,6 +32,7 @@ export const IndexPage: FC = () => {
   const { articles, loading } = useSelector((state: RootState) => state.articles);
   const { data: children } = useSelector((state: RootState) => state.children);
   const parentState = useSelector((state: RootState) => state.parent);
+  console.log("panern",parentState);
   const parent = {
     name: parentState.parent?.firstName ?? 'Unknown',
     avatar: parentAvatar,
@@ -38,9 +42,15 @@ export const IndexPage: FC = () => {
 
 
   useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+     let val = JSON.parse(storedUser);
     dispatch(fetchArticles({ page: 1, limit: 6 }));
-    dispatch(fetchArticles({ page: 1, limit: 6 }));
-    
+     dispatch(fetchParent(val?.id)).then(()=>{
+            
+          });
+     dispatch(fetchChildrenByParentId(val?.id));
+      
+      dispatch(fetchSpecialists({ page: 1, limit: 10 }));
   }, [dispatch]);
 
   if (loading) {
