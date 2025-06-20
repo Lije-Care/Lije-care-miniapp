@@ -158,7 +158,7 @@ const ParentProfile = () => {
               "address",
               "city",
               "telegram_username",
-              "email",
+            
             ].map((field) => (
               <Input
                 key={field}
