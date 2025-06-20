@@ -18,7 +18,7 @@ const useTelegramUser = () => {
       const getUser = async (id: string) => {
         try {
           const { data } = await api.get<BackendUser>(`users/find-one/${id}`);
-          localStorage.setItem('telegramUser', JSON.stringify(data));
+          // localStorage.setItem('user', JSON.stringify(data));
           setUser(data);
           console.log('Fetched existing user:', data);
         } catch (error) {
@@ -27,7 +27,7 @@ const useTelegramUser = () => {
             err?.response?.data?.message === 'User not found' ||
             err.message === 'User not found'
           ) {
-            localStorage.removeItem('telegramUser');
+            localStorage.removeItem('user');
             console.warn('User not found. Please ensure user exists in DB.');
           } else {
             console.error('Error fetching user:', err.message);
@@ -35,7 +35,7 @@ const useTelegramUser = () => {
         }
       };
 
-      const storedUser = localStorage.getItem('telegramUser');
+      const storedUser = localStorage.getItem('user');
       if (storedUser) {
         const parsedUser: BackendUser = JSON.parse(storedUser);
         try {

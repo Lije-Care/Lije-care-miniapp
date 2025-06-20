@@ -60,13 +60,15 @@ export function App() {
   const telegramUser = useTelegramUser();
   const dispatch = useDispatch<AppDispatch>();
 const storedUser = localStorage.getItem('user');
-
+let val = JSON.parse(storedUser);
+  console.log('Stored User:', val.id);
+  console.log('Telegram User:', telegramUser);
   useEffect(() => {
 
-    if (telegramUser) {
-      dispatch(fetchChildrenByParentId(telegramUser.id));
+    if (storedUser) {
+      dispatch(fetchChildrenByParentId(val.id));
       dispatch(fetchSpecialists({ page: 1, limit: 10 }));
-      dispatch(fetchParent(telegramUser.id)).then(()=>{
+      dispatch(fetchParent(val.id)).then(()=>{
         
       });
       
