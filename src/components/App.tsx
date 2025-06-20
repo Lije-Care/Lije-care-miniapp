@@ -57,7 +57,8 @@ const Layout = ({ children }: {children: any}) => (
 export function App() {
   const lp = useLaunchParams();
   const isDark = useSignal(miniApp.isDark);
-  const telegramUser = useTelegramUser();
+  const telegramUser = JSON.parse(localStorage.getItem("user") || "{}");
+  JSON.parse(localStorage.getItem("user") || "{}");
   const dispatch = useDispatch<AppDispatch>();
 const storedUser = localStorage.getItem('user');
 let val = JSON.parse(storedUser);

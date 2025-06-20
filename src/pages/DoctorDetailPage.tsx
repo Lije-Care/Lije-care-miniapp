@@ -10,7 +10,7 @@ import { useParams } from 'react-router-dom';
 
 export default function DoctorDetailPage() {
   const { doctorId } = useParams();
-  const telegramuser = useTelegramUser();
+  const telegramuser = JSON.parse(localStorage.getItem("user") || "{}");
   const [doctor, setDoctor] = useState<any>(null);
   const [availability, setAvailability] = useState<any[]>([]);
   const [selectedSlot, setSelectedSlot] = useState('');

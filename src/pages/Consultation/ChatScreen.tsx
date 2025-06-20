@@ -27,7 +27,7 @@ const ChatScreen = () => {
   const { doctorId } = useParams();
   const navigate = useNavigate();
 
-  const telegramUser = useTelegramUser();
+  const telegramUser = JSON.parse(localStorage.getItem("user") || "{}");
   const currentUserId = telegramUser?.id;
 
   const hmsActions = useHMSActions();

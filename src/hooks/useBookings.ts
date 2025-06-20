@@ -5,7 +5,7 @@ import { Booking } from '@/types/booking';
 import  useTelegramUser from '@/hooks/useTelegramUser'; // adjust path as needed
 
 export const useBookings = () => {
-  const telegramUserId = useTelegramUser();
+  const telegramUserId = JSON.parse(localStorage.getItem("user") || "{}");
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

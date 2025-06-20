@@ -31,7 +31,7 @@ interface FormValues {
 const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [submitting, setSubmitting] = useState(false);
-  const telegramUser = useTelegramUser();
+  const telegramUser = JSON.parse(localStorage.getItem("user") || "{}");
   const parentId = telegramUser?.id;// ✅ Corrected your parentId (you had typo)
 
   const {

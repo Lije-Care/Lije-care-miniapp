@@ -29,7 +29,7 @@ const AddChildPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
-  const telegramUser = useTelegramUser();
+  const telegramUser = JSON.parse(localStorage.getItem("user") || "{}");
   const parentId = telegramUser?.id;
 
   const {

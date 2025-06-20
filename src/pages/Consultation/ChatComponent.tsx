@@ -33,7 +33,7 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
   const [message, setMessage] = useState('');
   const [chatRoomId, setChatRoomId] = useState<string | null>(null);
   const isAudioOn = useHMSStore(selectIsLocalAudioEnabled);
-  const telegramUser = useTelegramUser();
+  const telegramUser = JSON.parse(localStorage.getItem("user") || "{}");
   const currentUserId = telegramUser?.id;
 
   const hmsActions = useHMSActions();
