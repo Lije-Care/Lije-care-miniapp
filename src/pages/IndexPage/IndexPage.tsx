@@ -39,6 +39,8 @@ export const IndexPage: FC = () => {
 
   useEffect(() => {
     dispatch(fetchArticles({ page: 1, limit: 6 }));
+    dispatch(fetchArticles({ page: 1, limit: 6 }));
+    
   }, [dispatch]);
 
   if (loading) {

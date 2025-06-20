@@ -31,7 +31,7 @@ const ParentProfile = () => {
   const [uploading, setUploading] = useState(false);
   const [imageError, setImageError] = useState("");
 
-  const telegramUser = useTelegramUser();
+  const telegramUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -99,6 +99,7 @@ const ParentProfile = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    console.log(telegramUser)
     try {
       await dispatch(
         updateParent({

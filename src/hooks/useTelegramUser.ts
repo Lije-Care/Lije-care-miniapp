@@ -35,16 +35,17 @@ const useTelegramUser = () => {
         }
       };
 
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        const parsedUser: BackendUser = JSON.parse(storedUser);
-        try {
-          await getUser(parsedUser.id.toString());
+     const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          const parsedUser: BackendUser = JSON.parse(storedUser);
+          setUser(parsedUser); // 👈 Set local copy first for immediate use
+          try {
+            await getUser(parsedUser.id.toString()); // Still refresh from API
+          } catch (error) {
+            console.warn('Stored user invalid, trying Telegram user.');
+          }
           return;
-        } catch (error) {
-          console.warn('Stored user invalid, trying Telegram user.');
         }
-      }
 
       await getUser(telegramUser.id.toString());
     };
