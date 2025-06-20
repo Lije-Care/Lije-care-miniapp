@@ -3,6 +3,7 @@ import { useBookings } from '@/hooks/useBookings';
 
 import { Button } from '@telegram-apps/telegram-ui';
 import ChatScreen from '@/pages/Consultation/ChatComponent';
+import { useNavigate } from 'react-router-dom';
 
 
 const ChatIcon = () => (
@@ -23,7 +24,7 @@ const ChatIcon = () => (
 const BookingsList: React.FC = () => {
      const [chatOpen, setChatOpen] = useState(false);
   const { bookings, loading, error } = useBookings();
-
+  const navigate = useNavigate();
 
   const handleChat = () => {
     setChatOpen(true)
@@ -63,7 +64,7 @@ const BookingsList: React.FC = () => {
 
           <Button
             className="ml-4 p-2 rounded-full hover:bg-blue-200"
-            onClick={() => handleChat()}
+            onClick={() => navigate(`/chat/${booking.expert.id}`)}
           >
             <ChatIcon  />
           </Button>

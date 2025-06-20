@@ -25,6 +25,9 @@ import { fetchSpecialists } from '@/redux/slices/specialistSlice';
 import ProtectedRoute from './ProtectedRoute';
 import RequireChildren from './RequireChildren';
 import AddChildPage from './AddChildPage';
+import DoctorDetailPage from '@/pages/DoctorDetailPage';
+import MyAppointments from '@/pages/MyAppointments';
+import ChatScreen from '@/pages/Consultation/ChatScreen';
 
 
 const Layout = ({ children }: {children: any}) => (
@@ -86,9 +89,9 @@ const storedUser = localStorage.getItem('user');
     const wrapped = isProtected ? (
       <ProtectedRoute>
         {isChildProtected ? (
-          <RequireChildren>
+          
             <Component />
-          </RequireChildren>
+          
         ) : (
           <Component />
         )}
@@ -101,14 +104,71 @@ const storedUser = localStorage.getItem('user');
   })}
 
   <Route path="/add-child" element={<AddChildPage />} />
-  <Route path="/meal" element={<ProtectedRoute><RequireChildren><MealComponent /></RequireChildren></ProtectedRoute>} />
+  <Route path="/meal" element={
+    <ProtectedRoute>
+      
+        <MealComponent />
+      
+    </ProtectedRoute>} />
+    
   <Route path="/articles" element={<ArticlesPage />} />
   <Route path="/articles/:id" element={<ArticleDetail />} />
-  <Route path="/mealplansummary" element={<ProtectedRoute><RequireChildren><MealPlanSummary /></RequireChildren></ProtectedRoute>} />
-  <Route path="/meal-plans/edit/:id" element={<ProtectedRoute><RequireChildren><EditMealPlan /></RequireChildren></ProtectedRoute>} />
-  <Route path="/mealplansummary/:id" element={<ProtectedRoute><RequireChildren><MealDetails /></RequireChildren></ProtectedRoute>} />
-  <Route path="/chat" element={<ProtectedRoute><RequireChildren><ConsultationTab /></RequireChildren></ProtectedRoute>} />
-  <Route path="/video-call" element={<ProtectedRoute><RequireChildren><VideoCall /></RequireChildren></ProtectedRoute>} />
+  
+
+  <Route path="/my-appointments" element={
+        <ProtectedRoute>
+          
+            <MyAppointments />
+          
+        </ProtectedRoute>} />
+  <Route path="/mealplansummary" element={
+        <ProtectedRoute>
+          
+            <MealPlanSummary />
+          
+        </ProtectedRoute>} />
+  <Route path="/meal-plans/edit/:id" element={
+    <ProtectedRoute>
+      
+        <EditMealPlan />
+      
+    </ProtectedRoute>} />
+  <Route path="/mealplansummary/:id" element={
+    <ProtectedRoute>
+      
+        <MealDetails />
+      
+    </ProtectedRoute>} />
+
+    {/* <Route path="/chat/:doctorId" element={<ChatScreen />} /> */}
+   <Route path="/chat/:doctorId" element={
+    <ProtectedRoute>
+      
+        <ChatScreen />
+      
+    </ProtectedRoute>} />
+  <Route path="/chat" element={
+    <ProtectedRoute>
+      
+        <ConsultationTab />
+      
+    </ProtectedRoute>} />
+  <Route path="/video-call" element={
+    <ProtectedRoute>
+      
+        <VideoCall />
+      
+      </ProtectedRoute>} />
+  <Route
+  path="/chat/:doctorId"
+  element={
+    <ProtectedRoute>
+      
+        <DoctorDetailPage />
+      
+    </ProtectedRoute>
+  }
+/>
 
   <Route path="*" element={<Navigate to="/" />} />
 </Routes>

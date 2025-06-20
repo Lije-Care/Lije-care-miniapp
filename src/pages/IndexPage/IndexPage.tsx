@@ -112,9 +112,11 @@ export const IndexPage: FC = () => {
             </div>
           </div>
         )}
-
+        <div>
+          Anthropometric
+        </div>
         {/* 📈 Growth Tracker & 🧠 Articles */}
-        <Section className="mt-4">
+        <Section className="mt-4 ">
           <GrowthTrackerHome childProfile={child} />
 
           {/* 📰 Articles Carousel */}

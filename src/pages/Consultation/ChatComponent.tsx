@@ -25,6 +25,7 @@ import socket from '@/utils/socket';
 import MessageList from './MessageList';
 import { Message } from '@/types';
 import useTelegramUser from '@/hooks/useTelegramUser';
+import { useNavigate } from 'react-router-dom';
 
 const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
   const [isParentOpen, setIsParentOpen] = useState(false);
@@ -101,7 +102,7 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
 
   // 💬 Send Message via API + Socket
   const sendMessage = async () => {
-
+    console.log('Sending message:', message, chatRoomId, currentUserId);
     if (!message.trim() || !chatRoomId || !currentUserId) return;
 
     const payload = {
@@ -171,96 +172,42 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
 
 
  
-
+ const navigate = useNavigate();
   const toggleAudio = async () => {
     await hmsActions.setLocalAudioEnabled(!isAudioOn);
   };
+const handleBack = () => {
+    leaveRoom(); // optional cleanup
+    navigate(-1); // go back
+  };
 
   return (
-    <div className="flex flex-col h-[91vh]">
-      <Modal open={isParentOpen} onOpenChange={setIsParentOpen}>
-        {isConnected && (
-          <div className="p-4">
-            <h3 className="text-center text-lg font-semibold">
-              Call in Progress
-            </h3>
-            <div className="flex flex-wrap justify-center gap-4 p-4">
-              {peers.map((peer) => (
-                <PeerView key={peer.id} peer={peer} />
-              ))}
-               <div className="flex justify-center gap-6">
-                {/* Mic toggle */}
-                <button
-                  type="button"
-                  title="Toggle Mic"
-                  className="bg-white border rounded-full p-3 shadow-md"
-                  onClick={toggleAudio}
-                  // onTouchStart={toggleAudio}
-                >
-                  {isAudioOn ? (
-                    <FaMicrophone className="h-6 w-6 text-black" />
-                  ) : (
-                    <FaMicrophoneSlash className="h-6 w-6 text-red-500" />
-                  )}
-                </button>
-
-                {/* Camera toggle */}
-                <button
-                  type="button"
-                  title="Toggle Camera"
-                  className="bg-white border rounded-full p-3 shadow-md"
-                  onClick={toggleVideo}
-                  // onTouchStart={toggleVideo}
-                >
-                  <MdVideoCameraFront
-                    className={`h-6 w-6 ${isVideoOn ? 'text-green-500' : 'text-gray-500'}`}
-                  />
-                </button>
-
-                {/* End Call */}
-                <button
-                  type="button"
-                  title="End Call"
-                  className="bg-red-600 text-white rounded-full p-3 shadow-md"
-                  onClick={leaveRoom}
-                  // onTouchStart={leaveRoom}
-                >
-                  <PhoneIcon className="h-6 w-6" />
-                </button>
-              </div>
-
-            </div>
-          </div>
-        )}
-      </Modal>
-
+     <div className="flex flex-col h-screen w-screen overflow-hidden bg-white">
       {/* Header */}
       <div className="flex items-center justify-between p-4 shadow-md">
-        <button className="p-2">
+        <button className="p-2" onClick={handleBack}>
           <ArrowLeftRightIcon className="h-6 w-6" />
         </button>
         <h2 className="text-lg font-semibold text-teal-700">{selectedDoctor?.name}</h2>
         <div className="flex space-x-2">
-          <button className="p-2" onClick={joinRoom} disabled={isConnected} title="Join call">
+          <button className="p-2" onClick={joinRoom} disabled={isConnected}>
             <PhoneIcon className="h-6 w-6" />
           </button>
-          <button className="p-2" onClick={joinRoom} disabled={!isConnected} title="Toggle Video">
-            <MdVideoCameraFront
-              className={`h-6 w-6`}
-            />
+          <button className="p-2" onClick={joinRoom} disabled={!isConnected}>
+            <MdVideoCameraFront className="h-6 w-6" />
           </button>
-          <button className="p-2 text-red-600" onClick={leaveRoom} disabled={!isConnected} title="Leave call">
+          <button className="p-2 text-red-600" onClick={leaveRoom} disabled={!isConnected}>
             Leave
           </button>
         </div>
       </div>
 
-      {/* Messages */}
+      {/* Chat Body */}
       <div className="flex-1 overflow-y-auto space-y-1 px-4 py-2">
         <MessageList messages={messages} currentUserId={currentUserId ?? ''} />
       </div>
 
-      {/* Input */}
+      {/* Input Footer */}
       <div className="p-4 flex items-center gap-2 shadow-md">
         <button className="p-2">
           <FaMicrophone className="h-6 w-6 text-gray-500" />
@@ -270,22 +217,20 @@ const ChatScreen = ({ selectedDoctor }: { selectedDoctor: any }) => {
           className="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-teal-500"
           placeholder="Write here..."
           value={message}
-          onChange={(e) =>  setMessage(e.target.value)}
-          // onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+          onChange={(e) => setMessage(e.target.value)}
         />
         <button className="p-2">
           <PhotoIcon className="h-6 w-6 text-gray-500" />
         </button>
-        <button
-            type="button"
-            className="p-2 text-teal-600"
-            onClick={sendMessage}
-            // onTouchStart={sendMessage}
-          >
-            <FaPaperPlane className="h-6 w-6" />
-          </button>
-
+        <button className="p-2 text-teal-600" onClick={sendMessage}>
+          <FaPaperPlane className="h-6 w-6" />
+        </button>
       </div>
+
+      {/* Modal */}
+      <Modal open={isParentOpen} onOpenChange={setIsParentOpen}>
+        {/* Video UI */}
+      </Modal>
     </div>
   );
 };

@@ -11,6 +11,8 @@ import {
   Legend,
 } from "recharts";
 import { useEffect, useState } from "react";
+import { calculateHAZ } from "@/excelData/calculateHAZ";
+import { getWeightForHeightReference } from "@/excelData/getWeightForHeightReference";
 
 // Helper to classify Z-score result
 const classifyZ = (z: number, type: string) => {
@@ -72,7 +74,7 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
   const [child, setChild] = useState<ChildProfile | null>(null);
   const [zScores, setZScores] = useState<any>(null);
   const [history, setHistory] = useState<any[]>([]);
-
+  const [hforAge, setHforAge] = useState<any>(null);
   useEffect(() => {
     if (childProfile) {
       setChild(childProfile);
@@ -80,10 +82,27 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
       const calculatedZScores = {
         BMI: calculateBMIzScore(childProfile.weight, childProfile.height, childProfile.ageMonths, childProfile.gender),
         MUAC: calculateMUACzScore(childProfile.muac, childProfile.ageMonths, childProfile.gender),
-        Height: calculateHeightZScore(childProfile.height, childProfile.ageMonths, childProfile.gender),
+        // Height: calculateHAZ(76.5, 1, "week", "boy"),
+      
       };
+      
       setZScores(calculatedZScores);
+      console.log(childProfile);
+      getWeightForHeightReference("girl", 65).then((result) => {
+          if (result) {
+            console.log("Reference found:", result);
+          } else {
+            console.log("No reference available.");
+          }
+        });
 
+      setHforAge(calculateHAZ(childProfile.height, getAgeValue(childProfile?.date_of_birth, "month") > 13 
+                            ? getAgeValue(childProfile?.date_of_birth, "month") : 
+                            getAgeValue(childProfile?.date_of_birth, "week"), "week", "boy"));
+      console.log(" for age:", 
+                              getAgeValue(childProfile?.date_of_birth, "month") > 13 
+                            ? getAgeValue(childProfile?.date_of_birth, "month") : 
+                            getAgeValue(childProfile?.date_of_birth, "week"));
       // Dynamic history mock (simulate monthly growth)
       const sampleHistory = [
         { month: "Jan", BMI: 14.6, MUAC: 13.3, Height: 90 },
@@ -103,18 +122,31 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
   const indicators = [
     { key: "BMI", label: "BMI-for-Age", value: zScores.BMI },
     { key: "MUAC", label: "MUAC-for-Age", value: zScores.MUAC },
-    { key: "Height", label: "Height-for-Age", value: zScores.Height },
+    
   ];
 
   return (
-    <div className=" max-w-3xl mx-auto font-sans text-white space-y-8">
+    <div className=" max-w-3xl mx-auto font-sans text-white space-y-2">
      
       {/* Current Z-scores */}
       <div className="grid md:grid-cols-3 gap-4">
+         <div key='haz' className="rounded-xl bg-[#1E1E2F] border border-gray-700 p-2 m-2 shadow-sm">
+          <h3 className="text-md font-semibold text-gray-300">Height for age</h3>
+              <h3 className="text-md font-semibold text-gray-300">{hforAge.la}</h3>
+              <div className="flex justify-between mt-2 text-sm">
+                <span className="text-gray-400">Z-Score:</span>
+                <span className={`font-bold`}>{hforAge.haz}</span>
+              </div>
+              <div className="mt-1 text-sm">
+                <p className={`font-medium`}>{hforAge.classification}</p>
+                <p className="text-gray-400 text-xs">{hforAge.classification}</p>
+              </div>
+            </div>
+
         {indicators.map(({ key, label, value }) => {
           const result = classifyZ(value, key);
           return (
-            <div key={key} className="rounded-xl bg-[#1E1E2F] border border-gray-700 p-4 shadow-sm">
+            <div key={key} className="rounded-xl bg-[#1E1E2F] border border-gray-700 p-2 m-2 shadow-sm">
               <h3 className="text-md font-semibold text-gray-300">{label}</h3>
               <div className="flex justify-between mt-2 text-sm">
                 <span className="text-gray-400">Z-Score:</span>
@@ -137,3 +169,31 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
 };
 
 export default GrowthTrackerHome;
+
+export const getAgeValue = (
+  dob: string | Date,
+  ageType: "week" | "month"
+): number => {
+  const birthDate = new Date(dob);
+  const now = new Date();
+
+  const diffInMs = now.getTime() - birthDate.getTime();
+
+  if (ageType === "week") {
+    const diffInWeeks = diffInMs / (1000 * 60 * 60 * 24 * 7);
+    return Math.floor(diffInWeeks);
+  } else if (ageType === "month") {
+    const years = now.getFullYear() - birthDate.getFullYear();
+    const months = now.getMonth() - birthDate.getMonth();
+    const totalMonths = years * 12 + months;
+
+    // Adjust for day of month
+    if (now.getDate() < birthDate.getDate()) {
+      return totalMonths - 1;
+    }
+
+    return totalMonths;
+  }
+
+  throw new Error("Invalid age type. Use 'week' or 'month'.");
+};

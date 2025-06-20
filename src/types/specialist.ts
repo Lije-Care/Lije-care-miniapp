@@ -23,6 +23,17 @@ export interface SpecialistProfile {
   userId: string;
 }
 
+export type AvailabilitySlot = {
+  id: string;
+  userId: string;
+  date: string; // or Date if parsed
+  startTime: string;
+  endTime: string;
+  isBooked: boolean;
+  createdAt: string; // or Date if parsed
+};
+
+
 export interface User {
   id: string;
   telegram_username: string;
@@ -40,6 +51,7 @@ export interface User {
   updatedAt: string; // ISO date string
   deletedAt: string | null;
   SpecialistProfile: SpecialistProfile;
+  availabilitySlots: AvailabilitySlot[];
 }
 
 export interface Meta {
