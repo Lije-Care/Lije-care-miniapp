@@ -30,11 +30,11 @@ const ChildrenListPage: React.FC = () => {
   useEffect(() => {
     if (!telegramUser?.id) return;
     dispatch(fetchChildrenByParentId(telegramUser.id));
-  }, [dispatch, telegramUser]);
+  }, []);
 
   useEffect(() => {
     setChildrenData(data);
-  }, [data]);
+  }, []);
 
   const handleViewChild = (childId: string) => {
     navigate(`/child/${childId}`);

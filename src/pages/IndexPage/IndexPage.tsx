@@ -12,13 +12,14 @@ import { useEffect, useState, type FC } from 'react';
 import { Page } from '@/components/Page.tsx';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-
+import parentImage from '@/assets/images/parent.png';
 import DoctorsList from '@/components/Templates/DoctorsList';
 import ArticleSliderWidget from '../knowledgebase/ArticleSliderWidget';
 import { fetchArticles } from '@/redux/slices/articlesSlice';
 import { AppDispatch, RootState } from '@/redux/store';
 import parentAvatar from '@/assets/avatar.png';
-import { FaUser } from 'react-icons/fa';
+import childAvatar from '@/assets/images/baby.png';
+
 import GrowthTrackerHome from '../Profile/GrowthTrackerHome';
 import { fetchParent } from '@/redux/slices/itemSlice';
 import { fetchChildrenByParentId } from '@/redux/slices/childSlice';
@@ -71,7 +72,12 @@ export const IndexPage: FC = () => {
             onClick={() => navigate('/profile')}
             className="flex items-center gap-3 border rounded-xl px-3 py-2 shadow-sm cursor-pointer"
           >
-            <FaUser size={36} />
+          <img
+                alt="Telegram sticker"
+                src={parentImage}
+                style={{ display: 'block', width: '144px', height: '144px' }}
+              />
+            {/* <FaUser size={36} /> */}
             <div>
               <Title level="3">{parent.name}</Title>
               <Caption>Parent</Caption>
@@ -85,7 +91,11 @@ export const IndexPage: FC = () => {
           >
             {child ? (
               <>
-                <Avatar src={child.avatar} size={48} />
+                {/* <Avatar src={child.avatar} size={48} /> */}
+                <img
+                  alt="Child avatar"
+                  src={childAvatar || 'https://via.placeholder.com/48'}
+                  className="w-12 h-12 rounded-full"/>
                 <div>
                   <Title level="3">{child.name}</Title>
                   <Caption>Child</Caption>
@@ -127,16 +137,12 @@ export const IndexPage: FC = () => {
         <div style={{margin: 'auto'}}> 
           Anthropometric
         </div>
-        {/* 📈 Growth Tracker & 🧠 Articles */}
         <Section className="mt-4 ">
           <GrowthTrackerHome childProfile={child} />
 
-          {/* 📰 Articles Carousel */}
           <div className="mt-4">
             <ArticleSliderWidget articles={articles} />
-          </div>
-
-          {/* 🧑‍⚕️ Doctors */}
+          </div> 
           <div className="mt-4">
             <DoctorsList />
           </div>
