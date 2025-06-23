@@ -1,18 +1,10 @@
 "use client";
 
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  ResponsiveContainer,
-  Legend,
-} from "recharts";
 import { useEffect, useState } from "react";
 import { calculateHAZ } from "@/excelData/calculateHAZ";
-import { getWeightForHeightReference } from "@/excelData/getWeightForHeightReference";
+
+import { calculateWHZ } from "@/excelData/calculateWHZ";
+import { calculateWAZ } from "@/excelData/calculateWAZ";
 
 // Helper to classify Z-score result
 const classifyZ = (z: number, type: string) => {
@@ -75,6 +67,9 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
   const [zScores, setZScores] = useState<any>(null);
   const [history, setHistory] = useState<any[]>([]);
   const [hforAge, setHforAge] = useState<any>(null);
+  const [wforAge, setWforAge] = useState<any>(null);
+  const [waz, setWaz] = useState<any>(null);
+  
   useEffect(() => {
     if (childProfile) {
       setChild(childProfile);
@@ -87,15 +82,16 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
       };
       
       setZScores(calculatedZScores);
-      console.log(childProfile);
-      getWeightForHeightReference("girl", 65).then((result) => {
-          if (result) {
-            console.log("Reference found:", result);
-          } else {
-            console.log("No reference available.");
-          }
-        });
+     
+    
+        
+      const result = calculateWHZ(8.1, 65, "girl", "0_2");
+      console.log("WHZ Z-Score:", result.zScore, "| Classification:", result.classification);
 
+      const wazresult = calculateWAZ(7.2, 12, "week", "girl");
+      console.log("here is the waz",wazresult);
+        setWaz(wazresult);
+      setWforAge(result)
       setHforAge(calculateHAZ(childProfile.height, getAgeValue(childProfile?.date_of_birth, "month") > 13 
                             ? getAgeValue(childProfile?.date_of_birth, "month") : 
                             getAgeValue(childProfile?.date_of_birth, "week"), "week", "boy"));
@@ -140,6 +136,32 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
               <div className="mt-1 text-sm">
                 <p className={`font-medium`}>{hforAge.classification}</p>
                 <p className="text-gray-400 text-xs">{hforAge.classification}</p>
+              </div>
+            </div>
+
+             <div key='haz' className="rounded-xl bg-[#1E1E2F] border border-gray-700 p-2 m-2 shadow-sm">
+          <h3 className="text-md font-semibold text-gray-300">Weight for Height</h3>
+         
+              <div className="flex justify-between mt-2 text-sm">
+                <span className="text-gray-400">Z-Score:</span>
+                <span className={`font-bold`}>{wforAge.zScore}</span>
+              </div>
+              <div className="mt-1 text-sm">
+                <p className={`font-medium`}>{wforAge.classification}</p>
+
+              </div>
+            </div>
+
+             <div key='haz' className="rounded-xl bg-[#1E1E2F] border border-gray-700 p-2 m-2 shadow-sm">
+          <h3 className="text-md font-semibold text-gray-300">Weight for Age</h3>
+         
+              <div className="flex justify-between mt-2 text-sm">
+                <span className="text-gray-400">Z-Score:</span>
+                <span className={`font-bold`}>{waz.zScore}</span>
+              </div>
+              <div className="mt-1 text-sm">
+                <p className={`font-medium`}>{waz.classification}</p>
+
               </div>
             </div>
 

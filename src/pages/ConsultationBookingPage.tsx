@@ -57,7 +57,7 @@ export default function ConsultationTab() {
           ))}
         </div>
 
-        <h1 className="text-2xl font-bold text-emerald-400">Consult a Specialist</h1>
+
         <p className="font-medium text-gray-300">👩‍⚕️ Choose a Specialist</p>
 
         {loading ? (
@@ -67,27 +67,41 @@ export default function ConsultationTab() {
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : (
-          <div className="space-y-3">
-            {filteredSpecialists.map((doc) => {
-              const fullName = `${doc?.firstName} ${doc?.lastName}`;
-              return (
-                <div
-                  key={doc.id}
-                  className="p-4 border rounded-lg flex justify-between items-center border-gray-700 bg-gray-800 cursor-pointer"
-                  onClick={() => navigate(`/chat/${doc.id}`)}
-                >
-                  <div className="flex gap-4 items-center">
-                    <img
-                      src={doc?.avatarUrl || '/doctors/default-avatar.png'}
-                      alt={fullName}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                    <p className="font-bold">{fullName}</p>
-                  </div>
-                </div>
-              );
-            })}
+          <>
+          {loading ? (
+  <div className="flex justify-center py-4">
+    <Spinner size="l" />
+  </div>
+) : error ? (
+  <p className="text-red-500">{error}</p>
+) : filteredSpecialists.length === 0 ? (
+  <p className="text-center text-gray-400 py-4">
+    No specialists are currently available. Please try again later.
+  </p>
+) : (
+  <div className="space-y-3">
+    {filteredSpecialists.map((doc) => {
+      const fullName = `${doc?.firstName} ${doc?.lastName}`;
+      return (
+        <div
+          key={doc.id}
+          className="p-4 border rounded-lg flex justify-between items-center border-gray-700 bg-gray-800 cursor-pointer"
+          onClick={() => navigate(`/chat/${doc.id}`)}
+        >
+          <div className="flex gap-4 items-center">
+            <img
+              src={doc?.avatarUrl || '/doctors/default-avatar.png'}
+              alt={fullName}
+              className="w-12 h-12 rounded-full object-cover"
+            />
+            <p className="font-bold">{fullName}</p>
           </div>
+        </div>
+      );
+    })}
+  </div>
+)}
+</>
         )}
       </div>
     </Page>
