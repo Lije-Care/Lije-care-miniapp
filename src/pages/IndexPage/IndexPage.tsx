@@ -66,49 +66,49 @@ export const IndexPage: FC = () => {
     <Page back={true}>
       <Section className="overflow-y-auto pb-8">
         {/* 👨‍👩‍👧 Profile Cards */}
-        <div className="flex gap-4 px-4 py-3 justify-between">
-          {/* Parent Card */}
-          <div
-            onClick={() => navigate('/profile')}
-            className="flex items-center gap-3 border rounded-xl px-3 py-2 shadow-sm cursor-pointer"
-          >
-          <img
-                alt="Telegram sticker"
-                src={parentImage}
-                style={{ display: 'block', width: '144px', height: '144px' }}
-              />
-            {/* <FaUser size={36} /> */}
-            <div>
-              <Title level="3">{parent.name}</Title>
-              <Caption>Parent</Caption>
-            </div>
-          </div>
+       <div className="flex gap-4 px-4 py-3 justify-between">
+  {/* Parent Card */}
+  <div
+    onClick={() => navigate('/profile')}
+    className="flex items-center gap-3 border rounded-xl px-3 py-2 shadow-sm cursor-pointer w-full max-w-xs"
+  >
+    <img
+      alt="Telegram sticker"
+      src={parentImage}
+      className="w-12 h-12 rounded-full object-cover"
+    />
+    <div className="flex flex-col min-w-0">
+      <p className="text-base font-semibold truncate">{parent.name}</p>
+      <p className="text-sm text-gray-500 truncate">Parent</p>
+    </div>
+  </div>
 
-          {/* Child Card */}
-          <div
-            onClick={() => navigate('/children')}
-            className="flex items-center gap-3 border rounded-xl px-3 py-2 shadow-sm cursor-pointer"
-          >
-            {child ? (
-              <>
-                {/* <Avatar src={child.avatar} size={48} /> */}
-                <img
-                  alt="Child avatar"
-                  src={childAvatar || 'https://via.placeholder.com/48'}
-                  className="w-12 h-12 rounded-full"/>
-                <div>
-                  <Title level="3">{child.name}</Title>
-                  <Caption>Child</Caption>
-                </div>
-              </>
-            ) : (
-              <div>
-                <Title level="4">No child</Title>
-                <Caption>Add a profile</Caption>
-              </div>
-            )}
-          </div>
+  {/* Child Card */}
+  <div
+    onClick={() => navigate('/children')}
+    className="flex items-center gap-3 border rounded-xl px-3 py-2 shadow-sm cursor-pointer w-full max-w-xs"
+  >
+    {child ? (
+      <>
+        <img
+          alt="Child avatar"
+          src={childAvatar || 'https://via.placeholder.com/48'}
+          className="w-12 h-12 rounded-full object-cover"
+        />
+        <div className="flex flex-col min-w-0">
+          <p className="text-base font-semibold truncate">{child.name}</p>
+          <p className="text-sm text-gray-500 truncate">children</p>
         </div>
+      </>
+    ) : (
+      <div className="flex flex-col min-w-0">
+        <p className="text-base font-semibold truncate">No child</p>
+        <p className="text-sm text-gray-500 truncate">Add a profile</p>
+      </div>
+    )}
+  </div>
+</div>
+
 
         {/* 📊 Assessment Summary */}
         {child?.assessment && (
@@ -134,7 +134,7 @@ export const IndexPage: FC = () => {
             </div>
           </div>
         )}
-        <div style={{margin: 'auto'}}> 
+        <div style={{margin: 'auto', textAlign: 'center', fontWeight: 'bold', color: '#4A5568'}}> 
           Anthropometric
         </div>
         <Section className="mt-4 ">

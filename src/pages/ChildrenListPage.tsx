@@ -81,9 +81,14 @@ const ChildrenListPage: React.FC = () => {
       <div className="p-4 bg-gray-900 min-h-screen text-white">
         <div className="flex justify-between items-center mb-6">
           <Headline>My Children</Headline>
-          <Button className="flex items-center gap-2" onClick={() => setShowAddModal(true)}>
-            <FaPlus /> <span>Add Child</span>
-          </Button>
+         <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-2 border border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white font-semibold px-4 py-2 rounded-md transition-all duration-200"
+          >
+            <FaPlus className="text-base" />
+            <span>Add Child</span>
+          </button>
+
         </div>
 
         {loading && (

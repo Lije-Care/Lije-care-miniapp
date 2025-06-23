@@ -124,16 +124,19 @@ const MealLibraryComponent = () => {
 
   if (!children.length) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-center text-white p-6">
-        <p className="text-xl font-semibold mb-2">No child profile found</p>
-        <p className="text-sm mb-4 text-gray-400">Add a child to create a meal plan</p>
-        <button
-          onClick={() => navigate("/children")}
-          className="bg-emerald-600 hover:bg-emerald-700 px-5 py-2 rounded-md font-semibold text-white"
-        >
-          ➕ Add Child
-        </button>
-      </div>
+     <div className="flex flex-col items-center justify-center min-h-screen text-center text-white p-6 bg-gray-900">
+  <p className="text-xl font-semibold mb-2">No child profile found</p>
+  <p className="text-sm mb-6 text-gray-400">Add a child to create a meal plan</p>
+
+  <button
+    onClick={() => navigate("/children")}
+    className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 px-5 py-2 rounded-md font-semibold text-white transition-all"
+  >
+    <span className="text-lg">➕</span>
+    <span>Add Chld</span>
+  </button>
+</div>
+
     );
   }
 
