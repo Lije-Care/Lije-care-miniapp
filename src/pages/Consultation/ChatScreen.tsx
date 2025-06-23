@@ -12,6 +12,8 @@ import {
   useVideo,
 } from '@100mslive/react-sdk';
 
+import { FiPhoneCall } from 'react-icons/fi';
+
 import { ArrowLeftRightIcon, PhoneIcon, PhotoIcon } from '@100mslive/react-icons';
 import { MdVideoCameraFront } from 'react-icons/md';
 import { FaMicrophone, FaMicrophoneSlash, FaPaperPlane } from 'react-icons/fa';
@@ -119,6 +121,7 @@ const ChatScreen = () => {
   }, [chatRoomId]);
 
   useEffect(() => {
+    console.log(selectedDoctor)
     const handler = (msg) => setMessages((prev) => [...prev, msg]);
     socket.on('receive_message', handler);
     return () => socket.off('receive_message', handler);
@@ -127,12 +130,33 @@ const ChatScreen = () => {
   return (
     <div style={{ minHeight: 'calc(100vh - 60px)' }} className="flex flex-col w-full">
       <div className="flex items-center justify-between p-4 shadow-md">
-        <h2 className="text-lg font-semibold text-teal-700">{selectedDoctor?.name}</h2>
+        <h2 className="text-lg font-semibold text-teal-700">{selectedDoctor?.firstName}</h2>
         <div className="flex space-x-2">
-          <button className="p-2" onClick={joinRoom} disabled={isConnected}><PhoneIcon className="h-6 w-6" /></button>
-          <button className="p-2" onClick={toggleVideo} disabled={!isConnected}><MdVideoCameraFront className="h-6 w-6" /></button>
-          <button className="p-2 text-red-600" onClick={leaveRoom} disabled={!isConnected}>Leave</button>
-        </div>
+  {!isConnected && (
+    <button className="p-2" onClick={joinRoom}>
+      <FiPhoneCall className="h-6 w-6 text-green-600" />
+    </button>
+  )}
+
+  {isConnected && peers.some(peer => peer.videoTrack) && (
+    <>
+      <button className="p-2" onClick={toggleVideo}>
+        <MdVideoCameraFront className="h-6 w-6 text-black" />
+      </button>
+      <button className="p-2" onClick={toggleAudio}>
+        {isAudioOn ? (
+          <FaMicrophone className="h-6 w-6 text-black" />
+        ) : (
+          <FaMicrophoneSlash className="h-6 w-6 text-red-500" />
+        )}
+      </button>
+      <button className="p-2 text-red-600" onClick={leaveRoom}>
+        Leave
+      </button>
+    </>
+  )}
+</div>
+
       </div>
 
       {isConnected && (
