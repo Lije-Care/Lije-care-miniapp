@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useBookings } from '@/hooks/useBookings';
 
 import { Button } from '@telegram-apps/telegram-ui';
-import ChatScreen from '@/pages/Consultation/ChatComponent';
+
 import { useNavigate } from 'react-router-dom';
+import ChatScreen from '@/pages/Consultation/ChatScreen';
 
 
 const ChatIcon = () => (
@@ -22,7 +23,7 @@ const ChatIcon = () => (
 
 
 const BookingsList: React.FC = () => {
-     const [chatOpen, setChatOpen] = useState(false);
+   const [chatOpen, setChatOpen] = useState(false);
   const { bookings, loading, error } = useBookings();
   const navigate = useNavigate();
 
@@ -34,9 +35,9 @@ const BookingsList: React.FC = () => {
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
 
-  if (chatOpen) {
-    return <ChatScreen selectedDoctor={bookings} />
-  }
+  // if (chatOpen) {
+  //   return <ChatScreen selectedDoctor={bookings} />
+  // }
   
   return (
     <div className="space-y-4">

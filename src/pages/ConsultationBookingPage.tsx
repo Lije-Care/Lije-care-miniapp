@@ -20,14 +20,20 @@ export default function ConsultationTab() {
     dispatch(fetchSpecialists({ page: 1, limit: 10 }));
   }, [dispatch]);
 
-  const filteredSpecialists =
-    activeCategory === 'All'
-      ? specialists.filter((doc) => doc.availabilitySlots?.some((slot) => !slot.isBooked))
-      : specialists.filter(
-          (doc) =>
-            doc?.SpecialistProfile?.specialty.toLowerCase() === activeCategory.toLowerCase() &&
-            doc.availabilitySlots?.some((slot) => !slot.isBooked)
-        );
+const filteredSpecialists =
+  activeCategory === 'All'
+    ? specialists.filter(
+        (doc) =>
+          Array.isArray(doc.AvailabilitySlots) &&
+          doc.AvailabilitySlots.some((slot) => slot.isBooked === false)
+      )
+    : specialists.filter(
+        (doc) =>
+          doc?.SpecialistProfile?.specialty?.toLowerCase() === activeCategory.toLowerCase() &&
+          Array.isArray(doc.AvailabilitySlots) &&
+          doc.AvailabilitySlots.some((slot) => slot.isBooked === false)
+      );
+
 
   return (
     <Page>
@@ -74,7 +80,7 @@ export default function ConsultationTab() {
   </div>
 ) : error ? (
   <p className="text-red-500">{error}</p>
-) : filteredSpecialists.length === 0 ? (
+) : specialists.length === 0 ? (
   <p className="text-center text-gray-400 py-4">
     No specialists are currently available. Please try again later.
   </p>
@@ -86,7 +92,7 @@ export default function ConsultationTab() {
         <div
           key={doc.id}
           className="p-4 border rounded-lg flex justify-between items-center border-gray-700 bg-gray-800 cursor-pointer"
-          onClick={() => navigate(`/chat/${doc.id}`)}
+          onClick={() => navigate(`/consultat/${doc.id}`)}
         >
           <div className="flex gap-4 items-center">
             <img

@@ -130,7 +130,7 @@ const GrowthTrackerAll = ({ childProfile }: { childProfile: any }) => {
         })}
       </div>
 
-      {/* Growth chart */}
+      {/* Growth chart
       <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl p-5">
         <h3 className="text-lg font-semibold text-center text-gray-300 mb-2">📊 Growth History</h3>
         <div className="h-72">
@@ -151,7 +151,7 @@ const GrowthTrackerAll = ({ childProfile }: { childProfile: any }) => {
             </LineChart>
           </ResponsiveContainer>
         </div>
-      </div>
+      </div> */}
 
       {/* Child profile */}
       <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl p-5 space-y-2 mb-5">

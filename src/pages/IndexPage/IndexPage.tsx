@@ -33,7 +33,7 @@ export const IndexPage: FC = () => {
   const { articles, loading } = useSelector((state: RootState) => state.articles);
   const { data: children } = useSelector((state: RootState) => state.children);
   const parentState = useSelector((state: RootState) => state.parent);
-  console.log("panern",parentState);
+  
   const parent = {
     name: parentState.parent?.firstName ?? 'Unknown',
     avatar: parentAvatar,

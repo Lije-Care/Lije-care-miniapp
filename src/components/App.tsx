@@ -148,7 +148,7 @@ export function App() {
         <ChatScreen />
       
     </ProtectedRoute>} />
-  <Route path="/chat" element={
+  <Route path="/consultat" element={
     <ProtectedRoute>
       
         <ConsultationTab />
@@ -161,7 +161,7 @@ export function App() {
       
       </ProtectedRoute>} />
   <Route
-  path="/chat/:doctorId"
+  path="/consultat/:doctorId"
   element={
     <ProtectedRoute>
       

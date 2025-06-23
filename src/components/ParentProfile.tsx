@@ -186,14 +186,12 @@ const ParentProfile = () => {
             <span>{parent?.firstName} {parent?.lastName}</span>
             <span className="font-medium">Mobile No:</span>
             <span>{parent?.phone || "N/A"}</span>
-            <span className="font-medium">Email:</span>
-            <span>{parent?.email || "N/A"}</span>
+           
             <span className="font-medium">Address:</span>
             <span>{parent?.address || "N/A"}</span>
             <span className="font-medium">City:</span>
             <span>{parent?.city || "N/A"}</span>
-            <span className="font-medium">Telegram:</span>
-            <span>{parent?.telegram_username || "N/A"}</span>
+           
           </div>
         )}
 

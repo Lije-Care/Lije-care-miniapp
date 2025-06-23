@@ -22,9 +22,9 @@ try {
   init(retrieveLaunchParams().startParam === 'debug' || import.meta.env.DEV);
 
   root.render(
-    <StrictMode>
+    // <StrictMode>
       <Root />
-    </StrictMode>
+    // </StrictMode>
   );
 
   // Register the Service Worker for PWA

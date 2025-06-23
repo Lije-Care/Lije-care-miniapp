@@ -6,7 +6,7 @@ import api from '@/api/axios';
 import { Spinner, Button } from '@telegram-apps/telegram-ui';
 import useTelegramUser from '@/hooks/useTelegramUser';
 import { Page } from '@/components/Page';
-import { useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
 export default function DoctorDetailPage() {
   const { doctorId } = useParams();
@@ -35,7 +35,7 @@ export default function DoctorDetailPage() {
   const fetchAvailability = async () => {
     try {
       setLoadingSlots(true);
-      const res = await api.get(`/availability/findbyExpert/${doctorId}`);
+      const res = await api.get(`/availability/find-availability/${doctorId}`);
       setAvailability(res.data);
     } catch {
       setAvailability([]);
@@ -43,7 +43,7 @@ export default function DoctorDetailPage() {
       setLoadingSlots(false);
     }
   };
-
+  const navigate = useNavigate();
   const bookSlot = async () => {
     if (!selectedSlot) {
       setErrorMsg('Please select a slot.');
@@ -56,8 +56,9 @@ export default function DoctorDetailPage() {
         expertId: doctorId,
         slotId: selectedSlot,
       });
+      navigate(`/consultation/${doctorId}`);
+      //setConfirmed(true);
 
-      setConfirmed(true);
     } catch (err) {
       setErrorMsg('Booking failed. Try again.');
     }
