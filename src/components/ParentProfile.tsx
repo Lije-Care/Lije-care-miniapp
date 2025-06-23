@@ -151,35 +151,42 @@ const ParentProfile = () => {
 
         {/* 📝 Form / Info View */}
         {isEditing ? (
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
-            {[
-              "firstName",
-              "lastName",
-              "phone",
-              "address",
-              "city",
-              "telegram_username",
-            
-            ].map((field) => (
-              <Input
-                key={field}
-                type="text"
-                name={field}
-                value={(formData as any)[field]}
-                onChange={handleChange}
-                placeholder={field.replace("_", " ").replace(/^\w/, (c) => c.toUpperCase())}
-              />
-            ))}
+        <form onSubmit={handleSubmit} className="space-y-4">
+  {[
+    { name: "firstName", label: "First Name" },
+    { name: "lastName", label: "Last Name" },
+    { name: "phone", label: "Phone Number" },
+    { name: "address", label: "Address" },
+    { name: "city", label: "City" },
+    { name: "telegram_username", label: "Telegram Username" },
+    { name: "email", label: "Email" },
+  ].map(({ name, label }) => (
+    <div key={name} className="flex flex-col">
+      <label htmlFor={name} className="text-sm font-medium text-gray-700 mb-1">
+        {label}
+      </label>
+      <input
+        id={name}
+        name={name}
+        type="text"
+        value={(formData as any)[name]}
+        onChange={handleChange}
+        className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full"
+        placeholder={`Enter ${label.toLowerCase()}`}
+      />
+    </div>
+  ))}
 
-            <div className="flex justify-between">
-              <Button type="submit" className="w-full mr-2">
-                {loading ? <Spinner size="s" /> : "Save"}
-              </Button>
-              <Button type="button" onClick={() => setIsEditing(false)} className="w-full ml-2">
-                Cancel
-              </Button>
-            </div>
-          </form>
+  <div className="flex flex-col sm:flex-row gap-2 mt-4">
+    <Button type="submit" className="w-full sm:w-1/2">
+      {loading ? <Spinner size="s" /> : "Save"}
+    </Button>
+    <Button type="button" onClick={() => setIsEditing(false)} className="w-full sm:w-1/2">
+      Cancel
+    </Button>
+  </div>
+</form>
+s
         ) : (
           <div className="grid grid-cols-2 gap-y-3 text-gray-700 mt-4">
             <span className="font-medium">Parent Name:</span>

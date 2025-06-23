@@ -76,99 +76,71 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col space-y-4 max-h-[80vh] overflow-y-auto px-2"
-    >
-      <Controller
-        name="name"
-        control={control}
-        rules={{ required: "Name is required" }}
-        render={({ field }) => <Input header="Name" {...field} />}
-      />
+   <form
+  onSubmit={handleSubmit(onSubmit)}
+  className="flex flex-col space-y-4 max-h-[80vh] overflow-y-auto px-2"
+>
+  {[
+    { name: 'name', label: 'Name', type: 'text' },
+    { name: 'date_of_birth', label: 'Date of Birth', type: 'date' },
+    { name: 'weight', label: 'Weight (kg)', type: 'number' },
+    { name: 'height', label: 'Height (cm)', type: 'number' },
+    { name: 'muac', label: 'MUAC (cm)', type: 'number' },
+    { name: 'dietary_restrictions', label: 'Dietary Restrictions', placeholder: 'e.g., Lactose Intolerance' },
+    { name: 'allergies', label: 'Allergies', placeholder: 'e.g., Peanuts' },
+    { name: 'medications', label: 'Medications', placeholder: 'e.g., Vitamin D Supplements' },
+  ].map(({ name, label, type = 'text', placeholder }) => (
+    <Controller
+      key={name}
+      name={name as keyof FormValues}
+      control={control}
+      rules={{ required: `${label} is required` }}
+      render={({ field }) => (
+        <div className="flex flex-col">
+          <label htmlFor={name} className="text-sm font-medium  mb-1">{label}</label>
+          <input
+            {...field}
+            id={name}
+            type={type}
+            placeholder={placeholder}
+            className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full"
+          />
+        </div>
+      )}
+    />
+  ))}
 
-      <Controller
-        name="date_of_birth"
-        control={control}
-        rules={{ required: "Date of birth is required" }}
-        render={({ field }) => (
-          <Input header="Date of Birth" type="date" {...field} />
-        )}
-      />
-
-      <Controller
-        name="gender"
-        control={control}
-        rules={{ required: "Gender is required" }}
-        render={({ field }) => (
-          <Select header="Gender" {...field}>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </Select>
-        )}
-      />
-
-      <Controller
-        name="weight"
-        control={control}
-        rules={{ required: "Weight is required" }}
-        render={({ field }) => (
-          <Input header="Weight (kg)" type="number" step="0.1" {...field} />
-        )}
-      />
-
-      <Controller
-        name="height"
-        control={control}
-        rules={{ required: "Height is required" }}
-        render={({ field }) => (
-          <Input header="Height (cm)" type="number" step="0.1" {...field} />
-        )}
-      />
-
-      <Controller
-        name="muac"
-        control={control}
-        rules={{ required: "MUAC is required" }}
-        render={({ field }) => (
-          <Input header="MUAC (cm)" type="number" step="0.1" {...field} />
-        )}
-      />
-
-      {/* New Fields for Dietary Info */}
-      <Controller
-        name="dietary_restrictions"
-        control={control}
-        render={({ field }) => (
-          <Input header="Dietary Restrictions" placeholder="e.g., Lactose Intolerance" {...field} />
-        )}
-      />
-
-      <Controller
-        name="allergies"
-        control={control}
-        render={({ field }) => (
-          <Input header="Allergies" placeholder="e.g., Peanuts" {...field} />
-        )}
-      />
-
-      <Controller
-        name="medications"
-        control={control}
-        render={({ field }) => (
-          <Input header="Medications" placeholder="e.g., Vitamin D Supplements" {...field} />
-        )}
-      />
-
-      <div className="flex justify-end gap-4 mt-6">
-        <Button stretched type="button" onClick={onClose} >
-          Cancel
-        </Button>
-        <Button stretched type="submit" disabled={submitting}>
-          {submitting ? <Spinner size="s" /> : "Add Child"}
-        </Button>
+  {/* Gender as Select Field */}
+  <Controller
+    name="gender"
+    control={control}
+    rules={{ required: "Gender is required" }}
+    render={({ field }) => (
+      <div className="flex flex-col">
+        <label htmlFor="gender" className="text-sm font-medium  mb-1">Gender</label>
+        <select
+          {...field}
+          id="gender"
+          className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full"
+        >
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
       </div>
-    </form>
+    )}
+  />
+
+  {/* Submit and Cancel Buttons */}
+  <div className="flex justify-end gap-4 mt-6">
+    <Button stretched type="button" onClick={onClose}>
+      Cancel
+    </Button>
+    <Button stretched type="submit" disabled={submitting}>
+      {submitting ? <Spinner size="s" /> : "Add Child"}
+    </Button>
+  </div>
+</form>
+
   );
 };
 
