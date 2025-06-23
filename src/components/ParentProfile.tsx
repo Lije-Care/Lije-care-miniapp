@@ -186,7 +186,7 @@ const ParentProfile = () => {
     </Button>
   </div>
 </form>
-s
+
         ) : (
           <div className="grid grid-cols-2 gap-y-3 text-gray-700 mt-4">
             <span className="font-medium">Parent Name:</span>
