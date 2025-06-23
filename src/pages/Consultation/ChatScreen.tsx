@@ -23,6 +23,7 @@ import api from '@/api/axios';
 import socket from '@/utils/socket';
 import MessageList from './MessageList';
 import { Message } from '@/types';
+import { Page } from '@/components/Page';
 
 const ChatScreen = () => {
   const { doctorId } = useParams();
@@ -128,6 +129,7 @@ const ChatScreen = () => {
   }, []);
 
   return (
+    <Page back={true}>
     <div style={{ minHeight: 'calc(100vh - 60px)' }} className="flex flex-col w-full">
       <div className="flex items-center justify-between p-4 shadow-md">
         <h2 className="text-lg font-semibold text-teal-700">{selectedDoctor?.firstName}</h2>
@@ -184,12 +186,12 @@ const ChatScreen = () => {
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
         />
-        <button className="p-2"><PhotoIcon className="h-6 w-6 text-gray-500" /></button>
-        <button type="button" className="p-2 text-teal-600" onClick={sendMessage}>
+         <button type="button" className="p-2 text-teal-600" onClick={sendMessage}>
           <FaPaperPlane className="h-6 w-6" />
         </button>
       </div>
     </div>
+    </Page> 
   );
 };
 

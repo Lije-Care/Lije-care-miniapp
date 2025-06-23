@@ -4,6 +4,7 @@ import { Badge, Button, Card, Placeholder } from "@telegram-apps/telegram-ui";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { Page } from "@/components/Page";
 
 type Meal = {
   id: string;
@@ -61,6 +62,7 @@ const MealPlanSummary = () => {
   }, [childId]);
 
   return (
+    <Page   back={true}>
     <div className="p-4 space-y-4">
       <h2 className="text-xl font-bold text-center">📋 daily meal plan</h2>
 
@@ -126,6 +128,7 @@ const MealPlanSummary = () => {
         </Button>
       </div>
     </div>
+    </Page>
   );
 };
 
