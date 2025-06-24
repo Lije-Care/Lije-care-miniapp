@@ -233,19 +233,7 @@ const getAgeDetails = (dob: string): { age: number; type: "week" | "month" } => 
   return { age: ageInMonths, type: "month" };
 };
 
-const getChildWHZResult = (child: Child) => {
-  if (!child.weight || !child.height || !child.gender) {
-    return { zScore: 0, classification: "Missing required data" };
-  }
 
-  // Normalize gender
-  const gender = child.gender === "Male" ? "boy" : "girl";
-
-  // Determine correct WHZ file group
-  const range = getWHZRange(child.date_of_birth);
-
-  return calculateWHZ(child.weight, child.height, gender, range);
-};
 
 
 const getWHZRange = (dob: string): "0_2" | "2_5" => {
