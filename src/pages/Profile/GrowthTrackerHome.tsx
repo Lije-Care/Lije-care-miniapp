@@ -89,9 +89,19 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
       console.log("WHZ Z-Score:", result.zScore, "| Classification:", result.classification);
 
       const wazresult = calculateWAZ(childProfile.weight, age, type, gender);
-      console.log("here is the waz",wazresult);
+      
         setWaz(wazresult);
       setWforAge(result)
+     console.log("our test data");
+    
+     console.log(calculateHAZ(85, 7,   "month", "boy"));
+console.log("our test data haz");
+      //observedHeight: number,
+      //ageValue: number, // week or month
+      //ageType: "week" | "month",
+      //gender: "boy" | "girl"
+
+
       setHforAge(calculateHAZ(childProfile.height, getAgeValue(childProfile?.date_of_birth, "month") > 13 
                             ? getAgeValue(childProfile?.date_of_birth, "month") : 
                             getAgeValue(childProfile?.date_of_birth, "week"), "week", "boy"));

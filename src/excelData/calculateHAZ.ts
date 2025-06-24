@@ -33,7 +33,7 @@ export const calculateHAZ = (
     console.warn("Invalid SD value. Returning default values.");
     return { haz: 0, classification: "Data unavailable" };
   }
-
+  console.log("Growth Data Row:", SD);
   const hazRaw = (observedHeight - row.median) / SD;
   const haz = parseFloat(hazRaw.toFixed(2));
   const classification = classifyHAZ(haz);

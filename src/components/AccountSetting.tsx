@@ -1,10 +1,9 @@
-// src/components/AccountSettings.tsx
 import { useState, useEffect } from 'react';
 import { Button, Modal } from '@telegram-apps/telegram-ui';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 
-const BASE_URL = 'https://lije-care-api-dev.zikollab.com/api/v1/auth';
+const BASE_URL = 'https://lije-care-api-dev.zikollab.com/api/v1';
 
 const AccountSettings = () => {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -20,12 +19,13 @@ const AccountSettings = () => {
 
   const [userPhone, setUserPhone] = useState('');
   const [telegramId, setTelegramId] = useState('');
+  const [userId, setUserId] = useState('');
 
-  // Auto-fetch phone and telegram ID
   useEffect(() => {
     const localUser = JSON.parse(localStorage.getItem('user') || '{}');
     setUserPhone(localUser?.phone ?? '');
-    
+    setUserId(localUser?.id ?? '');
+
     const tgUserId = (window as any)?.Telegram?.WebApp?.initDataUnsafe?.user?.id;
     setTelegramId(tgUserId ?? '');
   }, []);
@@ -42,7 +42,7 @@ const AccountSettings = () => {
     }
 
     try {
-      await axios.post(`${BASE_URL}/forget-password`, {
+      await axios.post(`${BASE_URL}/auth/forget-password`, {
         phone: userPhone,
         telegramId,
       });
@@ -60,7 +60,7 @@ const AccountSettings = () => {
     }
 
     try {
-      await axios.post(`${BASE_URL}/reset-password`, {
+      await axios.post(`${BASE_URL}/auth/reset-password`, {
         token: resetData.token,
         otp: resetData.otp,
         password: resetData.password,
@@ -73,8 +73,20 @@ const AccountSettings = () => {
   };
 
   const handleDeleteAccount = async () => {
-    toast.success('Account deletion not implemented.');
-    // You can implement delete logic here
+    if (!userId) {
+      toast.error("User ID not found.");
+      return;
+    }
+
+    try {
+      await axios.delete(`${BASE_URL}/users/delete?id=${userId}`);
+      toast.success("Account deleted successfully.");
+      // Optionally clear localStorage and redirect
+      localStorage.clear();
+      window.Telegram.WebApp.close(); // Closes the Mini App
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || "Failed to delete account.");
+    }
   };
 
   return (
@@ -98,7 +110,7 @@ const AccountSettings = () => {
         <div className="p-4">
           <h3 className="text-md font-semibold mb-3 text-center">Send OTP to Telegram</h3>
           <div className="mb-4 text-sm text-gray-600">
-            We'll send an OTP to your Telegram bot using:
+            We’ll send an OTP to your Telegram using:
             <ul className="mt-2 list-disc pl-5 text-xs">
               <li><strong>Phone:</strong> {userPhone}</li>
               <li><strong>Telegram ID:</strong> {telegramId}</li>
@@ -114,40 +126,37 @@ const AccountSettings = () => {
       <Modal open={showReset} onOpenChange={setShowReset}>
         <div className="p-4">
           <h3 className="text-md font-semibold mb-3 text-center">🔐 Reset Password</h3>
-          {/* <TextField
+
+          <input
             name="token"
-            label="Token"
-            placeholder="Paste reset token"
+            placeholder="Reset token"
             value={resetData.token}
             onChange={handleChangeReset}
-            className="mb-2 w-full"
-          /> */}
-          {/* <TextField
+            className="w-full mb-2 px-3 py-2 border rounded-md"
+          />
+          <input
             name="otp"
-            label="OTP"
             placeholder="Enter OTP"
             value={resetData.otp}
             onChange={handleChangeReset}
-            className="mb-2 w-full"
+            className="w-full mb-2 px-3 py-2 border rounded-md"
           />
-          <TextField
+          <input
             name="password"
-            label="New Password"
             type="password"
-            placeholder="Enter new password"
+            placeholder="New Password"
             value={resetData.password}
             onChange={handleChangeReset}
-            className="mb-2 w-full"
+            className="w-full mb-2 px-3 py-2 border rounded-md"
           />
-          <TextField
+          <input
             name="confirmPassword"
-            label="Confirm Password"
             type="password"
-            placeholder="Confirm new password"
+            placeholder="Confirm Password"
             value={resetData.confirmPassword}
             onChange={handleChangeReset}
-            className="mb-4 w-full"
-          /> */}
+            className="w-full mb-4 px-3 py-2 border rounded-md"
+          />
           <Button className="w-full" onClick={handleResetPassword}>
             ✅ Confirm Reset
           </Button>
