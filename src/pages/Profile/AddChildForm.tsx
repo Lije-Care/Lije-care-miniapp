@@ -80,9 +80,67 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
   onSubmit={handleSubmit(onSubmit)}
   className="flex flex-col space-y-4 max-h-[80vh] overflow-y-auto px-2"
 >
+   <Controller
+    name="name"
+    control={control}
+    rules={{ required: "Name is required" }}
+    render={({ field }) => (
+      <div className="flex flex-col">
+        <label htmlFor="name" className="text-sm font-medium mb-1">Name</label>
+        <input
+          {...field}
+          id="name"
+          type="text"
+          placeholder="Full Name"
+          className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full"
+        />
+      </div>
+    )}
+  />
+
+  {/* Date of Birth and Gender Side-by-Side */}
+  <div className="flex gap-4">
+    {/* Date of Birth */}
+    <Controller
+      name="date_of_birth"
+      control={control}
+      rules={{ required: "Date of Birth is required" }}
+      render={({ field }) => (
+        <div className="flex flex-col flex-1">
+          <label htmlFor="date_of_birth" className="text-sm font-medium mb-1">Date of Birth</label>
+          <input
+            {...field}
+            id="date_of_birth"
+            type="date"
+            className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full"
+          />
+        </div>
+      )}
+    />
+
+    {/* Gender Select */}
+    <Controller
+      name="gender"
+      control={control}
+      rules={{ required: "Gender is required" }}
+      render={({ field }) => (
+        <div className="flex flex-col flex-1">
+          <label htmlFor="gender" className="text-sm font-medium mb-1">Gender</label>
+          <select
+            {...field}
+            id="gender"
+            className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full"
+          >
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+      )}
+    />
+  </div>
   {[
     { name: 'name', label: 'Name', type: 'text' },
-    { name: 'date_of_birth', label: 'Date of Birth', type: 'date' },
+
     { name: 'weight', label: 'Weight (kg)', type: 'number' },
     { name: 'height', label: 'Height (cm)', type: 'number' },
     { name: 'muac', label: 'MUAC (cm)', type: 'number' },
@@ -110,25 +168,7 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
     />
   ))}
 
-  {/* Gender as Select Field */}
-  <Controller
-    name="gender"
-    control={control}
-    rules={{ required: "Gender is required" }}
-    render={({ field }) => (
-      <div className="flex flex-col">
-        <label htmlFor="gender" className="text-sm font-medium  mb-1">Gender</label>
-        <select
-          {...field}
-          id="gender"
-          className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full"
-        >
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-        </select>
-      </div>
-    )}
-  />
+  
 
   {/* Submit and Cancel Buttons */}
   <div className="flex justify-end gap-4 mt-6">
