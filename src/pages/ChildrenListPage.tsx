@@ -115,7 +115,7 @@ const ChildrenListPage: React.FC = () => {
                 onClick={() => toggleFavorite(child.id)}
                 title={favoriteChildId === child.id ? "Unmark Favorite" : "Mark as Favorite"}
               >
-                {favoriteChildId === child.id ? "❤️" : "🤍"}
+                {favoriteChildId === child.id ? "✅" : "⬜"}
               </button>
 
               <div onClick={() => handleViewChild(child.id)} className="cursor-pointer">
