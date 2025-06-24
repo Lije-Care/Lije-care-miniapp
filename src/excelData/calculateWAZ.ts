@@ -1,4 +1,5 @@
-import { getWeightForAgeData, WeightForAgeEntry } from "./getWeightForAgeData";
+import { getWeightForAgeData } from "./getWeightForAgeData";
+
 
 export const calculateWAZ = (
   weightKg: number,
@@ -7,7 +8,9 @@ export const calculateWAZ = (
   gender: "boy" | "girl"
 ): { zScore: number; classification: string } => {
   const data = getWeightForAgeData(gender, ageValue, ageType);
-
+  console.log("Weight for Age Data:", data);
+  console.log("Weight for Age Data:", weightKg, ageValue, ageType, gender);
+  
   // Select matching entry
   const row = data.find(entry => {
     return ageType === "week"

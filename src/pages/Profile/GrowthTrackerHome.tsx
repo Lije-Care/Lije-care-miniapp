@@ -81,11 +81,14 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
       setZScores(calculatedZScores);
      
     
-        
-      const result = calculateWHZ(8.1, 65, "girl", "0_2");
+      const { age, type } = getAgeDetails(childProfile.date_of_birth);
+      const gender = childProfile.gender === "Male" ? "boy" : "girl";
+       const range = getWHZRange(childProfile.date_of_birth);
+      const result = calculateWHZ(childProfile.weight, childProfile.height, gender, range);
+      // calculateWHZ(childProfile.weight, childProfile.height, "girl", "0_2");
       console.log("WHZ Z-Score:", result.zScore, "| Classification:", result.classification);
 
-      const wazresult = calculateWAZ(7.2, 12, "week", "girl");
+      const wazresult = calculateWAZ(childProfile.weight, age, type, gender);
       console.log("here is the waz",wazresult);
         setWaz(wazresult);
       setWforAge(result)
@@ -215,4 +218,39 @@ export const getAgeValue = (
   }
 
   throw new Error("Invalid age type. Use 'week' or 'month'.");
+};
+
+const getAgeDetails = (dob: string): { age: number; type: "week" | "month" } => {
+  const birthDate = new Date(dob);
+  const now = new Date();
+  const diffInDays = Math.floor((+now - +birthDate) / (1000 * 60 * 60 * 24));
+
+  const ageInWeeks = Math.floor(diffInDays / 7);
+  if (ageInWeeks <= 13) {
+    return { age: ageInWeeks, type: "week" };
+  }
+  const ageInMonths = Math.floor(diffInDays / 30.44);
+  return { age: ageInMonths, type: "month" };
+};
+
+const getChildWHZResult = (child: Child) => {
+  if (!child.weight || !child.height || !child.gender) {
+    return { zScore: 0, classification: "Missing required data" };
+  }
+
+  // Normalize gender
+  const gender = child.gender === "Male" ? "boy" : "girl";
+
+  // Determine correct WHZ file group
+  const range = getWHZRange(child.date_of_birth);
+
+  return calculateWHZ(child.weight, child.height, gender, range);
+};
+
+
+const getWHZRange = (dob: string): "0_2" | "2_5" => {
+  const birthDate = new Date(dob);
+  const now = new Date();
+  const ageInMonths = Math.floor((+now - +birthDate) / (1000 * 60 * 60 * 24 * 30.44));
+  return ageInMonths < 24 ? "0_2" : "2_5";
 };
