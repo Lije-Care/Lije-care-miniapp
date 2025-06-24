@@ -28,6 +28,7 @@ import AddChildPage from './AddChildPage';
 import DoctorDetailPage from '@/pages/DoctorDetailPage';
 import MyAppointments from '@/pages/MyAppointments';
 import ChatScreen from '@/pages/Consultation/ChatScreen';
+import NotificationsPage from '@/pages/NotificationsPage';
 
 
 const Layout = ({ children }: {children: any}) => (
@@ -115,6 +116,7 @@ export function App() {
   <Route path="/articles" element={<ArticlesPage />} />
   <Route path="/articles/:id" element={<ArticleDetail />} />
   
+    <Route path="/notifications" element={<NotificationsPage />} />
 
   <Route path="/my-appointments" element={
         <ProtectedRoute>

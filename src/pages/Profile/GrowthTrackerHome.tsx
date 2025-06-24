@@ -48,9 +48,6 @@ const calculateMUACzScore = (muac: number, _ageMonths: number, _gender: string) 
   return (muac - 13) / 2; // Approximation
 };
 
-const calculateHeightZScore = (height: number, _ageMonths: number, _gender: string) => {
-  return (height - 90) / 5; // Approximation
-};
 
 interface ChildProfile {
   date_of_birth: any;

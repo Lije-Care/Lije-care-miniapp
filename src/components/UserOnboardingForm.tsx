@@ -57,7 +57,7 @@ const UserOnboardingForm = () => {
   };
 
   return (
-    <Page back={true}>
+  <Page   back={true}>
       <div className="max-w-md mx-auto mt-10 rounded-2xl shadow-xl p-6 border border-gray-200">
         <h2 className="text-2xl font-semibold mb-6 text-center">👋 Create Your Account</h2>
 

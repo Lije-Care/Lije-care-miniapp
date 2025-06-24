@@ -6,6 +6,7 @@ import { Modal } from "@telegram-apps/telegram-ui";
 import { useState } from "react";
 import ParentProfile from "@/components/ParentProfile";
 import ChildProfile from "@/components/ChildProfile";
+import AccountSettings from "@/components/AccountSetting";
 import { Page } from "@/components/Page";
 
 export default function ProfileScreen() {
@@ -13,6 +14,7 @@ export default function ProfileScreen() {
     const navigate = useNavigate();
 
     const [isParentOpen, setIsParentOpen] =useState(false);
+    const [isAccountSettingOpen, setIsAccountSettingOpen] =useState(false);
     const [isChildOpen, setIsChildOpen] =useState(false);
     // const [isNotificationOpen, setIsNotificationOpen] =useState(false);
     // const [isAddchildOpen, setIsAddchildOpen] =useState(false);
@@ -64,6 +66,14 @@ export default function ProfileScreen() {
         </Modal>
 
         <Modal
+          trigger={undefined}
+          open={isAccountSettingOpen}
+          onOpenChange={setIsAccountSettingOpen}
+        >
+          <AccountSettings />
+        </Modal>
+
+        <Modal
           
           trigger={undefined}
           open={isChildOpen}
@@ -79,7 +89,7 @@ export default function ProfileScreen() {
         <ProfileOption onClick={() => navigate('/children')} icon={<FaChild />} label="Child Profile" />
         {/* <ProfileOption onClick={() => setIsNotificationOpen(true)} icon={<FaBell />} label="Notification" /> */}
         {/* <ProfileOption onClick={() => setIsSettingOpen(true)} icon={<FaLock />} label="Password & Security" /> */}
-        <ProfileOption onClick={() => navigate('/children')} icon={<MdPersonAdd />} label="Add Child Profile" />
+        <ProfileOption onClick={() => setIsAccountSettingOpen(true)} icon={<MdPersonAdd />} label="Account setting" />
       </div>
 
      

@@ -1,14 +1,10 @@
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
-import { Button, Headline, Input, Spinner } from "@telegram-apps/telegram-ui";
+import { Button, Headline, Spinner } from "@telegram-apps/telegram-ui";
 import { FaEdit } from "react-icons/fa";
 import { updateParent } from "@/redux/slices/itemSlice";
 import type { ParentInfo } from "@/types";
-import useTelegramUser from "@/hooks/useTelegramUser";
-import axios from "axios";
-
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 const ParentProfile = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -22,14 +18,11 @@ const ParentProfile = () => {
     address: parent?.address || "",
     city: parent?.city || "",
     telegram_username: parent?.telegram_username || "",
-    avatarUrl: parent?.avatarUrl || "https://lije-care-api-dev.zikollab.com/uploads/images/PROFILE/default-avatar.png",
     email: parent?.email || "",
   });
 
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [imageError, setImageError] = useState("");
 
   const telegramUser = JSON.parse(localStorage.getItem("user") || "{}");
 
@@ -38,68 +31,10 @@ const ParentProfile = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
-
-  // Client-side validation
-  if (file.size > MAX_FILE_SIZE) {
-    setImageError("Image must be smaller than 10MB.");
-    return;
-  }
-
-  setImageError("");
-  setUploading(true);
-
-  const formDataImage = new FormData();
-  formDataImage.append("image", file);
-  formDataImage.append("type", "PROFILE");
-
-  try {
-    const token = localStorage.getItem("access_token") || "";
-    const response = await axios.post(
-      "https://lije-care-api-dev.zikollab.com/api/v1/file-upload/upload-image",
-      formDataImage,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    const imageUrl = response?.data?.url;
-    if (imageUrl) {
-      setFormData((prev) => ({
-        ...prev,
-        avatarUrl: `https://lije-care-api-dev.zikollab.com/uploads/images/PROFILE${imageUrl}`,
-      }));
-    }
-  } catch (error: any) {
-    // Server-side error handling
-    if (axios.isAxiosError(error) && error.response) {
-      const serverMessage = error.response.data?.message?.[0] || "Image upload failed.";
-      
-      // Optional: Convert numeric size message to readable text
-      const maxSizeMatch = serverMessage.match(/Maximum file size is (\d+)/);
-      if (maxSizeMatch) {
-        const readableSize = (parseInt(maxSizeMatch[1]) / (1024 * 1024)).toFixed(1);
-        setImageError(`Image too large. Max size allowed is ${readableSize}MB.`);
-      } else {
-        setImageError(serverMessage);
-      }
-    } else {
-      setImageError("Failed to upload image. Please try again.");
-    }
-  } finally {
-    setUploading(false);
-  }
-};
-
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    console.log(telegramUser)
+
     try {
       await dispatch(
         updateParent({
@@ -125,80 +60,56 @@ const ParentProfile = () => {
 
         <Headline style={{ textAlign: "center" }}>Parent Profile</Headline>
 
-        {/* 👤 Avatar Upload */}
-        <div className="flex flex-col items-center my-4 gap-2">
-          <img
-            src={formData.avatarUrl}
-            alt="Parent Avatar"
-            className="w-24 h-24 rounded-full border object-cover"
-          />
-
-          {isEditing && (
-            <>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="text-sm text-gray-600"
-              />
-              {imageError && (
-                <p className="text-red-500 text-xs mt-1">{imageError}</p>
-              )}
-              {uploading && <Spinner size="s" />}
-            </>
-          )}
-        </div>
-
-        {/* 📝 Form / Info View */}
         {isEditing ? (
-        <form onSubmit={handleSubmit} className="space-y-4">
-  {[
-    { name: "firstName", label: "First Name" },
-    { name: "lastName", label: "Last Name" },
-    { name: "phone", label: "Phone Number" },
-    { name: "address", label: "Address" },
-    { name: "city", label: "City" },
-    { name: "telegram_username", label: "Telegram Username" },
-    { name: "email", label: "Email" },
-  ].map(({ name, label }) => (
-    <div key={name} className="flex flex-col">
-      <label htmlFor={name} className="text-sm font-medium text-gray-700 mb-1">
-        {label}
-      </label>
-      <input
-        id={name}
-        name={name}
-        type="text"
-        value={(formData as any)[name]}
-        onChange={handleChange}
-        className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full"
-        placeholder={`Enter ${label.toLowerCase()}`}
-      />
-    </div>
-  ))}
+          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+            {[
+              { name: "firstName", label: "First Name" },
+              { name: "lastName", label: "Last Name" },
+              { name: "phone", label: "Phone Number" },
+              { name: "address", label: "Address" },
+              { name: "city", label: "City" },
+              { name: "telegram_username", label: "Telegram Username" },
+              { name: "email", label: "Email" },
+            ].map(({ name, label }) => (
+              <div key={name} className="flex flex-col">
+                <label htmlFor={name} className="text-sm font-medium text-gray-700 mb-1">
+                  {label}
+                </label>
+                <input
+                  id={name}
+                  name={name}
+                  type="text"
+                  value={(formData as any)[name]}
+                  onChange={handleChange}
+                  className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full"
+                  placeholder={`Enter ${label.toLowerCase()}`}
+                />
+              </div>
+            ))}
 
-  <div className="flex flex-col sm:flex-row gap-2 mt-4">
-    <Button type="submit" className="w-full sm:w-1/2">
-      {loading ? <Spinner size="s" /> : "Save"}
-    </Button>
-    <Button type="button" onClick={() => setIsEditing(false)} className="w-full sm:w-1/2">
-      Cancel
-    </Button>
-  </div>
-</form>
-
+            <div className="flex flex-col sm:flex-row gap-2 mt-4">
+              <Button type="submit" className="w-full sm:w-1/2">
+                {loading ? <Spinner size="s" /> : "Save"}
+              </Button>
+              <Button type="button" onClick={() => setIsEditing(false)} className="w-full sm:w-1/2">
+                Cancel
+              </Button>
+            </div>
+          </form>
         ) : (
           <div className="grid grid-cols-2 gap-y-3 text-gray-700 mt-4">
             <span className="font-medium">Parent Name:</span>
             <span>{parent?.firstName} {parent?.lastName}</span>
             <span className="font-medium">Mobile No:</span>
             <span>{parent?.phone || "N/A"}</span>
-           
             <span className="font-medium">Address:</span>
             <span>{parent?.address || "N/A"}</span>
             <span className="font-medium">City:</span>
             <span>{parent?.city || "N/A"}</span>
-           
+            <span className="font-medium">Telegram Username:</span>
+            <span>{parent?.telegram_username || "N/A"}</span>
+            <span className="font-medium">Email:</span>
+            <span>{parent?.email || "N/A"}</span>
           </div>
         )}
 

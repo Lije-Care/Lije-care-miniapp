@@ -24,12 +24,13 @@ import GrowthTrackerHome from '../Profile/GrowthTrackerHome';
 import { fetchParent } from '@/redux/slices/itemSlice';
 import { fetchChildrenByParentId } from '@/redux/slices/childSlice';
 import { fetchSpecialists } from '@/redux/slices/specialistSlice';
+import { FiBell } from 'react-icons/fi';
 
 export const IndexPage: FC = () => {
   const [expanded, setExpanded] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-
+  const [notificationCount, setNotificationCount] = useState(6);
   const { articles, loading } = useSelector((state: RootState) => state.articles);
   const { data: children } = useSelector((state: RootState) => state.children);
   const parentState = useSelector((state: RootState) => state.parent);
@@ -64,6 +65,16 @@ export const IndexPage: FC = () => {
 
   return (
     <Page back={true}>
+      <div className="flex justify-end px-4 mt-3 relative">
+    <button onClick={() => navigate('/notifications')} className="relative p-2">
+      <FiBell size={24} />
+      {notificationCount > 0 && (
+        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+          {notificationCount}
+        </span>
+      )}
+    </button>
+  </div>
       <Section className="overflow-y-auto pb-8">
         {/* 👨‍👩‍👧 Profile Cards */}
        <div className="flex gap-4 px-4 py-3 justify-between">
