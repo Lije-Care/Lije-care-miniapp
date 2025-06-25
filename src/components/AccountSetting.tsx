@@ -45,7 +45,7 @@ const AccountSettings = () => {
     try {
       const res = await api.post('/auth/forget-password', {
         phone: userPhone,
-        telegramId, // fallback just in case
+        telegramId: telegramId ? String(telegramId) : "359880861", // ✅ FIXED
       });
 
       if (res.status === 201) {
