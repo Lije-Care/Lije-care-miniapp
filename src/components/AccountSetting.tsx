@@ -24,7 +24,8 @@ const AccountSettings = () => {
     const localUser = JSON.parse(localStorage.getItem('user') || '{}');
     setUserPhone(localUser?.phone ?? '');
     setUserId(localUser?.id ?? '');
-
+    const telegramUser = (window as any)?.Telegram?.WebApp?.initDataUnsafe?.user;
+    console.log('Local user data:', telegramUser);
     const tgUserId = (window as any)?.Telegram?.WebApp?.initDataUnsafe?.user?.id;
     setTelegramId(tgUserId ?? '');
   }, []);
@@ -36,7 +37,7 @@ const AccountSettings = () => {
 
   const handleForgotPassword = async () => {
      console.log('OTP sent to Telegram bot', { phone: userPhone, telegramId });
-    if (!userPhone || !telegramId) {
+    if (!userPhone) {
       toast.error('Missing phone number or Telegram ID.');
       return;
     }
