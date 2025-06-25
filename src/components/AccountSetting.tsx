@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button, Modal } from '@telegram-apps/telegram-ui';
 import toast from 'react-hot-toast';
 import api from '@/api/axios';
-import axios from 'axios'; // ✅ ensure axios is imported
+import axios from 'axios';
 
 const BASE_URL = 'https://lije-care-api-dev.zikollab.com/api/v1';
 
@@ -12,12 +12,12 @@ const AccountSettings = () => {
   const [showReset, setShowReset] = useState(false);
 
   const [resetData, setResetData] = useState({
-    token: '',
     otp: '',
     password: '',
     confirmPassword: '',
   });
 
+  const [resetToken, setResetToken] = useState(''); // 🔒 Stored internally
   const [userPhone, setUserPhone] = useState('');
   const [telegramId, setTelegramId] = useState('');
   const [userId, setUserId] = useState('');
@@ -37,22 +37,22 @@ const AccountSettings = () => {
   };
 
   const handleForgotPassword = async () => {
-    if (!userPhone ) {
-      toast.error('Missing phone number or Telegram ID.');
+    if (!userPhone) {
+      toast.error('Missing phone number.');
       return;
     }
 
     try {
       const res = await api.post('/auth/forget-password', {
         phone: userPhone,
-        telegramId: "359880861",
+        telegramId: telegramId, // fallback just in case
       });
 
       if (res.status === 201) {
         toast.success('OTP sent to your Telegram bot!');
-        setResetData(prev => ({ ...prev, token: res.data?.token ?? '' }));
+        setResetToken(res.data?.token ?? '');
         setShowForgot(false);
-        setShowReset(true); // ✅ Automatically open reset modal
+        setShowReset(true); // open reset modal automatically
       } else {
         toast.error('Unexpected response from server.');
       }
@@ -62,20 +62,24 @@ const AccountSettings = () => {
   };
 
   const handleResetPassword = async () => {
-    if (resetData.password !== resetData.confirmPassword) {
+    const { otp, password, confirmPassword } = resetData;
+
+    if (password !== confirmPassword) {
       toast.error("Passwords don't match.");
       return;
     }
 
     try {
-      await axios.post(`${BASE_URL}/auth/reset-password`, {
-        token: resetData.token,
-        otp: resetData.otp,
-        password: resetData.password,
+      const res = await axios.post(`${BASE_URL}/auth/reset-password`, {
+        token: resetToken,
+        otp,
+        password,
       });
 
-      toast.success('Password has been reset successfully!');
+      toast.success(res.data?.message || 'Password reset successfully');
       setShowReset(false);
+      setResetData({ otp: '', password: '', confirmPassword: '' });
+      setResetToken('');
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Failed to reset password.');
     }
@@ -118,7 +122,7 @@ const AccountSettings = () => {
         <div className="p-4">
           <h3 className="text-md font-semibold mb-3 text-center">Send OTP to Telegram</h3>
           <div className="mb-4 text-sm text-gray-600">
-            We’ll send an OTP to your Telegram using:
+            We'll send an OTP to your Telegram using:
             <ul className="mt-2 list-disc pl-5 text-xs">
               <li><strong>Phone:</strong> {userPhone}</li>
               <li><strong>Telegram ID:</strong> {telegramId}</li>
@@ -135,13 +139,6 @@ const AccountSettings = () => {
         <div className="p-4">
           <h3 className="text-md font-semibold mb-3 text-center">🔐 Reset Password</h3>
 
-          <input
-            name="token"
-            placeholder="Reset token"
-            value={resetData.token}
-            onChange={handleChangeReset}
-            className="w-full mb-2 px-3 py-2 border rounded-md"
-          />
           <input
             name="otp"
             placeholder="Enter OTP"
