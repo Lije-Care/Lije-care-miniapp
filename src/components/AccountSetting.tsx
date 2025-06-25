@@ -24,7 +24,7 @@ const AccountSettings = () => {
     const localUser = JSON.parse(localStorage.getItem('user') || '{}');
     setUserPhone(localUser?.phone ?? '');
     setUserId(localUser?.id ?? '');
-    const telegramUser = (window as any)?.Telegram?.WebApp?.initDataUnsafe?.user;
+    const telegramUser = (window as any)?.Telegram?.WebApp;
     console.log('Local user data:', telegramUser);
     const tgUserId = (window as any)?.Telegram?.WebApp?.initDataUnsafe?.user?.id;
     setTelegramId(tgUserId ?? '');
