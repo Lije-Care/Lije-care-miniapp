@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Button, Modal } from '@telegram-apps/telegram-ui';
 import toast from 'react-hot-toast';
-import axios from 'axios';
+import api from '@/api/axios';
 
-const BASE_URL = 'https://lije-care-api-dev.zikollab.com/api/v1';
 
 const AccountSettings = () => {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -36,16 +35,18 @@ const AccountSettings = () => {
   };
 
   const handleForgotPassword = async () => {
+     console.log('OTP sent to Telegram bot', { phone: userPhone, telegramId });
     if (!userPhone || !telegramId) {
       toast.error('Missing phone number or Telegram ID.');
       return;
     }
 
     try {
-      await axios.post(`${BASE_URL}/auth/forget-password`, {
+      await api.post(`/auth/forget-password`, {
         phone: userPhone,
         telegramId,
       });
+      console.log('OTP sent to Telegram bot');
       toast.success('OTP sent to your Telegram bot!');
       setShowForgot(false);
     } catch (error: any) {
