@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { Button, Modal } from '@telegram-apps/telegram-ui';
 import toast from 'react-hot-toast';
 import api from '@/api/axios';
+import axios from 'axios'; // ✅ ensure axios is imported
 
+const BASE_URL = 'https://lije-care-api-dev.zikollab.com/api/v1';
 
 const AccountSettings = () => {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -24,8 +26,7 @@ const AccountSettings = () => {
     const localUser = JSON.parse(localStorage.getItem('user') || '{}');
     setUserPhone(localUser?.phone ?? '');
     setUserId(localUser?.id ?? '');
-    const telegramUser = (window as any)?.Telegram?.WebApp;
-    console.log('Local user data:', telegramUser);
+
     const tgUserId = (window as any)?.Telegram?.WebApp?.initDataUnsafe?.user?.id;
     setTelegramId(tgUserId ?? '');
   }, []);
@@ -36,20 +37,25 @@ const AccountSettings = () => {
   };
 
   const handleForgotPassword = async () => {
-     console.log('OTP sent to Telegram bot', { phone: userPhone, telegramId });
-    if (!userPhone) {
+    if (!userPhone ) {
       toast.error('Missing phone number or Telegram ID.');
       return;
     }
 
     try {
-      await api.post(`/auth/forget-password`, {
+      const res = await api.post('/auth/forget-password', {
         phone: userPhone,
         telegramId: "359880861",
       });
-      console.log('OTP sent to Telegram bot');
-      toast.success('OTP sent to your Telegram bot!');
-      setShowForgot(false);
+
+      if (res.status === 201) {
+        toast.success('OTP sent to your Telegram bot!');
+        setResetData(prev => ({ ...prev, token: res.data?.token ?? '' }));
+        setShowForgot(false);
+        setShowReset(true); // ✅ Automatically open reset modal
+      } else {
+        toast.error('Unexpected response from server.');
+      }
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Failed to send OTP.');
     }
@@ -67,6 +73,7 @@ const AccountSettings = () => {
         otp: resetData.otp,
         password: resetData.password,
       });
+
       toast.success('Password has been reset successfully!');
       setShowReset(false);
     } catch (error: any) {
@@ -83,9 +90,8 @@ const AccountSettings = () => {
     try {
       await axios.delete(`${BASE_URL}/users/delete?id=${userId}`);
       toast.success("Account deleted successfully.");
-      // Optionally clear localStorage and redirect
       localStorage.clear();
-      window.Telegram.WebApp.close(); // Closes the Mini App
+      window.Telegram.WebApp.close(); // Close Mini App
     } catch (error: any) {
       toast.error(error?.response?.data?.message || "Failed to delete account.");
     }
