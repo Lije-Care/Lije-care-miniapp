@@ -133,9 +133,11 @@ const childrenSlice = createSlice({
 
       // Update child
       .addCase(updateChild.fulfilled, (state, action: PayloadAction<Child>) => {
-        const index = state.data.findIndex((child) => child.id === action.payload.id);
+        const index = state.data.findIndex((child) => child.id === action.payload.data.id);
+        console.log("Updating child at index:", state.data[0], "with data:", action.payload.data.id);
+        console.log("Updating child at index:", index, "with data:", action.payload);
         if (index !== -1) {
-          state.data[index] = action.payload;
+          state.data[index] = action.payload?.data;
         }
       });
   },

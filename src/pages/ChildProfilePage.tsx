@@ -187,7 +187,7 @@ const ChildProfilePage: React.FC = () => {
   }
 
   return (
-     <Page back={true}>
+  <Page back={true}>
     <div className="max-w-4xl mx-auto p-4 text-white">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-emerald-400">Child Profile</h1>
@@ -196,112 +196,143 @@ const ChildProfilePage: React.FC = () => {
         </Button>
       </div>
 
-      <GrowthTrackerAll childProfile={child} />
-     
-      {result ? (
-            <motion.div
-             className="bg-[#1E1E2F] border border-gray-700 p-5 rounded-xl shadow-md"
-            
-            initial={{ opacity: 0, y: 15 }}
+      {isEditing && (
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mb-6">
+          {/* Basic Info */}
+          <motion.div
+            className="bg-[#1E1E2F] border border-gray-700 rounded-xl p-6"
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            >
-                <div >
-            <Text className="text-emerald-400 text-lg font-semibold text-center">Nutrition Summary</Text>
-           
-            <div className="flex justify-between"><Text>Status:</Text><Text>{result.status}</Text></div>
-            <Divider />
-            <div className="flex justify-between"><Text>🔥 Calories:</Text><Text>{result.calories} kcal</Text></div>
-            <div className="flex justify-between"><Text>💪 Protein:</Text><Text>{result.protein} g</Text></div>
-            <div className="flex justify-between"><Text>🧈 Fat:</Text><Text>{result.fat} g</Text></div>
-            <div className="flex justify-between"><Text>🍞 Carbs:</Text><Text>{result.carbs} g</Text></div>
-            <Divider />
-            <div className="flex justify-between"><Text>🩸 Iron:</Text><Text>{result.iron} mg</Text></div>
-            <div className="flex justify-between"><Text>🦴 Calcium:</Text><Text>{result.calcium} mg</Text></div>
-            <div className="flex justify-between"><Text>👁️ Vitamin A:</Text><Text>{result.vitaminA} mcg</Text></div>
+          >
+            <Text className="text-xl font-semibold text-emerald-300 mb-4">Basic Information</Text>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm text-gray-400 mb-1 block">Name</label>
+                <Input {...register('name')} placeholder="Enter child’s name" />
+              </div>
+              <div>
+                <label className="text-sm text-gray-400 mb-1 block">Date of Birth</label>
+                <Input type="date" {...register('date_of_birth')} />
+              </div>
+              <div>
+                <label className="text-sm text-gray-400 mb-1 block">Gender</label>
+                <Select {...register('gender')}>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </Select>
+              </div>
+              <div>
+                <label className="text-sm text-gray-400 mb-1 block">Weight (kg)</label>
+                <Input type="number" step="0.1" {...register('weight')} placeholder="e.g. 12.5" />
+              </div>
+              <div>
+                <label className="text-sm text-gray-400 mb-1 block">Height (cm)</label>
+                <Input type="number" step="0.1" {...register('height')} placeholder="e.g. 85" />
+              </div>
+              <div>
+                <label className="text-sm text-gray-400 mb-1 block">MUAC (cm)</label>
+                <Input type="number" step="0.1" {...register('muac')} placeholder="e.g. 13.2" />
+              </div>
             </div>
-            </motion.div>
-        ) : (
-            <Placeholder header="Waiting for input...">
-            <Caption>Fill all fields above to calculate your child's needs.</Caption>
-            </Placeholder>
-        )}
-   <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-6">
-  <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl p-6 space-y-4">
-    <Text className="text-xl font-semibold text-emerald-300">Basic Information</Text>
+          </motion.div>
 
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div className="space-y-4">
-        <div>
-          <label className="text-sm text-gray-400 mb-1 block">Name</label>
-          <Input {...register('name')} placeholder="Enter child’s name" disabled={!isEditing} />
-        </div>
+          {/* Health Details - Styled like Nutrition Summary */}
+          <motion.div
+            className="bg-[#1E1E2F] border border-gray-700 p-5 rounded-xl shadow-md"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <Text className="text-emerald-400 text-lg font-semibold text-center mb-4">Health Details</Text>
+            <div className="space-y-4">
+              <div className="flex justify-between"><Text>Dietary Restrictions:</Text><Text>{watchFields.dietary_restrictions || '-'}</Text></div>
+              <Divider />
+              <div className="flex justify-between"><Text>Allergies:</Text><Text>{watchFields.allergies || '-'}</Text></div>
+              <Divider />
+              <div className="flex justify-between"><Text>Medications:</Text><Text>{watchFields.medications || '-'}</Text></div>
+            </div>
+          </motion.div>
 
-        <div>
-          <label className="text-sm text-gray-400 mb-1 block">Date of Birth</label>
-          <Input type="date" {...register('date_of_birth')} disabled={!isEditing} />
-        </div>
+          <div className="flex justify-end mt-4">
+            <Button type="submit" stretched disabled={submitting} className="bg-emerald-600 text-white">
+              {submitting ? <Spinner size="s" /> : 'Save Changes'}
+            </Button>
+          </div>
+        </form>
+      )}
 
-        <div>
-          <label className="text-sm text-gray-400 mb-1 block">Gender</label>
-          <Select {...register('gender')} disabled={!isEditing}>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </Select>
-        </div>
+      {/* Growth and Nutrition Tracker (Always visible) */}
+      <GrowthTrackerAll childProfile={child} />
+
+       <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl mt-4 p-5 space-y-2 mb-5">
+        <h3 className="text-lg font-semibold text-center text-gray-300 mb-2">👶 Child Profile</h3>
+         <div className="text-sm text-gray-400 space-y-1">
+            {child?.name && (
+              <div className="flex justify-between">
+                <span className="font-semibold">Name:</span>
+                <span>{child?.name}</span>
+              </div>
+            )}
+            {child?.gender && (
+              <div className="flex justify-between">
+                <span className="font-semibold">Gender:</span>
+                <span>{child.gender}</span>
+              </div>
+            )}
+            {child?.date_of_birth && (
+                    <div className="flex justify-between">
+                      <span className="font-semibold">Date of Birth:</span>
+                      <span>{new Date(child.date_of_birth).toLocaleDateString()}</span>
+                    </div>
+             )}
+
+            {child?.height && (
+            <div className="flex justify-between">
+              <span className="font-semibold">Height:</span>
+              <span>{child.height}</span>
+            </div>
+          )}
+            {child?.weight && (
+              <div className="flex justify-between">
+                <span className="font-semibold">weight:</span>
+                <span>{child.weight}</span>
+              </div>
+            )}
+         {child?.muac && (
+            <div className="flex justify-between"> 
+                 <span className="font-semibold">MUAC:</span>
+                <span>{child.muac}</span>
+              </div>
+            )}
+          </div>
       </div>
 
-      <div className="space-y-4">
-        <div>
-          <label className="text-sm text-gray-400 mb-1 block">Weight (kg)</label>
-          <Input type="number" step="0.1" {...register('weight')} placeholder="e.g. 12.5" disabled={!isEditing} />
-        </div>
-
-        <div>
-          <label className="text-sm text-gray-400 mb-1 block">Height (cm)</label>
-          <Input type="number" step="0.1" {...register('height')} placeholder="e.g. 85" disabled={!isEditing} />
-        </div>
-
-        <div>
-          <label className="text-sm text-gray-400 mb-1 block">MUAC (cm)</label>
-          <Input type="number" step="0.1" {...register('muac')} placeholder="e.g. 13.2" disabled={!isEditing} />
-        </div>
-      </div>
+      {/* Nutrition Summary (always shown if data available) */}
+      {result ? (
+        <motion.div
+          className="bg-[#1E1E2F] border border-gray-700 p-5 rounded-xl shadow-md mt-6"
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <Text className="text-emerald-400 text-lg font-semibold text-center mb-2">Nutrition Summary</Text>
+          <div className="flex justify-between"><Text>Status:</Text><Text>{result.status}</Text></div>
+          <Divider />
+          <div className="flex justify-between"><Text>🔥 Calories:</Text><Text>{result.calories} kcal</Text></div>
+          <div className="flex justify-between"><Text>💪 Protein:</Text><Text>{result.protein} g</Text></div>
+          <div className="flex justify-between"><Text>🧈 Fat:</Text><Text>{result.fat} g</Text></div>
+          <div className="flex justify-between"><Text>🍞 Carbs:</Text><Text>{result.carbs} g</Text></div>
+          <Divider />
+          <div className="flex justify-between"><Text>🩸 Iron:</Text><Text>{result.iron} mg</Text></div>
+          <div className="flex justify-between"><Text>🦴 Calcium:</Text><Text>{result.calcium} mg</Text></div>
+          <div className="flex justify-between"><Text>👁️ Vitamin A:</Text><Text>{result.vitaminA} mcg</Text></div>
+        </motion.div>
+      ) : (
+        <Placeholder header="Waiting for input..." className="mt-6">
+          <Caption>Fill all fields above to calculate your child's needs.</Caption>
+        </Placeholder>
+      )}
     </div>
-  </div>
-
-  <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl p-6 space-y-4">
-    <Text className="text-xl font-semibold text-emerald-300">Health Details</Text>
-
-    <div className="space-y-4">
-      <div>
-        <label className="text-sm text-gray-400 mb-1 block">Dietary Restrictions</label>
-        <Input {...register('dietary_restrictions')} placeholder="e.g. Lactose intolerance" disabled={!isEditing} />
-      </div>
-
-      <div>
-        <label className="text-sm text-gray-400 mb-1 block">Allergies</label>
-        <Input {...register('allergies')} placeholder="e.g. Peanuts, eggs" disabled={!isEditing} />
-      </div>
-
-      <div>
-        <label className="text-sm text-gray-400 mb-1 block">Medications</label>
-        <Input {...register('medications')} placeholder="e.g. Vitamin D supplement" disabled={!isEditing} />
-      </div>
-    </div>
-  </div>
-
-  {isEditing && (
-    <div className="flex justify-end mt-4">
-      <Button type="submit" stretched disabled={submitting} className="bg-emerald-600 text-white">
-        {submitting ? <Spinner size="s" /> : 'Save Changes'}
-      </Button>
-    </div>
-  )}
-</form>
-
-    </div>
-    </Page>
-  );
+  </Page>
+);
 };
 
 export default ChildProfilePage;
