@@ -55,7 +55,6 @@ const UserOnboardingForm = () => {
     try {
       const response = await api.post('users/create', formData);
       localStorage.setItem('onboarding_complete', 'true');
-      console.log('User created successfully:', response);
       navigate('/');
     } catch (err: any) {
       console.error('Error:', err?.response?.data?.message || err.message);

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { calculateHAZ } from "@/excelData/calculateHAZ";
 import { calculateWHZ } from "@/excelData/calculateWHZ";
 import { calculateWAZ } from "@/excelData/calculateWAZ";
+import { differenceInWeeks, differenceInMonths } from "date-fns";
 
 const classifyZ = (z: number, type: string) => {
   if (type === "BMI") {
@@ -67,17 +68,39 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
   useEffect(() => {
     if (childProfile) {
       setChild(childProfile);
+      
+       const hazResult = calculateHAZ(
+  85,      // heightCm
+  29,      // ageInWeeks
+  7,       // ageInMonths
+  "girl"   // gender
+);
+
+console.log("HAZ Z-Score:", hazResult.haz);
+console.log("HAZ Classification:", hazResult.classification);
+
+
+    
+   const birthDate = new Date(childProfile.date_of_birth);
+const today = new Date();
+const ageInWeeks = differenceInWeeks(today, birthDate);
+const ageInMonths = differenceInMonths(today, birthDate);
+
+// 2. Normalize gender to "girl" or "boy"
+const gender = childProfile.gender.toLowerCase() === "female" ? "girl" : "boy";
 
       const calculatedZScores = {
         BMI: calculateBMIzScore(childProfile.weight, childProfile.height),
         MUAC: calculateMUACzScore(childProfile.muac),
-        HAZ: calculateHAZ(childProfile.height, getAgeValue(childProfile.date_of_birth, "month") > 13 
-                        ? getAgeValue(childProfile.date_of_birth, "month") 
-                        : getAgeValue(childProfile.date_of_birth, "week"), "week", childProfile.gender === "Male" ? "boy" : "girl"),
+        HAZ: calculateHAZ(
+            childProfile.height,
+            ageInWeeks,
+            ageInMonths,
+            gender
+          ),
         WHZ: calculateWHZ(childProfile.weight, childProfile.height, childProfile.gender === "Male" ? "boy" : "girl", getWHZRange(childProfile.date_of_birth)),
         WAZ: calculateWAZ(childProfile.weight, getAgeDetails(childProfile.date_of_birth).age, getAgeDetails(childProfile.date_of_birth).type, childProfile.gender === "Male" ? "boy" : "girl"),
       };
-
       setZScores(calculatedZScores);
     }
   }, [childProfile]);

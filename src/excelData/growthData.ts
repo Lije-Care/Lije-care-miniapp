@@ -11,13 +11,28 @@ export interface GrowthEntry {
   minus1SD?: number;
 }
 
+type Gender = "boy" | "girl";
+type AgeType = "week" | "month";
+
+const growthDataMap: Record<Gender, Record<AgeType, GrowthEntry[]>> = {
+  boy: {
+    week: boys0To13Weeks,
+    month: boys4mTo5y,
+  },
+  girl: {
+    week: girls0To13Weeks,
+    month: girls4mTo5y,
+  },
+};
+
 export const getGrowthData = (
-  gender: "boy" | "girl",
-  ageType: "week" | "month"
+  gender: Gender,
+  ageType: AgeType
 ): GrowthEntry[] => {
-  if (gender === "boy" && ageType === "week") return boys0To13Weeks;
-  if (gender === "boy" && ageType === "month") return boys4mTo5y;
-  if (gender === "girl" && ageType === "week") return girls0To13Weeks;
-  if (gender === "girl" && ageType === "month") return girls4mTo5y;
-  return [];
+  const data = growthDataMap[gender]?.[ageType];
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    console.warn(`No growth data available for gender: ${gender}, ageType: ${ageType}`);
+    return [];
+  }
+  return data;
 };
