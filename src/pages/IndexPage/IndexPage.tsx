@@ -25,6 +25,7 @@ import { fetchParent } from '@/redux/slices/itemSlice';
 import { fetchChildrenByParentId } from '@/redux/slices/childSlice';
 import { fetchSpecialists } from '@/redux/slices/specialistSlice';
 import { FiBell } from 'react-icons/fi';
+import PromotionsList from '../Profile/PromotionsList';
 
 export const IndexPage: FC = () => {
   const [expanded, setExpanded] = useState(true);
@@ -153,7 +154,8 @@ export const IndexPage: FC = () => {
 
           <div className="mt-4">
             <ArticleSliderWidget articles={articles} />
-          </div> 
+          </div>
+          <PromotionsList /> 
           <div className="mt-4">
             <DoctorsList />
           </div>
