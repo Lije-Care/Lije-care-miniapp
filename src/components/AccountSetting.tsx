@@ -45,7 +45,7 @@ const AccountSettings = () => {
     try {
       await api.post(`/auth/forget-password`, {
         phone: userPhone,
-        telegramId,
+        telegramId: "359880861",
       });
       console.log('OTP sent to Telegram bot');
       toast.success('OTP sent to your Telegram bot!');
