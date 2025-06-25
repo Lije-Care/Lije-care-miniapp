@@ -214,12 +214,15 @@ const ChildProfilePage: React.FC = () => {
                 <label className="text-sm text-gray-400 mb-1 block">Date of Birth</label>
                 <Input type="date" {...register('date_of_birth')} />
               </div>
-              <div>
+              <div>   
                 <label className="text-sm text-gray-400 mb-1 block">Gender</label>
-                <Select {...register('gender')}>
+                <select
+                  {...register('gender')}
+                  className="w-full border border-gray-300 rounded-md px-6 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 bg-[#1E1E2F] text-white"
+                >
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
-                </Select>
+                </select>
               </div>
               <div>
                 <label className="text-sm text-gray-400 mb-1 block">Weight (kg)</label>
