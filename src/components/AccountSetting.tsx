@@ -147,9 +147,9 @@ const AccountSettings = () => {
     <div className="p-4 w-full max-w-md mx-auto text-sm">
       <h2 className="text-lg font-bold mb-4 text-center">⚙️ Account Settings</h2>
 
-      <Button className="w-full mb-3" onClick={() => setShowForgot(true)}>
+      {/* <Button className="w-full mb-3" onClick={() => setShowForgot(true)}>
         📩 Forgot Password (OTP)
-      </Button>
+      </Button> */}
 
       <Button className="w-full mb-3" onClick={() => setShowChange(true)}>
         🔐 Change Password
