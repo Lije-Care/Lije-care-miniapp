@@ -3,6 +3,7 @@ import { Button, Modal } from '@telegram-apps/telegram-ui';
 import toast from 'react-hot-toast';
 import api from '@/api/axios';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const BASE_URL = 'https://lije-care-api-dev.zikollab.com/api/v1';
 
@@ -118,22 +119,29 @@ const AccountSettings = () => {
       toast.error(error?.response?.data?.message || 'Failed to change password.');
     }
   };
-
+  const navigate = useNavigate();
   const handleDeleteAccount = async () => {
-    if (!userId) {
-      toast.error("User ID not found.");
-      return;
-    }
+  if (!userId) {
+    toast.error("User ID not found.");
+    return;
+  }
 
-    try {
-      await axios.delete(`${BASE_URL}/users/delete/${userId}`);
+  try {
+    const res = await api.delete(`/users/delete/${userId}`);
+
+    if (res.status === 200) {
       toast.success("Account deleted successfully.");
-      localStorage.clear();
-      window.Telegram.WebApp.close();
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || "Failed to delete account.");
+      setIsDeleting(false); // ✅ close modal
+      localStorage.removeItem('user');
+      localStorage.removeItem('access_token');
+      navigate('/signin'); // ✅ navigate to sign-in
+    } else {
+      toast.error("Unexpected response from server.");
     }
-  };
+  } catch (error: any) {
+    toast.error(error?.response?.data?.message || "Failed to delete account.");
+  }
+};
 
   return (
     <div className="p-4 w-full max-w-md mx-auto text-sm">
