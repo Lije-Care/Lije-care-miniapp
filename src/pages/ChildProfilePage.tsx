@@ -73,18 +73,27 @@ const ChildProfilePage: React.FC = () => {
 
   const watchFields = watch();
 
-  useEffect(() => {
-    if (child) {
-      reset({
-        ...child,
-        muac: child.muac ?? 0,
-        dietary_restrictions: child.dietary_restrictions ?? '',
-        allergies: child.allergies ?? '',
-        medications: child.medications ?? '',
-      });
-      setLoadingPage(false);
-    }
-  }, [child, reset]);
+  function formatDateToYYYYMMDD(dateString: string) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toISOString().split('T')[0]; // returns "YYYY-MM-DD"
+}
+
+
+useEffect(() => {
+  if (child) {
+    reset({
+      ...child,
+      date_of_birth: formatDateToYYYYMMDD(child.date_of_birth),
+      muac: child.muac ?? 0,
+      dietary_restrictions: child.dietary_restrictions ?? '',
+      allergies: child.allergies ?? '',
+      medications: child.medications ?? '',
+    });
+    setLoadingPage(false);
+  }
+}, [child, reset]);
+
 
   useEffect(() => {
     const { weight, height, gender, date_of_birth } = watchFields;
