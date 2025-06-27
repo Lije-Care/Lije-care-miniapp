@@ -1,0 +1,19 @@
+{
+  "welcome": "Welcome",
+  "change_language": "Change Language",
+  "profile": "Profile",
+  "parent_profile": "Parent Profile",
+  "child_profile": "Child Profile",
+  "account_setting": "Account Setting",
+  "first_name": "First Name",
+  "last_name": "Last Name",
+  "phone_number": "Phone Number",
+  "address": "Address",
+  "city": "City",
+  "telegram_username": "Telegram Username",
+  "email": "Email",
+  "save": "Save",
+  "cancel": "Cancel",
+  "enter": "Enter",
+  "n_a": "N/A"
+}
