@@ -139,7 +139,6 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
     />
   </div>
   {[
-    { name: 'name', label: 'Name', type: 'text' },
 
     { name: 'weight', label: 'Weight (kg)', type: 'number' },
     { name: 'height', label: 'Height (cm)', type: 'number' },
