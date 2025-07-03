@@ -64,7 +64,7 @@ const MealPlanSummary = () => {
   return (
     <Page   back={true}>
     <div className="p-4 space-y-4">
-      <h2 className="text-xl font-bold text-center">📋 daily meal plan</h2>
+      <h2 className="text-xl font-bold text-center">📋 your meal plan</h2>
 
       {error && (
         <div className="text-red-500 text-center">

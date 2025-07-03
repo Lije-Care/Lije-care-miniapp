@@ -5,7 +5,8 @@ import { calculateHAZ } from "@/excelData/calculateHAZ";
 import { calculateWHZ } from "@/excelData/calculateWHZ";
 import { calculateWAZ } from "@/excelData/calculateWAZ";
 import { differenceInWeeks, differenceInMonths } from "date-fns";
-
+import { calculateBMIZ } from "@/excelData/calculateBMIZ";
+ 
 const classifyZ = (z: number, type: string) => {
   if (type === "BMI") {
     if (z < -3) return { label: "Severe underweight", color: "text-red-500", note: "Urgent nutritional intervention needed." };
@@ -42,12 +43,6 @@ const classifyZ = (z: number, type: string) => {
   };
 };
 
-
-const calculateBMIzScore = (weight: number, height: number) => {
-  const bmi = weight / ((height / 100) ** 2);
-  return (bmi - 15) / 2;
-};
-
 const calculateMUACzScore = (muac: number) => (muac - 13) / 2;
 
 interface ChildProfile {
@@ -64,6 +59,7 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
   const [child, setChild] = useState<ChildProfile | null>(null);
   const [zScores, setZScores] = useState<any>(null);
   const [expanded, setExpanded] = useState(false);
+const gender = childProfile?.gender.toLowerCase() === "female" ? "girl" : "boy";
 
   useEffect(() => {
     if (childProfile) {
@@ -73,8 +69,10 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
   85,      // heightCm
   29,      // ageInWeeks
   7,       // ageInMonths
-  "girl"   // gender
+  gender   // gender
 );
+
+
 
 console.log("HAZ Z-Score:", hazResult.haz);
 console.log("HAZ Classification:", hazResult.classification);
@@ -85,12 +83,26 @@ console.log("HAZ Classification:", hazResult.classification);
 const today = new Date();
 const ageInWeeks = differenceInWeeks(today, birthDate);
 const ageInMonths = differenceInMonths(today, birthDate);
-
+const measuredStanding = childProfile.height > 87;
+const bmiResult = calculateBMIZ(
+  childProfile.weight,
+  childProfile.height,
+  ageInWeeks <= 13 ? ageInWeeks : ageInMonths,
+  ageInWeeks <= 13 ? "week" : "month",
+  gender,
+  measuredStanding
+);
+console.log("BMI Z-Score:", bmiResult);
+console.log("Z-Score:",calculateHAZ(
+            childProfile.height,
+            ageInWeeks,
+            ageInMonths,
+            gender
+          ),)
 // 2. Normalize gender to "girl" or "boy"
-const gender = childProfile.gender.toLowerCase() === "female" ? "girl" : "boy";
 
       const calculatedZScores = {
-        BMI: calculateBMIzScore(childProfile.weight, childProfile.height),
+        BMI: bmiResult,
         MUAC: calculateMUACzScore(childProfile.muac),
         HAZ: calculateHAZ(
             childProfile.height,
@@ -111,7 +123,7 @@ const gender = childProfile.gender.toLowerCase() === "female" ? "girl" : "boy";
     { key: "HAZ", label: "Height for Age", value: zScores.HAZ.haz, result: { label: zScores.HAZ.classification, color: "text-blue-400", note: zScores.HAZ.classification } },
     { key: "WHZ", label: "Weight for Height", value: zScores.WHZ.zScore, result: { label: zScores.WHZ.classification, color: "text-orange-400", note: zScores.WHZ.classification } },
     { key: "WAZ", label: "Weight for Age", value: zScores.WAZ.zScore, result: { label: zScores.WAZ.classification, color: "text-yellow-400", note: zScores.WAZ.classification } },
-    { key: "BMI", label: "BMI for Age", value: zScores.BMI, result: classifyZ(zScores.BMI, "BMI") },
+    { key: "BMI", label: "BMI for Age", value: zScores.BMI.zScore, result: { label: zScores.BMI.classification, color: "text-yellow-400", note: zScores.BMI.classification } },
     { key: "MUAC", label: "MUAC for Age", value: zScores.MUAC, result: classifyZ(zScores.MUAC, "MUAC") },
   ];
 
@@ -125,7 +137,7 @@ const gender = childProfile.gender.toLowerCase() === "female" ? "girl" : "boy";
             <h3 className="text-md font-semibold text-gray-300">{label}</h3>
             <div className="flex justify-between mt-2 text-sm">
               <span className="text-gray-400">Z-Score:</span>
-              <span className={`font-bold ${result.color}`}>{value.toFixed(2)}</span>
+              <span className={`font-bold ${result.color}`}>{value?.toFixed(2)}</span>
             </div>
             <div className="mt-1 text-sm">
               <p className={`font-medium ${result.color}`}>{result.label}</p>
