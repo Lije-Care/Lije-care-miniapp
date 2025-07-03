@@ -6,6 +6,7 @@ import { calculateWHZ } from "@/excelData/calculateWHZ";
 import { calculateWAZ } from "@/excelData/calculateWAZ";
 import { differenceInWeeks, differenceInMonths } from "date-fns";
 import { calculateBMIZ } from "@/excelData/calculateBMIZ";
+import { calculateMUACZ } from "@/excelData/calculateMUACZ";
  
 const classifyZ = (z: number, type: string) => {
   if (type === "BMI") {
@@ -43,7 +44,7 @@ const classifyZ = (z: number, type: string) => {
   };
 };
 
-const calculateMUACzScore = (muac: number) => (muac - 13) / 2;
+
 
 interface ChildProfile {
   date_of_birth: any;
@@ -103,7 +104,7 @@ console.log("Z-Score:",calculateHAZ(
 
       const calculatedZScores = {
         BMI: bmiResult,
-        MUAC: calculateMUACzScore(childProfile.muac),
+        MUAC: calculateMUACZ(childProfile.muac, ageInMonths, gender).zScore,
         HAZ: calculateHAZ(
             childProfile.height,
             ageInWeeks,
