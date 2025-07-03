@@ -339,8 +339,7 @@ useEffect(() => {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <Text className="text-emerald-400 text-lg font-semibold text-center mb-2">Nutrition Summary</Text>
-          <div className="flex justify-between"><Text>Status:</Text><Text>{result.status}</Text></div>
+          <Text className="text-emerald-400 text-lg font-semibold text-center mb-2">Daily Nutrition requirement</Text>
           <Divider />
           <div className="flex justify-between"><Text>🔥 Calories:</Text><Text>{result.calories} kcal</Text></div>
           <div className="flex justify-between"><Text>💪 Protein:</Text><Text>{result.protein} g</Text></div>
