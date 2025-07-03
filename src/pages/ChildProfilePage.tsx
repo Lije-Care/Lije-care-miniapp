@@ -39,6 +39,7 @@ type Result = {
   vitaminA: number;
   status: string;
   error?: string;
+  water?: number; // Added water to the result
 };
 
 const ChildProfilePage: React.FC = () => {
@@ -97,11 +98,13 @@ useEffect(() => {
 
 
   useEffect(() => {
-    const { weight, height, gender, date_of_birth } = watchFields;
+    const {  weight, height, gender, date_of_birth } = watchFields;
     const months = date_of_birth ? Math.floor((new Date().getTime() - new Date(date_of_birth).getTime()) / (1000 * 60 * 60 * 24 * 30)) : 0;
 
     if (weight && height && gender && months) {
+      console.log('Calculating nutrition needs...', months);
       const weightNum = Number(weight);
+      const ageNum = months;
       const heightNum = Number(height);
       const bmi = weightNum / ((heightNum / 100) ** 2);
       const roundedBMI = parseFloat(bmi.toFixed(2));
@@ -152,7 +155,16 @@ useEffect(() => {
       let calcium = months <= 6 ? 200 : months <= 12 ? 260 : months <= 36 ? 700 : 1000;
       let iron = months <= 6 ? 0.27 : months <= 12 ? 11 : months <= 36 ? 7 : 10;
       let vitaminA = months <= 6 ? 400 : months <= 12 ? 500 : months <= 36 ? 300 : 400;
+       let baseWater = 1600;
+            if (ageNum <= 6) baseWater = 700;
+            else if (ageNum <= 12) baseWater = 900;
+            else if (ageNum <= 36) baseWater = 1300;
 
+            const waterMultiplier = condition === "Catch-up Growth" ? 1.2
+                                : condition === "Underweight" ? 1.15
+                                : 1;
+
+            const water = parseFloat((baseWater * waterMultiplier).toFixed(2));
       let status = 'Normal';
       if (bmi < 14) status = 'Underweight';
       else if (bmi > 17) status = 'Overweight';
@@ -167,6 +179,7 @@ useEffect(() => {
         calcium,
         vitaminA,
         status,
+        water
       });
     } else {
       setResult(null);
@@ -337,6 +350,7 @@ useEffect(() => {
           <div className="flex justify-between"><Text>🩸 Iron:</Text><Text>{result.iron} mg</Text></div>
           <div className="flex justify-between"><Text>🦴 Calcium:</Text><Text>{result.calcium} mg</Text></div>
           <div className="flex justify-between"><Text>👁️ Vitamin A:</Text><Text>{result.vitaminA} mcg</Text></div>
+           <div className="flex justify-between"><Text>👁️ Water</Text><Text>{result.water} mcg</Text></div>
         </motion.div>
       ) : (
         <Placeholder header="Waiting for input..." className="mt-6">

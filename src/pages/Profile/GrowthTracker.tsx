@@ -1,18 +1,11 @@
 "use client";
 
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  ResponsiveContainer,
-  Legend,
-} from "recharts";
 import { useEffect, useState } from "react";
-
-// Helper to classify Z-score result
+import { calculateHAZ } from "@/excelData/calculateHAZ";
+import { calculateWHZ } from "@/excelData/calculateWHZ";
+import { calculateWAZ } from "@/excelData/calculateWAZ";
+import { differenceInWeeks, differenceInMonths } from "date-fns";
+ 
 const classifyZ = (z: number, type: string) => {
   if (type === "BMI") {
     if (z < -3) return { label: "Severe underweight", color: "text-red-500", note: "Urgent nutritional intervention needed." };
@@ -41,22 +34,21 @@ const classifyZ = (z: number, type: string) => {
     return { label: "Obese", color: "text-red-600", note: "Immediate intervention advised." };
   }
 
-  return { label: "Unknown", color: "text-gray-500", note: "Data missing." };
+  // ✅ Default fallback
+  return {
+    label: "Unknown",
+    color: "text-gray-500",
+    note: "Unrecognized indicator type or missing data.",
+  };
 };
 
-// Dummy calculators - you should replace with real calculations or API results
-const calculateBMIzScore = (weight: number, height: number, _ageMonths: number, _gender: string) => {
+
+const calculateBMIzScore = (weight: number, height: number) => {
   const bmi = weight / ((height / 100) ** 2);
-  return (bmi - 15) / 2; // Approximation
+  return (bmi - 15) / 2;
 };
 
-const calculateMUACzScore = (muac: number, _ageMonths: number, _gender: string) => {
-  return (muac - 13) / 2; // Approximation
-};
-
-const calculateHeightZScore = (height: number, _ageMonths: number, _gender: string) => {
-  return (height - 90) / 5; // Approximation
-};
+const calculateMUACzScore = (muac: number) => (muac - 13) / 2;
 
 interface ChildProfile {
   date_of_birth: any;
@@ -68,97 +60,119 @@ interface ChildProfile {
   muac: number;
 }
 
-const GrowthTrackerAll = ({ childProfile }: { childProfile: any }) => {
+const GrowthTracker = ({ childProfile }: { childProfile: any }) => {
   const [child, setChild] = useState<ChildProfile | null>(null);
   const [zScores, setZScores] = useState<any>(null);
-  const [history, setHistory] = useState<any[]>([]);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     if (childProfile) {
       setChild(childProfile);
+      
+       const hazResult = calculateHAZ(
+  85,      // heightCm
+  29,      // ageInWeeks
+  7,       // ageInMonths
+  "girl"   // gender
+);
+
+console.log("HAZ Z-Score:", hazResult.haz);
+console.log("HAZ Classification:", hazResult.classification);
+
+
+    
+   const birthDate = new Date(childProfile.date_of_birth);
+const today = new Date();
+const ageInWeeks = differenceInWeeks(today, birthDate);
+const ageInMonths = differenceInMonths(today, birthDate);
+
+// 2. Normalize gender to "girl" or "boy"
+const gender = childProfile.gender.toLowerCase() === "female" ? "girl" : "boy";
 
       const calculatedZScores = {
-        BMI: calculateBMIzScore(childProfile.weight, childProfile.height, childProfile.ageMonths, childProfile.gender),
-        MUAC: calculateMUACzScore(childProfile.muac, childProfile.ageMonths, childProfile.gender),
-        Height: calculateHeightZScore(childProfile.height, childProfile.ageMonths, childProfile.gender),
+        BMI: calculateBMIzScore(childProfile.weight, childProfile.height),
+        MUAC: calculateMUACzScore(childProfile.muac),
+        HAZ: calculateHAZ(
+            childProfile.height,
+            ageInWeeks,
+            ageInMonths,
+            gender
+          ),
+        WHZ: calculateWHZ(childProfile.weight, childProfile.height, childProfile.gender === "Male" ? "boy" : "girl", getWHZRange(childProfile.date_of_birth)),
+        WAZ: calculateWAZ(childProfile.weight, getAgeDetails(childProfile.date_of_birth).age, getAgeDetails(childProfile.date_of_birth).type, childProfile.gender === "Male" ? "boy" : "girl"),
       };
       setZScores(calculatedZScores);
-
-      // Dynamic history mock (simulate monthly growth)
-      const sampleHistory = [
-        { month: "Jan", BMI: 14.6, MUAC: 13.3, Height: 90 },
-        { month: "Feb", BMI: 14.9, MUAC: 13.5, Height: 91.5 },
-        { month: "Mar", BMI: 15.1, MUAC: 13.7, Height: 93 },
-        { month: "Apr", BMI: 15.3, MUAC: 13.9, Height: 94.2 },
-        { month: "May", BMI: 15.4, MUAC: 14.1, Height: 95.5 },
-      ];
-      setHistory(sampleHistory);
     }
   }, [childProfile]);
 
-  if (!child || !zScores) {
-    return <div className="text-center text-gray-400 mt-10">Loading child data...</div>;
-  }
+  if (!child || !zScores) return <div className="text-center text-gray-400 mt-10">Loading...</div>;
 
   const indicators = [
-    { key: "BMI", label: "BMI-for-Age", value: zScores.BMI },
-    { key: "MUAC", label: "MUAC-for-Age", value: zScores.MUAC },
-    { key: "Height", label: "Height-for-Age", value: zScores.Height },
+    { key: "HAZ", label: "Height for Age", value: zScores.HAZ.haz, result: { label: zScores.HAZ.classification, color: "text-blue-400", note: zScores.HAZ.classification } },
+    { key: "WHZ", label: "Weight for Height", value: zScores.WHZ.zScore, result: { label: zScores.WHZ.classification, color: "text-orange-400", note: zScores.WHZ.classification } },
+    { key: "WAZ", label: "Weight for Age", value: zScores.WAZ.zScore, result: { label: zScores.WAZ.classification, color: "text-yellow-400", note: zScores.WAZ.classification } },
+    { key: "BMI", label: "BMI for Age", value: zScores.BMI, result: classifyZ(zScores.BMI, "BMI") },
+    { key: "MUAC", label: "MUAC for Age", value: zScores.MUAC, result: classifyZ(zScores.MUAC, "MUAC") },
   ];
 
-  return (
-    <div className=" max-w-3xl mx-auto font-sans text-white space-y-8">
-      <h2 className="text-2xl font-bold text-center text-emerald-400">📈 Growth Tracker</h2>
+  const visibleIndicators = expanded ? indicators : indicators.slice(0, 3);
 
-      {/* Current Z-scores */}
+  return (
+    <div className="max-w-3xl mx-auto font-sans text-white space-y-4 p-4">
       <div className="grid md:grid-cols-3 gap-4">
-        {indicators.map(({ key, label, value }) => {
-          const result = classifyZ(value, key);
-          return (
-            <div key={key} className="rounded-xl bg-[#1E1E2F] border border-gray-700 p-4 shadow-sm">
-              <h3 className="text-md font-semibold text-gray-300">{label}</h3>
-              <div className="flex justify-between mt-2 text-sm">
-                <span className="text-gray-400">Z-Score:</span>
-                <span className={`font-bold ${result.color}`}>{value.toFixed(2)}</span>
-              </div>
-              <div className="mt-1 text-sm">
-                <p className={`font-medium ${result.color}`}>{result.label}</p>
-                <p className="text-gray-400 text-xs">{result.note}</p>
-              </div>
+        {visibleIndicators.map(({ key, label, value, result }) => (
+          <div key={key} className="rounded-xl bg-[#1E1E2F] border border-gray-700 p-4 shadow-sm">
+            <h3 className="text-md font-semibold text-gray-300">{label}</h3>
+            <div className="flex justify-between mt-2 text-sm">
+              <span className="text-gray-400">Z-Score:</span>
+              <span className={`font-bold ${result.color}`}>{value.toFixed(2)}</span>
             </div>
-          );
-        })}
+            <div className="mt-1 text-sm">
+              <p className={`font-medium ${result.color}`}>{result.label}</p>
+              <p className="text-gray-400 text-xs">{result.note}</p>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Growth chart
-      <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl p-5">
-        <h3 className="text-lg font-semibold text-center text-gray-300 mb-2">📊 Growth History</h3>
-        <div className="h-72">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={history} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#2D2D3A" />
-              <XAxis dataKey="month" stroke="#8884d8" />
-              <YAxis stroke="#8884d8" />
-              <Tooltip
-                contentStyle={{ backgroundColor: '#2A2A3C', border: 'none' }}
-                labelStyle={{ color: '#f3f3f3' }}
-                itemStyle={{ color: '#f3f3f3' }}
-              />
-              <Legend />
-              <Line type="monotone" dataKey="BMI" stroke="#4F46E5" strokeWidth={2} dot={{ r: 3 }} />
-              <Line type="monotone" dataKey="MUAC" stroke="#34D399" strokeWidth={2} dot={{ r: 3 }} />
-              <Line type="monotone" dataKey="Height" stroke="#F59E0B" strokeWidth={2} dot={{ r: 3 }} />
-            </LineChart>
-          </ResponsiveContainer>
+      {indicators.length > 3 && (
+        <div className="text-center">
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="text-teal-400 underline text-sm"
+          >
+            {expanded ? "View Less" : "View More"}
+          </button>
         </div>
-      </div> */}
-
-      {/* Child profile */}
-     
-     
-
+      )}
     </div>
   );
 };
 
-export default GrowthTrackerAll;
+export default GrowthTracker;
+
+export const getAgeValue = (dob: string | Date, ageType: "week" | "month"): number => {
+  const birthDate = new Date(dob);
+  const now = new Date();
+  const diffInMs = now.getTime() - birthDate.getTime();
+
+  if (ageType === "week") return Math.floor(diffInMs / (1000 * 60 * 60 * 24 * 7));
+  const years = now.getFullYear() - birthDate.getFullYear();
+  const months = now.getMonth() - birthDate.getMonth();
+  return now.getDate() < birthDate.getDate() ? years * 12 + months - 1 : years * 12 + months;
+};
+
+const getAgeDetails = (dob: string): { age: number; type: "week" | "month" } => {
+  const birthDate = new Date(dob);
+  const now = new Date();
+  const diffInDays = Math.floor((+now - +birthDate) / (1000 * 60 * 60 * 24));
+  const ageInWeeks = Math.floor(diffInDays / 7);
+  return ageInWeeks <= 13 ? { age: ageInWeeks, type: "week" } : { age: Math.floor(diffInDays / 30.44), type: "month" };
+};
+
+const getWHZRange = (dob: string): "0_2" | "2_5" => {
+  const birthDate = new Date(dob);
+  const now = new Date();
+  const ageInMonths = Math.floor((+now - +birthDate) / (1000 * 60 * 60 * 24 * 30.44));
+  return ageInMonths < 24 ? "0_2" : "2_5";
+};
