@@ -3,29 +3,9 @@ import api from "@/api/axios";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { Meal } from "@/types/meal";
 
-export type Meal = {
-  id: string;
-  name: string;
-  description: string;
-  mealTime: "BREAKFAST" | "SNACK" | "LUNCH" | "DINNER";
-  mealType: "SOLID" | "DRINK" | "SEMI_SOLID";
-  ageGroup: '0-5' | '6-12' | '13-18' | 'ADULT' | string;
-  allergen: boolean;
-  intolerance: boolean;
-  choking: boolean;
-  allergenDescription: string;
-  intoleranceDescription: string;
-  drugInteraction: string;
-  totalVolume: number;
-  direction: string;
-  modificationNote: string;
-  howToStore: string | null;
-  videoUrl: string;
-  imageUrl: string;
-  createdAt: string;
-  updatedAt: string;
-};
+
 
 type SelectedMeal = {
   meal: Meal;
@@ -159,59 +139,94 @@ const MealLibraryComponent = () => {
         </div>
       </div>
 
-      {/* Meal Cards */}
-      <div className="space-y-4">
-        {meals.map((meal) => {
-          const selected = selectedMeals.find((m) => m.meal.id === meal.id);
-          return (
-            <div
-              key={meal.id}
-              className={`p-4 rounded-lg border transition-all duration-200 ${
-                selected ? "border-emerald-400 bg-emerald-900/10" : "border-gray-700 bg-[#101827]"
-              }`}
-            >
-              <div className="flex gap-4 items-start">
-                <img
-                  src={`https://lije-care-api-dev.zikollab.com/uploads/images/MEAL/${meal.imageUrl}`}
-                  alt={meal.name}
-                  className="w-24 h-24 object-cover rounded"
-                />
-                <div className="flex-1 space-y-1">
-                  <h2 className="text-lg font-semibold">{meal.name}</h2>
-                  <p className="text-xs text-gray-400">{meal.ageGroup} · {meal.mealType} · {meal.mealTime}</p>
-                  <p className="text-sm text-gray-300">{meal.description}</p>
+     {/* Meal Cards */}
+<div className="space-y-4">
+  {meals.map((meal) => {
+    const selected = selectedMeals.find((m) => m.meal.id === meal.id);
 
-                  {selected && (
-                    <div className="mt-2 flex items-center gap-2">
-                      <label className="text-sm text-gray-300">Multiplier:</label>
-                      <input
-                        type="number"
-                        min={1}
-                        value={selected.multiplier}
-                        onChange={(e) =>
-                          handleMultiplierChange(meal.id, parseInt(e.target.value) || 1)
-                        }
-                        className="w-16 px-2 py-1 bg-gray-800 text-white rounded"
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
+    return (
+      <div
+        key={meal.id}
+        className={`p-4 rounded-xl border transition-all text-white duration-200 ${
+          selected
+            ? "border-emerald-400 bg-emerald-800/10"
+            : "border-gray-700 bg-[#111827]"
+        }`}
+      >
+        <div className="flex gap-4">
+          {/* Meal Image */}
+          <img
+            src={`https://lije-care-api-dev.zikollab.com/uploads/images/MEAL/${meal.imageUrl}`}
+            alt={meal.name}
+            className="w-20 h-20 rounded-lg object-cover border border-gray-700"
+          />
 
-              <div className="mt-3 flex justify-between items-center">
-                <button
-                  onClick={() => toggleMeal(meal)}
-                  className={`text-sm px-4 py-2 rounded font-semibold ${
-                    selected ? "bg-red-500" : "bg-blue-500"
-                  }`}
-                >
-                  {selected ? "Remove" : "Add"}
-                </button>
-              </div>
+          <div className="flex-1 space-y-1 text-sm">
+            {/* Meal Title */}
+            <h2 className="text-base font-bold text-emerald-300">{meal.name}</h2>
+            <p className="text-gray-400 text-xs italic">
+              {meal.ageGroup}m+ · {meal.mealType} · {meal.mealTime}
+            </p>
+
+            {/* Description */}
+            <p className="text-gray-300 text-xs line-clamp-2">{meal.description}</p>
+
+            {/* Meta Tags */}
+            <div className="flex gap-2 flex-wrap mt-1 text-[11px]">
+              {meal.prepTime && (
+                <span className="bg-gray-700 px-2 py-0.5 rounded text-gray-300">
+                  ⏱️ {meal.prepTime}
+                </span>
+              )}
+              {meal.cost && (
+                <span className="bg-gray-700 px-2 py-0.5 rounded text-gray-300">
+                  💰 {meal.cost.charAt(0).toUpperCase() + meal.cost.slice(1)}
+                </span>
+              )}
+              {meal.allergen && (
+                <span className="bg-red-600/70 px-2 py-0.5 rounded text-white">⚠️ Allergen</span>
+              )}
+              {meal.intolerance && (
+                <span className="bg-yellow-600/70 px-2 py-0.5 rounded text-white">⚠️ Intolerance</span>
+              )}
             </div>
-          );
-        })}
+
+            {/* Multiplier (if selected) */}
+            {selected && (
+              <div className="mt-2 flex items-center gap-2">
+                <label className="text-xs text-gray-400">Qty:</label>
+                <input
+                  type="number"
+                  min={1}
+                  value={selected.multiplier}
+                  onChange={(e) =>
+                    handleMultiplierChange(meal.id, parseInt(e.target.value) || 1)
+                  }
+                  className="w-14 px-2 py-1 bg-gray-800 text-white rounded border border-gray-600 text-sm"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Add/Remove Button */}
+        <div className="mt-3 flex justify-end">
+          <button
+            onClick={() => toggleMeal(meal)}
+            className={`text-xs px-4 py-1.5 rounded font-semibold transition-all ${
+              selected
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-blue-500 hover:bg-blue-600"
+            }`}
+          >
+            {selected ? "Remove" : "Add"}
+          </button>
+        </div>
       </div>
+    );
+  })}
+</div>
+
 
       <button
         onClick={handleConfirmMealPlan}
