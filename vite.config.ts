@@ -22,8 +22,11 @@ export default defineConfig({
   ],
   publicDir: './public',
   server: {
-    // Exposes your dev server and makes it accessible for the devices in the same network.
-    host: true
+    host: '0.0.0.0', // ✅ allow external hosts
+    https: true,     // ✅ required if using mkcert
+    cors: true,      // ✅ avoid CORS issues
+    origin: 'https://lije-care-miniapp-dev.zikollab.com', // ✅ ensure origin is known
+    // proxy: {} ← optional if you need to proxy backend
   },
 });
 
