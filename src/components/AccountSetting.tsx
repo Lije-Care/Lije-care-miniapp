@@ -3,11 +3,20 @@ import { Button, Modal } from '@telegram-apps/telegram-ui';
 import toast from 'react-hot-toast';
 import api from '@/api/axios';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
+
+declare global {
+  interface Window {
+    Telegram?: any;
+  }
+}
 import { useNavigate } from 'react-router-dom';
 
 const BASE_URL = 'https://lije-care-api-dev.zikollab.com/api/v1';
 
 const AccountSettings = () => {
+  const { t } = useTranslation();
+
   const [isDeleting, setIsDeleting] = useState(false);
   const [showForgot, setShowForgot] = useState(false);
   const [showReset, setShowReset] = useState(false);
@@ -70,7 +79,7 @@ const AccountSettings = () => {
         toast.error('Unexpected response from server.');
       }
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'Failed to send OTP.');
+      toast.error(error?.response?.data?.message || t('Failed to send OTP.'));
     }
   };
 
@@ -94,7 +103,7 @@ const AccountSettings = () => {
       setResetData({ otp: '', password: '', confirmPassword: '' });
       setResetToken('');
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'Failed to reset password.');
+      toast.error(error?.response?.data?.message || t('Failed to reset password.'));
     }
   };
 
@@ -145,7 +154,7 @@ const AccountSettings = () => {
 
   return (
     <div className="p-4 w-full max-w-md mx-auto text-sm">
-      <h2 className="text-lg font-bold mb-4 text-center">⚙️ Account Settings</h2>
+      <h2 className="text-lg font-bold mb-4 text-center">⚙️ {t("Account Settings")}</h2>
 
       <Button className="w-full mb-3" onClick={() => 
         {
@@ -162,22 +171,22 @@ const AccountSettings = () => {
       </Button>
 
       <Button className="w-full bg-red-600 text-white" onClick={() => setIsDeleting(true)}>
-        🗑️ Delete Account
+        🗑️ {t("Delete Account")}
       </Button>
 
       {/* Forgot Password Modal */}
       <Modal open={showForgot} onOpenChange={setShowForgot}>
         <div className="p-4">
-          <h3 className="text-md font-semibold mb-3 text-center">Send OTP to Telegram</h3>
+          <h3 className="text-md font-semibold mb-3 text-center">{t("Send OTP to Telegram")}</h3>
           <div className="mb-4 text-sm text-gray-600">
             We'll send an OTP to your Telegram using:
             <ul className="mt-2 list-disc pl-5 text-xs">
-              <li><strong>Phone:</strong> {userPhone}</li>
-              <li><strong>Telegram ID:</strong> {telegramId}</li>
+              <li><strong>{t("Phone")}:</strong> {userPhone}</li>
+              <li><strong>{t("Telegram ID")}:</strong> {telegramId}</li>
             </ul>
           </div>
           <Button className="w-full" onClick={handleForgotPassword}>
-            📤 Send OTP
+            📤 {t("Send OTP")}
           </Button>
         </div>
       </Modal>
@@ -185,11 +194,11 @@ const AccountSettings = () => {
       {/* Reset Password Modal */}
       <Modal open={showReset} onOpenChange={setShowReset}>
         <div className="p-4">
-          <h3 className="text-md font-semibold mb-3 text-center">🔐 Reset Password</h3>
+          <h3 className="text-md font-semibold mb-3 text-center">{t("Reset Password Title")}</h3>
 
           <input
             name="otp"
-            placeholder="Enter OTP"
+            placeholder={t("Enter OTP")}
             value={resetData.otp}
             onChange={handleChangeReset}
             className="w-full mb-2 px-3 py-2 border rounded-md"
@@ -197,7 +206,7 @@ const AccountSettings = () => {
           <input
             name="password"
             type="password"
-            placeholder="New Password"
+            placeholder={t("New Password")}
             value={resetData.password}
             onChange={handleChangeReset}
             className="w-full mb-2 px-3 py-2 border rounded-md"
@@ -205,13 +214,13 @@ const AccountSettings = () => {
           <input
             name="confirmPassword"
             type="password"
-            placeholder="Confirm Password"
+            placeholder={t("Confirm Password")}
             value={resetData.confirmPassword}
             onChange={handleChangeReset}
             className="w-full mb-4 px-3 py-2 border rounded-md"
           />
           <Button className="w-full" onClick={handleResetPassword}>
-            ✅ Confirm Reset
+            ✅ {t("Confirm Reset")}
           </Button>
         </div>
       </Modal>
@@ -255,13 +264,13 @@ const AccountSettings = () => {
       <Modal open={isDeleting} onOpenChange={setIsDeleting}>
         <div className="p-4 text-center">
           <p className="mb-4 text-red-600 font-semibold">
-            Are you sure you want to delete your account?
+            {t("Delete Warning")}
           </p>
           <Button className="w-full bg-red-600 text-white mb-2" onClick={handleDeleteAccount}>
-            Yes, Delete My Account
+            {t("Yes, Delete My Account")}
           </Button>
           <Button className="w-full" onClick={() => setIsDeleting(false)}>
-            Cancel
+            {t("Cancel")}
           </Button>
         </div>
       </Modal>

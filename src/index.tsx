@@ -1,3 +1,4 @@
+import 'i18next'
 import ReactDOM from 'react-dom/client';
 import { StrictMode } from 'react';
 import { retrieveLaunchParams } from '@telegram-apps/sdk-react';
@@ -22,6 +23,7 @@ try {
   init(retrieveLaunchParams().startParam === 'debug' || import.meta.env.DEV);
   root.render(
     // <StrictMode>
+    
       <Root />
     // </StrictMode>
   );

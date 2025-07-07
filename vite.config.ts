@@ -23,10 +23,7 @@ export default defineConfig({
   publicDir: './public',
   server: {
     // Exposes your dev server and makes it accessible for the devices in the same network.
-    host: true,
-    allowedHosts: [
-      "does-wales-inside-pavilion.trycloudflare.com" // Replace with your actual Cloudflare Tunnel URL
-    ]
+    host: true
   },
 });
 
