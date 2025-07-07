@@ -83,10 +83,10 @@ const MealPlanSummary = () => {
             >
               {/* Description + Metadata */}
               <div className="space-y-1">
-                <p className="text-sm text-gray-700 line-clamp-2 font-medium">
+                <p className="text-sm line-clamp-2 font-medium">
                   {mealPlan.meal_description || "No description available."}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs ">
                   🔥 {mealPlan.calories} kcal · 🕒{" "}
                   {new Date(mealPlan.createdAt).toLocaleDateString()}
                 </p>
@@ -96,12 +96,12 @@ const MealPlanSummary = () => {
               <div className="my-2 border-t border-gray-200" />
 
               {/* Child Info */}
-              <div className="text-xs text-gray-600">
-                <span className="font-semibold text-gray-800">👶 Child:</span>{" "}
+              <div className="text-xs ">
+                <span className="font-semibold ">👶 Child:</span>{" "}
                 {mealPlan.child?.name || "Unnamed"} <br />
-                <span className="font-semibold text-gray-800">Allergies:</span>{" "}
+                <span className="font-semibold ">Allergies:</span>{" "}
                 {mealPlan.child?.allergies || "None"} <br />
-                <span className="font-semibold text-gray-800">Restrictions:</span>{" "}
+                <span className="font-semibold ">Restrictions:</span>{" "}
                 {mealPlan.child?.dietary_restrictions || "None"}
               </div>
 
@@ -110,21 +110,21 @@ const MealPlanSummary = () => {
 
               {/* Meals Preview */}
               <div>
-                <h4 className="text-sm font-semibold text-gray-800 mb-1">🍽️ Meals</h4>
+                <h4 className="text-sm font-semibold mb-1">🍽️ Meals</h4>
                 {Array.isArray(mealPlan.meals) && mealPlan.meals.length > 0 ? (
                   <div className="space-y-1">
                     {mealPlan.meals.slice(0, 3).map((meal) => (
-                      <div key={meal.id} className="flex justify-between items-center text-sm text-gray-700">
+                      <div key={meal.id} className="flex justify-between items-center text-sm ">
                         <span>{meal.title || "Untitled"}</span>
                         <Badge type="dot">{meal.meal_type || "Unknown"}</Badge>
                       </div>
                     ))}
                     {mealPlan.meals.length > 3 && (
-                      <p className="text-xs text-gray-400 italic mt-1">+ {mealPlan.meals.length - 3} more</p>
+                      <p className="text-xs  italic mt-1">+ {mealPlan.meals.length - 3} more</p>
                     )}
                   </div>
                 ) : (
-                  <p className="text-xs text-gray-500">No meals listed.</p>
+                  <p className="text-xs">No meals listed.</p>
                 )}
               </div>
             </Card>
