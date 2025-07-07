@@ -17,12 +17,13 @@ const MealDetails: React.FC = () => {
   const [data, setData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [openMealId, setOpenMealId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchMealPlan = async () => {
       try {
         const res = await api.get(`/meal-plans/find-one/${id}`);
-        setData(res.data); // <-- Fix: properly set response data
+        setData(res.data);
       } catch (err: any) {
         setError(err?.response?.data?.message || 'Something went wrong');
       } finally {
@@ -62,141 +63,144 @@ const MealDetails: React.FC = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6 text-white space-y-10">
-      <Title className="text-2xl font-bold text-emerald-400">🥗 Meal Plan</Title>
+    <div className="max-w-3xl mx-auto px-4 py-6 text-white space-y-8">
+      <Title className="text-2xl font-bold text-emerald-400">🍽️ Meal Plan Overview</Title>
 
-      {meals.map((meal: any) => (
-        <div
-          key={meal.id}
-          className="bg-[#1f1f2b] border border-gray-700 rounded-xl p-4 shadow-md space-y-5"
-        >
-          {/* Meal Image and Title */}
-          <div className="flex flex-col md:flex-row gap-4 items-start">
-            <img
-              src={
-                meal.imageUrl
-                  ? `https://lije-care-api-dev.zikollab.com/uploads/images/MEAL/${meal.imageUrl}`
-                  : fallbackImg
-              }
-              alt={meal.name}
-              onError={(e) => {
-                e.currentTarget.src = fallbackImg;
-              }}
-              className="w-full h-24 object-cover rounded-lg"
-            />
-            <div className="flex-1">
-              <Title className="text-xl">{meal.name}</Title>
-              <Text className="text-gray-300">{meal.description}</Text>
+      {meals.map((meal: any) => {
+        const isOpen = openMealId === meal.id;
+
+        return (
+          <div
+            key={meal.id}
+            className="bg-[#1f1f2b] border border-gray-700 rounded-xl p-4 shadow-md transition-all duration-300"
+          >
+            {/* Collapsed Header */}
+            <div
+              className="flex items-center gap-4 cursor-pointer"
+              onClick={() => setOpenMealId(isOpen ? null : meal.id)}
+            >
+              <img
+                src={
+                  meal.imageUrl
+                    ? `https://lije-care-api-dev.zikollab.com/uploads/images/MEAL/${meal.imageUrl}`
+                    : fallbackImg
+                }
+                alt={meal.name}
+                onError={(e) => {
+                  e.currentTarget.src = fallbackImg;
+                }}
+                className="w-24 h-24 rounded-lg object-cover border border-gray-700"
+              />
+              <div className="flex-1">
+                <Title className="text-lg">{meal.name}</Title>
+                <Text className="text-xs text-gray-400">
+                  {meal.ageGroup}m+ · {meal.mealType} · {meal.mealTime}
+                </Text>
+                {meal.description && (
+                  <Text className="text-sm text-gray-300 mt-1 line-clamp-2">{meal.description}</Text>
+                )}
+              </div>
+              <span className="text-sm text-emerald-400">{isOpen ? '▲' : '▼'}</span>
             </div>
+
+            {/* Expanded Content */}
+            {isOpen && (
+              <div className="pt-4 space-y-5 text-sm text-gray-300">
+                <Divider />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div><strong>Age Group:</strong> {meal.ageGroup}m+</div>
+                  <div><strong>Prep Time:</strong> {meal.prepTime || 'N/A'}</div>
+                  <div><strong>Cost:</strong> {meal.cost || 'N/A'}</div>
+                  <div><strong>Volume:</strong> {meal.totalVolume} ml</div>
+                </div>
+
+                {/* Nutrients */}
+                {Array.isArray(meal.totalNutrients) && meal.totalNutrients.length > 0 && (
+                  <div>
+                    <Title className="text-md mt-4">🔬 Nutrients</Title>
+                    <ul className="list-disc list-inside ml-4 mt-1">
+                      {meal.totalNutrients.map((n: any) => (
+                        <li key={n.id}>{n.name} ({n.amount} {n.unit})</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Ingredients */}
+                {Array.isArray(meal.mealIngredients) && meal.mealIngredients.length > 0 && (
+                  <div>
+                    <Title className="text-md mt-4">🥬 Ingredients</Title>
+                    <ul className="list-disc list-inside ml-4 mt-1">
+                      {meal.mealIngredients.map((mi: any) => (
+                        <li key={mi.id}>
+                          {mi.quantity} {mi.ingredient?.portionUnit?.abbreviation || ''} of {mi.ingredient?.name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Sections */}
+                {meal.direction && (
+                  <Section title="📋 Direction" content={meal.direction} />
+                )}
+                {meal.modificationNote && (
+                  <Section title="🛠️ Modification Note" content={meal.modificationNote} />
+                )}
+                {meal.howToStore && (
+                  <Section title="📦 How to Store" content={meal.howToStore} />
+                )}
+                {meal.drugInteraction && (
+                  <Section title="💊 Drug Interaction" content={meal.drugInteraction} />
+                )}
+
+                {/* Sensitivities */}
+                {(meal.allergen || meal.intolerance || meal.choking) && (
+                  <div>
+                    <Title className="text-md">⚠️ Sensitivities</Title>
+                    <ul className="list-disc list-inside ml-4 mt-1">
+                      {meal.allergen && (
+                        <li>Allergen: {meal.allergenDescription}</li>
+                      )}
+                      {meal.intolerance && (
+                        <li>Intolerance: {meal.intoleranceDescription}</li>
+                      )}
+                      {meal.choking && (
+                        <li>Choking Hazard</li>
+                      )}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Video */}
+                {meal.videoUrl && (
+                  <div>
+                    <Title className="text-md">🎥 Video</Title>
+                    <a
+                      href={meal.videoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sky-400 underline text-sm"
+                    >
+                      Watch Video
+                    </a>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-
-          <Divider />
-
-          {/* General Meal Info */}
-          <div>
-            <Title className="text-md">🧠 General Info</Title>
-            <ul className="text-sm mt-2 space-y-1 text-gray-300">
-              <li><strong>Meal Time:</strong> {meal.mealTime}</li>
-              <li><strong>Meal Type:</strong> {meal.mealType}</li>
-              <li><strong>Age Group:</strong> {meal.ageGroup}</li>
-              <li><strong>Total Volume:</strong> {meal.totalVolume} ml</li>
-            </ul>
-          </div>
-
-          {/* Allergens, Intolerance, Choking Info */}
-          {(meal.allergen || meal.intolerance || meal.choking) && (
-            <>
-              <Divider />
-              <div>
-                <Title className="text-md">⚠️ Sensitivities</Title>
-                <ul className="text-sm mt-2 space-y-1 text-gray-300">
-                  {meal.allergen && (
-                    <li><strong>Allergen:</strong> Yes - {meal.allergenDescription}</li>
-                  )}
-                  {meal.intolerance && (
-                    <li><strong>Intolerance:</strong> Yes - {meal.intoleranceDescription}</li>
-                  )}
-                  {meal.choking && (
-                    <li><strong>Choking Hazard:</strong> Yes</li>
-                  )}
-                </ul>
-              </div>
-            </>
-          )}
-
-          {/* Directions */}
-          {meal.direction && (
-            <>
-              <Divider />
-              <div>
-                <Title className="text-md">📋 Directions</Title>
-                <Text className="text-sm text-gray-300 mt-2 whitespace-pre-wrap">
-                  {meal.direction}
-                </Text>
-              </div>
-            </>
-          )}
-
-          {/* Modification Note */}
-          {meal.modificationNote && (
-            <>
-              <Divider />
-              <div>
-                <Title className="text-md">🛠️ Modification Note</Title>
-                <Text className="text-sm text-gray-300 mt-2 whitespace-pre-wrap">
-                  {meal.modificationNote}
-                </Text>
-              </div>
-            </>
-          )}
-
-          {/* How to Store */}
-          {meal.howToStore && (
-            <>
-              <Divider />
-              <div>
-                <Title className="text-md">📦 How to Store</Title>
-                <Text className="text-sm text-gray-300 mt-2 whitespace-pre-wrap">
-                  {meal.howToStore}
-                </Text>
-              </div>
-            </>
-          )}
-
-          {/* Drug Interaction */}
-          {meal.drugInteraction && (
-            <>
-              <Divider />
-              <div>
-                <Title className="text-md">💊 Drug Interaction</Title>
-                <Text className="text-sm text-gray-300 mt-2 whitespace-pre-wrap">
-                  {meal.drugInteraction}
-                </Text>
-              </div>
-            </>
-          )}
-
-          {/* Video URL */}
-          {meal.videoUrl && (
-            <>
-              <Divider />
-              <div>
-                <Title className="text-md">🎥 Video Tutorial</Title>
-                <a
-                  href={meal.videoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-sky-400 underline"
-                >
-                  Watch Video
-                </a>
-              </div>
-            </>
-          )}
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
+
+const Section = ({ title, content }: { title: string; content: string }) => (
+  <div>
+    <Title className="text-md mt-4">{title}</Title>
+    <Text className="whitespace-pre-wrap text-sm text-gray-300 mt-1">{content}</Text>
+  </div>
+);
 
 export default MealDetails;
