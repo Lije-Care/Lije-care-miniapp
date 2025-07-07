@@ -32,9 +32,11 @@ const ChildrenListPage: React.FC = () => {
     dispatch(fetchChildrenByParentId(telegramUser.id));
   }, []);
 
-  useEffect(() => {
-    setChildrenData(data);
-  }, []);
+useEffect(() => {
+  console.log("Redux data updated:", data);
+  setChildrenData(data);
+}, [data]); // <-- ✅ now it will re-run whenever Redux store updates
+
 
   const handleViewChild = (childId: string) => {
     navigate(`/child/${childId}`);

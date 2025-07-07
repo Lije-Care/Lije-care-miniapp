@@ -9,7 +9,7 @@ export type Child = {
   avatar: any;
   assessment: any;
   id: string;
-  parent_id: string;
+  parentId: string; // ✅ updated from parent_id
   name: string;
   date_of_birth: string;
   gender: string;
@@ -57,10 +57,14 @@ export const fetchChildrenByParentId = createAsyncThunk<Child[], string>(
   "children/fetchChildrenByParentId",
   async (parentId, { rejectWithValue }) => {
     try {
-      const response = await api.get<{ data: Child[] }>(`children/find-all?parentId=${parentId}`);
-      return response.data.data; // only return the array
+      const response = await api.get<{ data: Child[] }>(
+        `children/find-all?parentId=${parentId}`
+      );
+      return response.data.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || "Failed to fetch children");
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch children"
+      );
     }
   }
 );
@@ -72,7 +76,9 @@ export const deleteChildById = createAsyncThunk<string, string>(
       await api.delete(`/children/${childId}`);
       return childId;
     } catch (err: any) {
-      return thunkAPI.rejectWithValue(err.response?.data?.message || "Delete failed");
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Delete failed"
+      );
     }
   }
 );
@@ -81,10 +87,15 @@ export const updateChild = createAsyncThunk<Child, Partial<Child>>(
   "children/updateChild",
   async (updateChildData, { rejectWithValue }) => {
     try {
-      const response = await api.patch<Child>(`children/${updateChildData.id}`, updateChildData);
+      const response = await api.patch<Child>(
+        `children/${updateChildData.id}`,
+        updateChildData
+      );
       return response.data;
     } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || "Update failed");
+      return rejectWithValue(
+        err.response?.data?.message || "Update failed"
+      );
     }
   }
 );
@@ -98,7 +109,7 @@ const childrenSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Add child
+      // Create child
       .addCase(addChild.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -109,7 +120,8 @@ const childrenSlice = createSlice({
       })
       .addCase(addChild.rejected, (state, action) => {
         state.loading = false;
-        state.error = String(action.payload || action.error.message || "Failed to add child");
+        state.error =
+          String(action.payload || action.error.message || "Failed to add child");
       })
 
       // Fetch children
@@ -117,13 +129,17 @@ const childrenSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchChildrenByParentId.fulfilled, (state, action: PayloadAction<Child[]>) => {
-        state.loading = false;
-        state.data = action.payload;
-      })
+      .addCase(
+        fetchChildrenByParentId.fulfilled,
+        (state, action: PayloadAction<Child[]>) => {
+          state.loading = false;
+          state.data = action.payload;
+        }
+      )
       .addCase(fetchChildrenByParentId.rejected, (state, action) => {
         state.loading = false;
-        state.error = String(action.payload || action.error.message || "Failed to fetch children");
+        state.error =
+          String(action.payload || action.error.message || "Failed to fetch children");
       })
 
       // Delete child
@@ -134,10 +150,8 @@ const childrenSlice = createSlice({
       // Update child
       .addCase(updateChild.fulfilled, (state, action: PayloadAction<Child>) => {
         const index = state.data.findIndex((child) => child.id === action.payload.data.id);
-        console.log("Updating child at index:", state.data[0], "with data:", action.payload.data.id);
-        console.log("Updating child at index:", index, "with data:", action.payload);
         if (index !== -1) {
-          state.data[index] = action.payload?.data;
+          state.data[index] = action.payload.data;
         }
       });
   },

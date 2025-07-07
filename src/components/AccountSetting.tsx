@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button, Modal } from '@telegram-apps/telegram-ui';
 import toast from 'react-hot-toast';
+import api from '@/api/axios';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 
@@ -9,6 +10,7 @@ declare global {
     Telegram?: any;
   }
 }
+import { useNavigate } from 'react-router-dom';
 
 const BASE_URL = 'https://lije-care-api-dev.zikollab.com/api/v1';
 
@@ -18,14 +20,21 @@ const AccountSettings = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [showForgot, setShowForgot] = useState(false);
   const [showReset, setShowReset] = useState(false);
+  const [showChange, setShowChange] = useState(false); // ✅ NEW
 
   const [resetData, setResetData] = useState({
-    token: '',
     otp: '',
     password: '',
     confirmPassword: '',
   });
 
+  const [changeData, setChangeData] = useState({
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+
+  const [resetToken, setResetToken] = useState('');
   const [userPhone, setUserPhone] = useState('');
   const [telegramId, setTelegramId] = useState('');
   const [userId, setUserId] = useState('');
@@ -36,77 +45,129 @@ const AccountSettings = () => {
     setUserId(localUser?.id ?? '');
 
     const tgUserId = (window as any)?.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-    setTelegramId(tgUserId ?? '');
+    setTelegramId(tgUserId ? String(tgUserId) : '');
   }, []);
 
   const handleChangeReset = (e: any) => {
     const { name, value } = e.target;
-    setResetData((prev) => ({ ...prev, [name]: value }));
+    setResetData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleChangePasswordChange = (e: any) => {
+    const { name, value } = e.target;
+    setChangeData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleForgotPassword = async () => {
-    if (!userPhone || !telegramId) {
-      toast.error(t('Missing phone number or Telegram ID.'));
+    if (!userPhone) {
+      toast.error('Missing phone number.');
       return;
     }
 
     try {
-      await axios.post(`${BASE_URL}/auth/forget-password`, {
+      const res = await api.post('/auth/forget-password', {
         phone: userPhone,
-        telegramId,
+        telegramId: telegramId,
       });
-      toast.success(t('OTP sent to your Telegram bot!'));
-      setShowForgot(false);
+
+      if (res.status === 201) {
+        toast.success('OTP sent to your Telegram bot!');
+        setResetToken(res.data?.token ?? '');
+        setShowForgot(false);
+        setShowReset(true);
+      } else {
+        toast.error('Unexpected response from server.');
+      }
     } catch (error: any) {
       toast.error(error?.response?.data?.message || t('Failed to send OTP.'));
     }
   };
 
   const handleResetPassword = async () => {
-    if (resetData.password !== resetData.confirmPassword) {
-      toast.error(t("Passwords don't match."));
+    const { otp, password, confirmPassword } = resetData;
+
+    if (password !== confirmPassword) {
+      toast.error("Passwords don't match.");
       return;
     }
 
     try {
-      await axios.post(`${BASE_URL}/auth/reset-password`, {
-        token: resetData.token,
-        otp: resetData.otp,
-        password: resetData.password,
+      const res = await axios.post(`${BASE_URL}/auth/reset-password`, {
+        token: resetToken,
+        otp,
+        password,
       });
-      toast.success(t('Password has been reset successfully!'));
+
+      toast.success(res.data?.message || 'Password reset successfully');
       setShowReset(false);
+      setResetData({ otp: '', password: '', confirmPassword: '' });
+      setResetToken('');
     } catch (error: any) {
       toast.error(error?.response?.data?.message || t('Failed to reset password.'));
     }
   };
 
-  const handleDeleteAccount = async () => {
-    if (!userId) {
-      toast.error(t("User ID not found."));
+  const handleChangePassword = async () => {
+    const { oldPassword, newPassword, confirmPassword } = changeData;
+
+    if (newPassword !== confirmPassword) {
+      toast.error("New passwords don't match.");
       return;
     }
 
     try {
-      await axios.delete(`${BASE_URL}/users/delete?id=${userId}`);
-      toast.success(t("Account deleted successfully."));
-      localStorage.clear();
-      window.Telegram.WebApp.close();
+      const res = await api.post(`/auth/change-password`, {
+        oldPassword,
+        newPassword,
+      });
+
+      toast.success(res.data?.message || 'Password changed successfully');
+      setShowChange(false);
+      setChangeData({ oldPassword: '', newPassword: '', confirmPassword: '' });
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || t("Failed to delete account."));
+      toast.error(error?.response?.data?.message || 'Failed to change password.');
     }
   };
+  const navigate = useNavigate();
+  const handleDeleteAccount = async () => {
+  if (!userId) {
+    toast.error("User ID not found.");
+    return;
+  }
+
+  try {
+    const res = await api.delete(`/users/delete/${userId}`);
+
+    if (res.status === 200) {
+      toast.success("Account deleted successfully.");
+      setIsDeleting(false); // ✅ close modal
+      localStorage.removeItem('user');
+      localStorage.removeItem('access_token');
+      navigate('/signin'); // ✅ navigate to sign-in
+    } else {
+      toast.error("Unexpected response from server.");
+    }
+  } catch (error: any) {
+    toast.error(error?.response?.data?.message || "Failed to delete account.");
+  }
+};
 
   return (
     <div className="p-4 w-full max-w-md mx-auto text-sm">
       <h2 className="text-lg font-bold mb-4 text-center">⚙️ {t("Account Settings")}</h2>
 
-      <Button className="w-full mb-3" onClick={() => setShowForgot(true)}>
-        📩 {t("Forgot Password (OTP)")}
-      </Button>
+      <Button className="w-full mb-3" onClick={() => 
+        {
+          localStorage.removeItem('user');
+          localStorage.removeItem('access_token');
+          window.Telegram.WebApp.close();
+          navigate('/signin'); // Redirect to sign-in page
+        }}>
+         Log out
+      </Button>    
 
-      <Button className="w-full mb-3" onClick={() => setShowReset(true)}>
-        🔐 {t("Reset Password")}
+      <Button className="w-full mb-3" onClick={() => setShowChange(true)}>
+        🔐 Change Password
       </Button>
 
       <Button className="w-full bg-red-600 text-white" onClick={() => setIsDeleting(true)}>
@@ -118,7 +179,7 @@ const AccountSettings = () => {
         <div className="p-4">
           <h3 className="text-md font-semibold mb-3 text-center">{t("Send OTP to Telegram")}</h3>
           <div className="mb-4 text-sm text-gray-600">
-            {t("We’ll send an OTP to your Telegram using:")}
+            We'll send an OTP to your Telegram using:
             <ul className="mt-2 list-disc pl-5 text-xs">
               <li><strong>{t("Phone")}:</strong> {userPhone}</li>
               <li><strong>{t("Telegram ID")}:</strong> {telegramId}</li>
@@ -135,13 +196,6 @@ const AccountSettings = () => {
         <div className="p-4">
           <h3 className="text-md font-semibold mb-3 text-center">{t("Reset Password Title")}</h3>
 
-          <input
-            name="token"
-            placeholder={t("Reset token")}
-            value={resetData.token}
-            onChange={handleChangeReset}
-            className="w-full mb-2 px-3 py-2 border rounded-md"
-          />
           <input
             name="otp"
             placeholder={t("Enter OTP")}
@@ -167,6 +221,41 @@ const AccountSettings = () => {
           />
           <Button className="w-full" onClick={handleResetPassword}>
             ✅ {t("Confirm Reset")}
+          </Button>
+        </div>
+      </Modal>
+
+      {/* Change Password Modal */}
+      <Modal open={showChange} onOpenChange={setShowChange}>
+        <div className="p-4">
+          <h3 className="text-md font-semibold mb-3 text-center">🔁 Change Password</h3>
+
+          <input
+            name="oldPassword"
+            type="password"
+            placeholder="Old Password"
+            value={changeData.oldPassword}
+            onChange={handleChangePasswordChange}
+            className="w-full mb-2 px-3 py-2 border rounded-md"
+          />
+          <input
+            name="newPassword"
+            type="password"
+            placeholder="New Password"
+            value={changeData.newPassword}
+            onChange={handleChangePasswordChange}
+            className="w-full mb-2 px-3 py-2 border rounded-md"
+          />
+          <input
+            name="confirmPassword"
+            type="password"
+            placeholder="Confirm New Password"
+            value={changeData.confirmPassword}
+            onChange={handleChangePasswordChange}
+            className="w-full mb-4 px-3 py-2 border rounded-md"
+          />
+          <Button className="w-full" onClick={handleChangePassword}>
+            🔐 Change Password
           </Button>
         </div>
       </Modal>

@@ -6,24 +6,37 @@ export const calculateWHZ = (
   gender: "boy" | "girl",
   ageGroup: "0_2" | "2_5"
 ): { zScore: number; classification: string } => {
-  const data: WeightForHeightEntry[] = getWeightForHeightData(gender, ageGroup);
-
-  if (!data.length) {
-    return { zScore: 0, classification: "Unknown (no data)" };
+  if (!weightKg || !heightCm || isNaN(weightKg) || isNaN(heightCm)) {
+    return { zScore: 0, classification: "Invalid input values" };
   }
 
-  const closest = data.reduce((prev, curr) =>
-    Math.abs(parseFloat(curr.cm) - heightCm) < Math.abs(parseFloat(prev.cm) - heightCm)
-      ? curr
-      : prev
-  );
+  const data: WeightForHeightEntry[] = getWeightForHeightData(gender, ageGroup);
 
-  const median = parseFloat(closest["SD(M)"]);
-  const plus1SD = parseFloat(closest["1SD"]);
+  if (!data || data.length === 0) {
+    return { zScore: 0, classification: "Unknown (no reference data)" };
+  }
+
+  // Find closest height in cm (assuming height is stored as string in cm)
+  const closest = data.reduce((prev, curr) => {
+    const prevDiff = Math.abs(parseFloat(prev.cm) - heightCm);
+    const currDiff = Math.abs(parseFloat(curr.cm) - heightCm);
+    return currDiff < prevDiff ? curr : prev;
+  });
+
+  // Parse and validate values
+  const medianStr = closest["SD(M)"];
+  const plus1SDStr = closest["1SD"];
+
+  if (!medianStr || !plus1SDStr) {
+    return { zScore: 0, classification: "Missing reference values" };
+  }
+
+  const median = parseFloat(medianStr);
+  const plus1SD = parseFloat(plus1SDStr);
   const SD = plus1SD - median;
 
-  if (isNaN(median) || isNaN(plus1SD) || SD === 0 || isNaN(weightKg)) {
-    return { zScore: 0, classification: "Invalid data" };
+  if (isNaN(median) || isNaN(plus1SD) || isNaN(SD) || Math.abs(SD) < 0.0001) {
+    return { zScore: 0, classification: "Invalid reference data" };
   }
 
   const zRaw = (weightKg - median) / SD;
@@ -34,11 +47,10 @@ export const calculateWHZ = (
 };
 
 const classifyWHZ = (z: number): string => {
-  if (z < -3) return "Severe malnutrition (Severe wasting)";
-  if (z >= -3 && z < -2) return "Moderate malnutrition (Moderate wasting)";
-  if (z >= -2 && z < -1) return "Mild underweight";
-  if (z >= -1 && z < 1) return "Normal weight";
-  if (z >= 1 && z < 2) return "Risk of overweight";
-  if (z >= 2 && z < 3) return "Overweight";
+  if (z < -3) return "Severe wasting";
+  if (z >= -3 && z < -2) return "Moderate wasting";
+  if (z >= -2 && z <= 1) return "Normal";
+  if (z > 1 && z <= 2) return "Risk of overweight";
+  if (z > 2 && z <= 3) return "Overweight";
   return "Obese";
 };

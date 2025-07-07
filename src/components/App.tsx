@@ -63,8 +63,7 @@ export function App() {
   const dispatch = useDispatch<AppDispatch>();
   const storedUser = localStorage.getItem('user');
   let val = JSON.parse(storedUser);
-  console.log('Stored User:', val?.id);
-  console.log('Telegram User:', telegramUser);
+
   useEffect(() => {
 
     if (storedUser) {

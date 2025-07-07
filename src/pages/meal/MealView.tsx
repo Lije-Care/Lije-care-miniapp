@@ -22,7 +22,6 @@ const MealDetails: React.FC = () => {
     const fetchMealPlan = async () => {
       try {
         const res = await api.get(`/meal-plans/find-one/${id}`);
-        console.log('Meal Plan Data:', res.data.meals);
         setData(res.data); // <-- Fix: properly set response data
       } catch (err: any) {
         setError(err?.response?.data?.message || 'Something went wrong');

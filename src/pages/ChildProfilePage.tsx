@@ -12,6 +12,7 @@ import type { RootState, AppDispatch } from '@/redux/store';
 // import GrowthTracker from './Profile/GrowthTracker';
 import GrowthTrackerAll from './Profile/GrowthTracker';
 import { Page } from '@/components/Page';
+import GrowthTrackerHome from './Profile/GrowthTrackerHome';
 
 type ChildFormData = {
   name: string;
@@ -38,6 +39,7 @@ type Result = {
   vitaminA: number;
   status: string;
   error?: string;
+  water?: number; // Added water to the result
 };
 
 const ChildProfilePage: React.FC = () => {
@@ -73,25 +75,36 @@ const ChildProfilePage: React.FC = () => {
 
   const watchFields = watch();
 
-  useEffect(() => {
-    if (child) {
-      reset({
-        ...child,
-        muac: child.muac ?? 0,
-        dietary_restrictions: child.dietary_restrictions ?? '',
-        allergies: child.allergies ?? '',
-        medications: child.medications ?? '',
-      });
-      setLoadingPage(false);
-    }
-  }, [child, reset]);
+  function formatDateToYYYYMMDD(dateString: string) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toISOString().split('T')[0]; // returns "YYYY-MM-DD"
+}
+
+
+useEffect(() => {
+  if (child) {
+    reset({
+      ...child,
+      date_of_birth: formatDateToYYYYMMDD(child.date_of_birth),
+      muac: child.muac ?? 0,
+      dietary_restrictions: child.dietary_restrictions ?? '',
+      allergies: child.allergies ?? '',
+      medications: child.medications ?? '',
+    });
+    setLoadingPage(false);
+  }
+}, [child, reset]);
+
 
   useEffect(() => {
-    const { weight, height, gender, date_of_birth } = watchFields;
+    const {  weight, height, gender, date_of_birth } = watchFields;
     const months = date_of_birth ? Math.floor((new Date().getTime() - new Date(date_of_birth).getTime()) / (1000 * 60 * 60 * 24 * 30)) : 0;
 
     if (weight && height && gender && months) {
+      console.log('Calculating nutrition needs...', months);
       const weightNum = Number(weight);
+      const ageNum = months;
       const heightNum = Number(height);
       const bmi = weightNum / ((heightNum / 100) ** 2);
       const roundedBMI = parseFloat(bmi.toFixed(2));
@@ -142,7 +155,16 @@ const ChildProfilePage: React.FC = () => {
       let calcium = months <= 6 ? 200 : months <= 12 ? 260 : months <= 36 ? 700 : 1000;
       let iron = months <= 6 ? 0.27 : months <= 12 ? 11 : months <= 36 ? 7 : 10;
       let vitaminA = months <= 6 ? 400 : months <= 12 ? 500 : months <= 36 ? 300 : 400;
+       let baseWater = 1600;
+            if (ageNum <= 6) baseWater = 700;
+            else if (ageNum <= 12) baseWater = 900;
+            else if (ageNum <= 36) baseWater = 1300;
 
+            const waterMultiplier = condition === "Catch-up Growth" ? 1.2
+                                : condition === "Underweight" ? 1.15
+                                : 1;
+
+            const water = parseFloat((baseWater * waterMultiplier).toFixed(2));
       let status = 'Normal';
       if (bmi < 14) status = 'Underweight';
       else if (bmi > 17) status = 'Overweight';
@@ -157,6 +179,7 @@ const ChildProfilePage: React.FC = () => {
         calcium,
         vitaminA,
         status,
+        water
       });
     } else {
       setResult(null);
@@ -264,8 +287,8 @@ const ChildProfilePage: React.FC = () => {
       )}
 
       {/* Growth and Nutrition Tracker (Always visible) */}
-      <GrowthTrackerAll childProfile={child} />
-
+      {/* <GrowthTrackerAll childProfile={child} /> */}
+      <GrowthTrackerHome childProfile={child} />
        <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl mt-4 p-5 space-y-2 mb-5">
         <h3 className="text-lg font-semibold text-center text-gray-300 mb-2">👶 Child Profile</h3>
          <div className="text-sm text-gray-400 space-y-1">
@@ -316,8 +339,7 @@ const ChildProfilePage: React.FC = () => {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <Text className="text-emerald-400 text-lg font-semibold text-center mb-2">Nutrition Summary</Text>
-          <div className="flex justify-between"><Text>Status:</Text><Text>{result.status}</Text></div>
+          <Text className="text-emerald-400 text-lg font-semibold text-center mb-2">Daily Nutrition requirement</Text>
           <Divider />
           <div className="flex justify-between"><Text>🔥 Calories:</Text><Text>{result.calories} kcal</Text></div>
           <div className="flex justify-between"><Text>💪 Protein:</Text><Text>{result.protein} g</Text></div>
@@ -327,6 +349,7 @@ const ChildProfilePage: React.FC = () => {
           <div className="flex justify-between"><Text>🩸 Iron:</Text><Text>{result.iron} mg</Text></div>
           <div className="flex justify-between"><Text>🦴 Calcium:</Text><Text>{result.calcium} mg</Text></div>
           <div className="flex justify-between"><Text>👁️ Vitamin A:</Text><Text>{result.vitaminA} mcg</Text></div>
+           <div className="flex justify-between"><Text>👁️ Water</Text><Text>{result.water} mcg</Text></div>
         </motion.div>
       ) : (
         <Placeholder header="Waiting for input..." className="mt-6">

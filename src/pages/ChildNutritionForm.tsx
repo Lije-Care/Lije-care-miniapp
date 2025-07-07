@@ -22,6 +22,7 @@
     iron: number;
     calcium: number;
     vitaminA: number;
+    water?: number; // Added water to the result
     status: string;
     error?: string;
     };
@@ -74,7 +75,17 @@
         // 💪 Macronutrients
         const protein = parseFloat((calories * 0.12 / 4).toFixed(2));
         const fat = parseFloat((calories * 0.35 / 9).toFixed(2));
-        const carbs = parseFloat((calories * 0.53 / 4).toFixed(2));
+        const carbs = parseFloat((calories * 0.5 / 4).toFixed(2));
+        let baseWater = 1600;
+            if (ageNum <= 6) baseWater = 700;
+            else if (ageNum <= 12) baseWater = 900;
+            else if (ageNum <= 36) baseWater = 1300;
+
+            const waterMultiplier = condition === "Catch-up Growth" ? 1.2
+                                : condition === "Underweight" ? 1.15
+                                : 1;
+
+            const water = parseFloat((baseWater * waterMultiplier).toFixed(2));
 
         // 💊 Micronutrients — age and condition-based
         let calcium = 1000;
@@ -107,6 +118,7 @@
             calcium,
             vitaminA,
             status,
+            water
         });
         } else {
         setResult(null);
@@ -158,6 +170,7 @@
             <div className="flex justify-between"><Text>🩸 Iron:</Text><Text>{result.iron} mg</Text></div>
             <div className="flex justify-between"><Text>🦴 Calcium:</Text><Text>{result.calcium} mg</Text></div>
             <div className="flex justify-between"><Text>👁️ Vitamin A:</Text><Text>{result.vitaminA} mcg</Text></div>
+            <div className="flex justify-between"><Text>👁️ Water</Text><Text>{result.water} mcg</Text></div>
             </div>
             </motion.div>
         ) : (
