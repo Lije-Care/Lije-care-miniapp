@@ -5,6 +5,8 @@ import { calculateHAZ } from "@/excelData/calculateHAZ";
 import { calculateWHZ } from "@/excelData/calculateWHZ";
 import { calculateWAZ } from "@/excelData/calculateWAZ";
 import { differenceInWeeks, differenceInMonths } from "date-fns";
+import { calculateBMIZ } from "@/excelData/calculateBMIZ";
+import { calculateMUACZ } from "@/excelData/calculateMUACZ";
  
 const classifyZ = (z: number, type: string) => {
   if (type === "BMI") {
@@ -43,12 +45,8 @@ const classifyZ = (z: number, type: string) => {
 };
 
 
-const calculateBMIzScore = (weight: number, height: number) => {
-  const bmi = weight / ((height / 100) ** 2);
-  return (bmi - 15) / 2;
-};
 
-const calculateMUACzScore = (muac: number) => (muac - 13) / 2;
+
 
 interface ChildProfile {
   date_of_birth: any;
@@ -86,12 +84,27 @@ const today = new Date();
 const ageInWeeks = differenceInWeeks(today, birthDate);
 const ageInMonths = differenceInMonths(today, birthDate);
 
+
+
 // 2. Normalize gender to "girl" or "boy"
 const gender = childProfile.gender.toLowerCase() === "female" ? "girl" : "boy";
 
+const measuredStanding = childProfile.height > 87;
+
+const bmiResult = calculateBMIZ(
+  childProfile.weight,
+  childProfile.height,
+  ageInWeeks <= 13 ? ageInWeeks : ageInMonths,
+  ageInWeeks <= 13 ? "week" : "month",
+  gender,
+  measuredStanding
+);
+console.log("BMI  Z-Score:", bmiResult);
+
+
       const calculatedZScores = {
-        BMI: calculateBMIzScore(childProfile.weight, childProfile.height),
-        MUAC: calculateMUACzScore(childProfile.muac),
+        BMI: bmiResult,
+        MUAC: calculateMUACZ(childProfile.muac, ageInMonths, gender),
         HAZ: calculateHAZ(
             childProfile.height,
             ageInWeeks,

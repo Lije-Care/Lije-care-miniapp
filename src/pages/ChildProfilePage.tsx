@@ -184,7 +184,7 @@ useEffect(() => {
     } else {
       setResult(null);
     }
-  }, [watchFields]);
+  }, [watch]);
 
   const onSubmit = async (data: any) => {
     setSubmitting(true);

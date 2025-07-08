@@ -6,10 +6,11 @@ export const calculateMUACZ = (
   gender: "boy" | "girl"
 ): { muac: number; zScore: number; classification: string } => {
   const data = getMUACForAgeData(gender);
+  console.log("MUAC Data:", data);
 
   const row = data.find(entry => parseInt(entry.Months ?? "") === ageInMonths);
 
-  if (!row || !row["Median"] || !row["+1 SD"]) {
+  if (!row || !row["Median"] || !row["1 SD"]) {
     return {
       muac: parseFloat(muacCm.toFixed(2)),
       zScore: 0,
@@ -18,7 +19,7 @@ export const calculateMUACZ = (
   }
 
   const median = parseFloat(row["Median"]);
-  const plus1SD = parseFloat(row["+1 SD"]);
+  const plus1SD = parseFloat(row["1 SD"]);
   const SD = plus1SD - median;
 
   if (isNaN(SD) || SD === 0) {
