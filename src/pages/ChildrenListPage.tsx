@@ -7,12 +7,13 @@ import { fetchChildrenByParentId, deleteChildById } from "@/redux/slices/childSl
 import AddChildForm from "./Profile/AddChildForm";
 import type { RootState, AppDispatch } from "@/redux/store";
 import { Child } from "@/types";
-import useTelegramUser from "@/hooks/useTelegramUser";
 import { Page } from "@/components/Page";
+import { useTranslation } from "react-i18next";
 
 const FAVORITE_CHILD_KEY = "favorite_child_id";
 
 const ChildrenListPage: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const [childrenData, setChildrenData] = useState<Child[] | null>(null);
@@ -32,11 +33,9 @@ const ChildrenListPage: React.FC = () => {
     dispatch(fetchChildrenByParentId(telegramUser.id));
   }, []);
 
-useEffect(() => {
-  console.log("Redux data updated:", data);
-  setChildrenData(data);
-}, [data]); // <-- ✅ now it will re-run whenever Redux store updates
-
+  useEffect(() => {
+    setChildrenData(data);
+  }, [data]);
 
   const handleViewChild = (childId: string) => {
     navigate(`/child/${childId}`);
@@ -52,17 +51,15 @@ useEffect(() => {
     try {
       setDeleting(true);
       await dispatch(deleteChildById(selectedChild.id)).unwrap();
-
       setChildrenData((prev) => prev?.filter((c) => c.id !== selectedChild.id) || []);
       setShowConfirmDelete(false);
       setSelectedChild(null);
-
       if (favoriteChildId === selectedChild.id) {
         localStorage.removeItem(FAVORITE_CHILD_KEY);
         setFavoriteChildId(null);
       }
     } catch (err) {
-      alert("Failed to delete child. Please try again.");
+      alert(t("Failed to delete child. Please try again."));
     } finally {
       setDeleting(false);
     }
@@ -82,15 +79,14 @@ useEffect(() => {
     <Page back={true}>
       <div className="p-4 bg-gray-900 min-h-screen text-white">
         <div className="flex justify-between items-center mb-6">
-          <Headline>My Children</Headline>
-         <button
+          <Headline>{t("My Children")}</Headline>
+          <button
             onClick={() => setShowAddModal(true)}
             className="flex items-center gap-2 border border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white font-semibold px-4 py-2 rounded-md transition-all duration-200"
           >
             <FaPlus className="text-base" />
-            <span>Add Child</span>
+            <span>{t("Add Child")}</span>
           </button>
-
         </div>
 
         {loading && (
@@ -111,11 +107,10 @@ useEffect(() => {
               key={child.id}
               className="bg-gray-800 rounded-xl p-5 shadow-md border border-gray-700 hover:shadow-xl transition-all relative"
             >
-              {/* Favorite icon */}
               <button
                 className="absolute top-3 right-3 text-2xl"
                 onClick={() => toggleFavorite(child.id)}
-                title={favoriteChildId === child.id ? "Unmark Favorite" : "Mark as Favorite"}
+                title={favoriteChildId === child.id ? t("Unmark Favorite") : t("Mark as Favorite")}
               >
                 {favoriteChildId === child.id ? "✅" : "⬜"}
               </button>
@@ -123,7 +118,7 @@ useEffect(() => {
               <div onClick={() => handleViewChild(child.id)} className="cursor-pointer">
                 <h2 className="text-lg font-bold text-gray-100 mb-1">{child.name}</h2>
                 <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-600 text-white">
-                  {child.gender === "Male" ? "👦 Boy" : "👧 Girl"}
+                  {child.gender === "Male" ? t("Boy") : t("Girl")}
                 </span>
               </div>
 
@@ -143,7 +138,7 @@ useEffect(() => {
         {showAddModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-gray-800 rounded-lg p-6 max-w-md w-full shadow-xl">
-              <h2 className="text-xl font-semibold mb-4">Add New Child</h2>
+              <h2 className="text-xl font-semibold mb-4">{t("Add New Child")}</h2>
               <AddChildForm onClose={() => setShowAddModal(false)} />
             </div>
           </div>
@@ -153,9 +148,9 @@ useEffect(() => {
         {showConfirmDelete && selectedChild && (
           <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 px-4">
             <div className="bg-gray-800 text-white p-6 rounded-lg max-w-md w-full shadow-xl">
-              <h2 className="text-lg font-bold mb-3 text-red-500">Confirm Delete</h2>
+              <h2 className="text-lg font-bold mb-3 text-red-500">{t("Confirm Delete")}</h2>
               <p className="mb-4">
-                Are you sure you want to delete <strong>{selectedChild.name}</strong>?
+                {t("Are you sure you want to delete")} <strong>{selectedChild.name}</strong>?
               </p>
               <div className="flex justify-end gap-4">
                 <button
@@ -166,14 +161,14 @@ useEffect(() => {
                   }}
                   disabled={deleting}
                 >
-                  Cancel
+                  {t("Cancel")}
                 </button>
                 <button
                   className="px-4 py-2 bg-red-600 rounded hover:bg-red-500"
                   onClick={handleDeleteChild}
                   disabled={deleting}
                 >
-                  {deleting ? "Deleting..." : "Delete"}
+                  {deleting ? t("Deleting...") : t("Delete")}
                 </button>
               </div>
             </div>

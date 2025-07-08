@@ -145,7 +145,7 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
     { name: 'muac', label: 'MUAC (cm)', type: 'number' },
     { name: 'dietary_restrictions', label: 'Dietary Restrictions', placeholder: 'e.g., Lactose Intolerance' },
     { name: 'allergies', label: 'Allergies', placeholder: 'e.g., Peanuts' },
-    { name: 'medications', label: 'Medications', placeholder: 'e.g., Vitamin D Supplements' },
+    { name: 'medications', label: 'm', placeholder: 'e.g., Vitamin D Supplements' },
   ].map(({ name, label, type = 'text', placeholder }) => (
     <Controller
       key={name}
