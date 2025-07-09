@@ -94,7 +94,7 @@ const GrowthTracker = ({ childProfile }: { childProfile: any }) => {
   if (!child || !zScores) return <div className="text-center text-gray-400 mt-10">{t("Loading...")}</div>;
 
   const indicators = [
-    { key: "HAZ", label: t("Height for Age"), value: zScores.HAZ.haz, result: { label: zScores.HAZ.classification, color: "text-blue-400", note: zScores.HAZ.classification } },
+    { key: "HAZ", label: "Height for Ageiguh", value: zScores.HAZ.haz, result: { label: zScores.HAZ.classification, color: "text-blue-400", note: zScores.HAZ.classification } },
     { key: "WHZ", label: t("Weight for Height"), value: zScores.WHZ.zScore, result: { label: zScores.WHZ.classification, color: "text-orange-400", note: zScores.WHZ.classification } },
     { key: "WAZ", label: t("Weight for Age"), value: zScores.WAZ.zScore, result: { label: zScores.WAZ.classification, color: "text-yellow-400", note: zScores.WAZ.classification } },
     { key: "BMI", label: t("BMI for Age"), value: zScores.BMI, result: classifyZ(zScores.BMI, "BMI", t) },
