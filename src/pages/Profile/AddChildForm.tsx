@@ -20,9 +20,9 @@ interface FormValues {
   weight: number | string;
   height: number | string;
   muac: number | string;
-  dietary_restrictions: string;
-  allergies: string;
-  medications: string;
+  dietary_restrictions?: string;
+  allergies?: string;
+  medications?: string;
 }
 
 // ----------------------
@@ -139,33 +139,33 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
     />
   </div>
   {[
+  { name: 'weight', label: 'Weight (kg)', type: 'number', required: true },
+  { name: 'height', label: 'Height (cm)', type: 'number', required: true },
+  { name: 'muac', label: 'MUAC (cm)', type: 'number', required: true },
+  { name: 'dietary_restrictions', label: 'Dietary Restrictions', placeholder: 'e.g., Lactose Intolerance', required: false },
+  { name: 'allergies', label: 'Allergies', placeholder: 'e.g., Peanuts', required: false },
+  { name: 'medications', label: 'Medications', placeholder: 'e.g., Vitamin D Supplements', required: false },
+].map(({ name, label, type = 'text', placeholder, required }) => (
+  <Controller
+    key={name}
+    name={name as keyof FormValues}
+    control={control}
+    rules={required ? { required: `${label} is required` } : {}}
+    render={({ field }) => (
+      <div className="flex flex-col">
+        <label htmlFor={name} className="text-sm font-medium mb-1">{label}</label>
+        <input
+          {...field}
+          id={name}
+          type={type}
+          placeholder={placeholder}
+          className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full"
+        />
+      </div>
+    )}
+  />
+))}
 
-    { name: 'weight', label: 'Weight (kg)', type: 'number' },
-    { name: 'height', label: 'Height (cm)', type: 'number' },
-    { name: 'muac', label: 'MUAC (cm)', type: 'number' },
-    { name: 'dietary_restrictions', label: 'Dietary Restrictions', placeholder: 'e.g., Lactose Intolerance' },
-    { name: 'allergies', label: 'Allergies', placeholder: 'e.g., Peanuts' },
-    { name: 'medications', label: 'Medications', placeholder: 'e.g., Vitamin D Supplements' },
-  ].map(({ name, label, type = 'text', placeholder }) => (
-    <Controller
-      key={name}
-      name={name as keyof FormValues}
-      control={control}
-      rules={{ required: `${label} is required` }}
-      render={({ field }) => (
-        <div className="flex flex-col">
-          <label htmlFor={name} className="text-sm font-medium  mb-1">{label}</label>
-          <input
-            {...field}
-            id={name}
-            type={type}
-            placeholder={placeholder}
-            className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full"
-          />
-        </div>
-      )}
-    />
-  ))}
 
   
 
