@@ -20,13 +20,14 @@ export const calculateBMIZ = (
 
   const bmi = weightKg / (heightM * heightM);
   const roundedBMI = Number(bmi.toFixed(2));
-
-  const genderKey = gender === "female" ? "girl" : "boy";
+  
+  const genderKey = gender.toLowerCase() === "female" ? "girl" : "boy";
 
   console.log("Testing BMI Calculation");
+  console.log(gender);
   console.log({ genderKey, ageValue, ageType });
 
-  const data = getBMIForAgeData(genderKey, ageValue, ageType);
+  const data = getBMIForAgeData(gender, ageValue, ageType);
 
   const row = data.find(entry =>
     ageType === "week"

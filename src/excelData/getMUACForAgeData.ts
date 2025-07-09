@@ -11,7 +11,7 @@ export const getMUACForAgeData = (
   gender: "boy" | "girl"
 ): MUACForAgeEntry[] => {
 
-  console.log("Fetching MUAC for age data",gender )
+
   if (gender === "boy") {
     return boysMuacData.map((entry: any) => ({
       Months: entry.Month,
