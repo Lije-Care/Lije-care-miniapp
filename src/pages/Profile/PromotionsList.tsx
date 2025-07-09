@@ -9,6 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import api from "@/api/axios";
 import { Page } from "@/components/Page";
+import { useTranslation } from "react-i18next";
 
 interface Promotion {
   id: string;
@@ -18,6 +19,7 @@ interface Promotion {
 }
 
 export const PromotionsList = () => {
+  const { t } = useTranslation();
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -30,7 +32,7 @@ export const PromotionsList = () => {
       });
       setPromotions(res.data?.data || []);
     } catch (err: any) {
-      setError(err?.response?.data?.message || "Failed to load promotions.");
+      setError(err?.response?.data?.message || t("Failed to load promotions."));
     } finally {
       setLoading(false);
     }
@@ -43,12 +45,12 @@ export const PromotionsList = () => {
   return (
     <Page back={true}>
       <Section style={{ padding: "20px" }}>
-        <Headline style={{ marginBottom: "20px" }}>📢 Promotions</Headline>
+        <Headline style={{ marginBottom: "20px" }}>📢 {t("Promotions")}</Headline>
 
         {loading && (
           <div className="text-center">
             <Spinner size="s"/>
-            <Text>Loading promotions...</Text>
+            <Text>{t("Loading promotions...")}</Text>
           </div>
         )}
 
@@ -57,7 +59,7 @@ export const PromotionsList = () => {
         )}
 
         {!loading && !error && promotions.length === 0 && (
-          <Text>No promotions found.</Text>
+          <Text>{t("No promotions found.")}</Text>
         )}
 
         {promotions.map((promo) => (
