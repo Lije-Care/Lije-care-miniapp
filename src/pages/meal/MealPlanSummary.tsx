@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { Page } from "@/components/Page";
+import { useTranslation } from "react-i18next";
 
 type Meal = {
   id: string;
@@ -31,6 +32,7 @@ type MealPlan = {
 };
 
 const MealPlanSummary = () => {
+  const { t } = useTranslation();
   const [mealPlans, setMealPlans] = useState<MealPlan[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { data } = useSelector((state: RootState) => state.children);
@@ -40,7 +42,7 @@ const MealPlanSummary = () => {
   useEffect(() => {
     if (!childId) {
       setMealPlans([]);
-      setError("No child profile found. Please add a child first.");
+      setError(t("No child profile found. Please add a child first."));
       return;
     }
 
@@ -56,16 +58,16 @@ const MealPlanSummary = () => {
         setMealPlans([]);
         setError(
           err?.response?.data?.message ||
-            "Failed to fetch meal plans. Please try again later."
+            t("Failed to fetch meal plans. Please try again later.")
         );
       });
-  }, [childId]);
+  }, [childId, t]);
 
   return (
     <Page back={true}>
       <div className="p-4 space-y-4">
         <h2 className="text-xl font-bold text-center text-emerald-500">
-          📋 Your Meal Plans
+          {t("📋 Your Meal Plans")}
         </h2>
 
         {error && (
@@ -84,10 +86,10 @@ const MealPlanSummary = () => {
               {/* Description + Metadata */}
               <div className="space-y-1">
                 <p className="text-sm text-gray-700 line-clamp-2 font-medium">
-                  {mealPlan.meal_description || "No description available."}
+                  {mealPlan.meal_description || t("No description available.")}
                 </p>
                 <p className="text-xs text-gray-500">
-                  🔥 {mealPlan.calories} kcal · 🕒{" "}
+                  🔥 {mealPlan.calories} {t("kcal")} · 🕒{" "}
                   {new Date(mealPlan.createdAt).toLocaleDateString()}
                 </p>
               </div>
@@ -97,12 +99,18 @@ const MealPlanSummary = () => {
 
               {/* Child Info */}
               <div className="text-xs text-gray-600">
-                <span className="font-semibold text-gray-800">👶 Child:</span>{" "}
-                {mealPlan.child?.name || "Unnamed"} <br />
-                <span className="font-semibold text-gray-800">Allergies:</span>{" "}
-                {mealPlan.child?.allergies || "None"} <br />
-                <span className="font-semibold text-gray-800">Restrictions:</span>{" "}
-                {mealPlan.child?.dietary_restrictions || "None"}
+                <span className="font-semibold text-gray-800">
+                  {t("👶 Child")}:
+                </span>{" "}
+                {mealPlan.child?.name || t("Unnamed")} <br />
+                <span className="font-semibold text-gray-800">
+                  {t("Allergies")}:
+                </span>{" "}
+                {mealPlan.child?.allergies || t("None")} <br />
+                <span className="font-semibold text-gray-800">
+                  {t("Restrictions")}:
+                </span>{" "}
+                {mealPlan.child?.dietary_restrictions || t("None")}
               </div>
 
               {/* Divider */}
@@ -110,21 +118,32 @@ const MealPlanSummary = () => {
 
               {/* Meals Preview */}
               <div>
-                <h4 className="text-sm font-semibold text-gray-800 mb-1">🍽️ Meals</h4>
+                <h4 className="text-sm font-semibold text-gray-800 mb-1">
+                  {t("🍽️ Meals")}
+                </h4>
                 {Array.isArray(mealPlan.meals) && mealPlan.meals.length > 0 ? (
                   <div className="space-y-1">
                     {mealPlan.meals.slice(0, 3).map((meal) => (
-                      <div key={meal.id} className="flex justify-between items-center text-sm text-gray-700">
-                        <span>{meal.title || "Untitled"}</span>
-                        <Badge type="dot">{meal.meal_type || "Unknown"}</Badge>
+                      <div
+                        key={meal.id}
+                        className="flex justify-between items-center text-sm text-gray-700"
+                      >
+                        <span>{meal.title || t("Untitled")}</span>
+                        <Badge type="dot">
+                          {t(meal.meal_type) || t("Unknown")}
+                        </Badge>
                       </div>
                     ))}
                     {mealPlan.meals.length > 3 && (
-                      <p className="text-xs text-gray-400 italic mt-1">+ {mealPlan.meals.length - 3} more</p>
+                      <p className="text-xs text-gray-400 italic mt-1">
+                        + {mealPlan.meals.length - 3} {t("more")}
+                      </p>
                     )}
                   </div>
                 ) : (
-                  <p className="text-xs text-gray-500">No meals listed.</p>
+                  <p className="text-xs text-gray-500">
+                    {t("No meals listed.")}
+                  </p>
                 )}
               </div>
             </Card>
@@ -132,7 +151,7 @@ const MealPlanSummary = () => {
         ) : (
           !error && (
             <div className="text-center text-gray-500">
-              No meal plans found. You can create one below!
+              {t("No meal plans found. You can create one below!")}
             </div>
           )
         )}
@@ -142,7 +161,7 @@ const MealPlanSummary = () => {
             className="mt-4 w-full bg-emerald-600 text-white"
             onClick={() => navigate("/meal")}
           >
-            ➕ Create a Meal Plan
+            ➕ {t("Create a Meal Plan")}
           </Button>
         </div>
       </div>

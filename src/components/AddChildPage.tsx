@@ -200,6 +200,7 @@ const AddChildPage = () => {
           control={control}
           render={({ field }) => (
             <Input
+              header={t("Medications")}
               placeholder={t("e.g., Vitamin D Supplements")}
               {...field}
             />
