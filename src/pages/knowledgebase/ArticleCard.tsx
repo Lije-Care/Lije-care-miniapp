@@ -1,25 +1,27 @@
 import { useNavigate } from "react-router-dom";
+import { FaStar, FaRegStar } from "react-icons/fa";
 
 const ArticleCard = ({ article, showButton = true }: any) => {
   const navigate = useNavigate();
- 
+
+  const renderStars = (rating: number) => {
+    const stars = [];
+    const roundedRating = Math.round(rating);
+    for (let i = 1; i <= 5; i++) {
+      stars.push(
+        i <= roundedRating ? (
+          <FaStar key={i} className="text-yellow-400 w-4 h-4" />
+        ) : (
+          <FaRegStar key={i} className="text-yellow-400 w-4 h-4" />
+        )
+      );
+    }
+    return <div className="flex gap-1 mt-1">{stars}</div>;
+  };
+
   return (
-    // <div className="rounded-xl shadow-md p-4 space-y-3 flex-shrink-0 w-80">
-    //   <img src={article.image} alt={article.title} className="w-full h-40 object-cover rounded-lg" />
-    //   <h3 className="text-lg font-semibold">{article.title}</h3>
-    //   <p className="text-sm ">by {article.author}</p>
-    //   <p className="text-sm  line-clamp-3">{article.content}</p>
-    //   {showButton && (
-    //     <button
-    //       className="mt-2 w-full font-semibold hover:underline"
-    //       onClick={() => navigate(`/articles/${article.id}`)}
-    //     >
-    //       Read More →
-    //     </button>
-    //   )}
-    // </div>
-    <div className="rounded-xl overflow-hidden shadow-md  hover:shadow-lg transition duration-300 h-full flex flex-col">
-      <div className="relative w-full h-40 overflow-hidden">
+    <div className="rounded-xl overflow-hidden shadow-sm hover:shadow-md transition duration-200 h-full flex flex-col w-full">
+      <div className="relative w-full h-40">
         <img
           src={article.image}
           alt={article.title}
@@ -27,9 +29,26 @@ const ArticleCard = ({ article, showButton = true }: any) => {
         />
       </div>
 
-      <div className="p-4 flex flex-col justify-between flex-1">
-        <h3 className="text-lg font-semibold line-clamp-2">{article.title}</h3>
-        <p className="text-sm text-gray-600 mt-2 line-clamp-3">{article.description}</p>
+      <div className="p-3 flex flex-col justify-between flex-1">
+        <div>
+          <h3 className="text-base font-semibold line-clamp-2">
+            {article.title}
+          </h3>
+          <p className="text-xs text-gray-500 mt-1">by {article.author}</p>
+          {article.rating && renderStars(article.rating)}
+          <p className="text-sm text-gray-600 mt-2 line-clamp-3">
+            {article.description}
+          </p>
+        </div>
+
+        {showButton && (
+          <button
+            onClick={() => navigate(`/articles/${article.id}`)}
+            className="mt-3 text-sm text-blue-600 hover:underline font-medium self-start"
+          >
+            Read More →
+          </button>
+        )}
       </div>
     </div>
   );

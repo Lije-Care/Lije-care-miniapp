@@ -154,7 +154,7 @@ const AccountSettings = () => {
 
   return (
     <div className="p-4 w-full max-w-md mx-auto text-sm">
-      <h2 className="text-lg font-bold mb-4 text-center">⚙️ {t("Account Settings")}</h2>
+      <h2 className="text-lg font-bold mb-4 text-center"> {t("Account Settings")}</h2>
 
       <Button className="w-full mb-3" onClick={() => 
         {
