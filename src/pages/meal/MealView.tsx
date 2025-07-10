@@ -53,7 +53,7 @@ const MealDetails: React.FC = () => {
   }
 
   const meals = data?.meals || [];
-
+  console.log("meals", meals)
   if (!meals.length) {
     return (
       <Text className="text-center mt-8">
@@ -82,7 +82,7 @@ const MealDetails: React.FC = () => {
               <img
                 src={
                   meal.imageUrl
-                    ? `https://lije-care-api-dev.zikollab.com/uploads/images/MEAL/${meal.imageUrl}`
+                    ? `${meal.imageUrl}`
                     : fallbackImg
                 }
                 alt={meal.name}
