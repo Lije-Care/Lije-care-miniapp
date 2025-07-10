@@ -26,8 +26,6 @@ type ChildFormData = {
   medications: string;
 };
 
-
-
 type Result = {
   bmi: string;
   calories: number;
@@ -39,7 +37,7 @@ type Result = {
   vitaminA: number;
   status: string;
   error?: string;
-  water?: number; // Added water to the result
+  water?: number;
 };
 
 const ChildProfilePage: React.FC = () => {
@@ -75,41 +73,54 @@ const ChildProfilePage: React.FC = () => {
 
   const watchFields = watch();
 
-  function formatDateToYYYYMMDD(dateString: string) {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  return date.toISOString().split('T')[0]; // returns "YYYY-MM-DD"
-}
-
-
-useEffect(() => {
-  if (child) {
-    reset({
-      ...child,
-      date_of_birth: formatDateToYYYYMMDD(child.date_of_birth),
-      muac: child.muac ?? 0,
-      dietary_restrictions: child.dietary_restrictions ?? '',
-      allergies: child.allergies ?? '',
-      medications: child.medications ?? '',
-    });
-    setLoadingPage(false);
-  }
-}, [child, reset]);
-
+  const formatDateToYYYYMMDD = (dateString: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0];
+  };
 
   useEffect(() => {
-    const {  weight, height, gender, date_of_birth } = watchFields;
+    if (child) {
+      reset({
+        ...child,
+        date_of_birth: formatDateToYYYYMMDD(child.date_of_birth),
+        muac: child.muac ?? 0,
+        dietary_restrictions: child.dietary_restrictions ?? '',
+        allergies: child.allergies ?? '',
+        medications: child.medications ?? '',
+      });
+      setLoadingPage(false);
+    }
+  }, [child, reset]);
+
+  useEffect(() => {
+    const { weight, height, gender, date_of_birth } = watchFields;
     const months = date_of_birth ? Math.floor((new Date().getTime() - new Date(date_of_birth).getTime()) / (1000 * 60 * 60 * 24 * 30)) : 0;
 
     if (weight && height && gender && months) {
-      console.log('Calculating nutrition needs...', months);
       const weightNum = Number(weight);
       const ageNum = months;
       const heightNum = Number(height);
       const bmi = weightNum / ((heightNum / 100) ** 2);
       const roundedBMI = parseFloat(bmi.toFixed(2));
 
-      let caloriePerKg = months <= 6 ? 108 : months <= 12 ? 98 : months <= 36 ? 102 : 90;
+      if (ageNum > 36) {
+        setResult({
+          bmi: 'NA',
+          calories: NaN,
+          protein: NaN,
+          fat: NaN,
+          carbs: NaN,
+          iron: NaN,
+          calcium: NaN,
+          vitaminA: NaN,
+          status: 'Unsupported age',
+          water: NaN,
+        });
+        return;
+      }
+
+      let caloriePerKg = ageNum <= 6 ? 108 : ageNum <= 12 ? 98 : 102;
       let calories = weightNum * caloriePerKg;
 
       enum Activity {
@@ -117,54 +128,48 @@ useEffect(() => {
         Moderate = 'Moderate',
         Sedentary = 'Sedentary',
       }
-      
+
       enum Condition {
         CatchUpGrowth = 'Catch-up Growth',
         Underweight = 'Underweight',
         Overweight = 'Overweight',
         Normal = 'Normal',
       }
-      
-      // Usage:
+
       const activity: Activity = Activity.Moderate;
       const condition: Condition = Condition.Normal;
-      
+
       const ActivityFactors: Record<Activity, number> = {
         [Activity.Active]: 1.26,
         [Activity.Moderate]: 1.13,
         [Activity.Sedentary]: 1,
       };
-      
+
       const HealthFactors: Record<Condition, number> = {
         [Condition.CatchUpGrowth]: 1.2,
         [Condition.Underweight]: 1.15,
         [Condition.Overweight]: 0.9,
         [Condition.Normal]: 1,
       };
-      
-      const activityFactor = ActivityFactors[activity];
-      const healthFactor = HealthFactors[condition];
-      
-      
-      calories *= activityFactor * healthFactor;
+
+      calories *= ActivityFactors[activity] * HealthFactors[condition];
 
       const protein = parseFloat((calories * 0.12 / 4).toFixed(2));
       const fat = parseFloat((calories * 0.35 / 9).toFixed(2));
       const carbs = parseFloat((calories * 0.53 / 4).toFixed(2));
 
-      let calcium = months <= 6 ? 200 : months <= 12 ? 260 : months <= 36 ? 700 : 1000;
-      let iron = months <= 6 ? 0.27 : months <= 12 ? 11 : months <= 36 ? 7 : 10;
-      let vitaminA = months <= 6 ? 400 : months <= 12 ? 500 : months <= 36 ? 300 : 400;
-       let baseWater = 1600;
-            if (ageNum <= 6) baseWater = 700;
-            else if (ageNum <= 12) baseWater = 900;
-            else if (ageNum <= 36) baseWater = 1300;
+      const calcium = ageNum <= 6 ? 200 : ageNum <= 12 ? 260 : 700;
+      const iron = ageNum <= 6 ? 0.27 : ageNum <= 12 ? 11 : 7;
+      const vitaminA = ageNum <= 6 ? 400 : ageNum <= 12 ? 500 : 300;
 
-            const waterMultiplier = condition === "Catch-up Growth" ? 1.2
-                                : condition === "Underweight" ? 1.15
-                                : 1;
+      let baseWater = 1600;
+      if (ageNum <= 6) baseWater = 700;
+      else if (ageNum <= 12) baseWater = 900;
+      else baseWater = 1300;
 
-            const water = parseFloat((baseWater * waterMultiplier).toFixed(2));
+      const waterMultiplier = condition === 'Catch-up Growth' ? 1.2 : condition === 'Underweight' ? 1.15 : 1;
+      const water = parseFloat((baseWater * waterMultiplier).toFixed(2));
+
       let status = 'Normal';
       if (bmi < 14) status = 'Underweight';
       else if (bmi > 17) status = 'Overweight';
@@ -179,12 +184,12 @@ useEffect(() => {
         calcium,
         vitaminA,
         status,
-        water
+        water,
       });
     } else {
       setResult(null);
     }
-  }, [watch]);
+  }, [watchFields]);
 
   const onSubmit = async (data: any) => {
     setSubmitting(true);
@@ -203,6 +208,10 @@ useEffect(() => {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const display = (val: number | string | undefined | null, unit = '') => {
+    return val === undefined || val === null || val === '' || isNaN(Number(val)) ? 'NA' : `${val} ${unit}`;
   };
 
   if (loadingPage) {

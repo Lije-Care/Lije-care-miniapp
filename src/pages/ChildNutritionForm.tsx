@@ -151,7 +151,7 @@
             <option value="Catch-up Growth">🛠️ Catch-up Growth</option>
         </Select>
 
-        {result ? (
+       
             <motion.div
             className=" text-[15px]"
             initial={{ opacity: 0, y: 15 }}
@@ -173,11 +173,11 @@
             <div className="flex justify-between"><Text>👁️ Water</Text><Text>{result.water} mcg</Text></div>
             </div>
             </motion.div>
-        ) : (
+        {/* ) : (
             <Placeholder header="Waiting for input...">
             <Caption>Fill all fields above to calculate your child's needs.</Caption>
             </Placeholder>
-        )}
+        )} */}
         </div>
     );
     }
