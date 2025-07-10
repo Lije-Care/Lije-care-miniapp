@@ -47,7 +47,7 @@ export const PromotionsList = () => {
 
         {loading && (
           <div className="text-center">
-            <Spinner size="s"/>
+            <Spinner size="s" />
             <Text>Loading promotions...</Text>
           </div>
         )}
@@ -60,37 +60,53 @@ export const PromotionsList = () => {
           <Text>No promotions found.</Text>
         )}
 
-        {promotions.map((promo) => (
-          <Card
-            key={promo.id}
-            style={{
-              marginBottom: "16px",
-              padding: "16px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "10px",
-            }}
-          >
-            {promo.imageUrl && (
-              <img
-                src={promo.imageUrl}
-                alt={promo.title}
-                style={{
-                  width: "100%",
-                  maxHeight: "180px",
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                }}
-              />
-            )}
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <Subheadline style={{ marginBottom: "4px" }}>{promo.title}</Subheadline>
-              <Text style={{ whiteSpace: "pre-line", wordBreak: "break-word" }}>
-                {promo.description}
-              </Text>
-            </div>
-          </Card>
-        ))}
+        {!loading && !error && promotions.length > 0 && (
+          <div className="flex overflow-x-auto space-x-4 pb-2 snap-x snap-mandatory">
+            {promotions.map((promo) => (
+              <div
+                key={promo.id}
+                className="snap-start flex-shrink-0 w-72 sm:w-80"
+              >
+                <Card
+                  style={{
+                    padding: "16px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "10px",
+                    height: "100%",
+                  }}
+                >
+                  {promo.imageUrl && (
+                    <img
+                      src={promo.imageUrl}
+                      alt={promo.title}
+                      style={{
+                        width: "100%",
+                        maxHeight: "160px",
+                        objectFit: "cover",
+                        borderRadius: "8px",
+                      }}
+                    />
+                  )}
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <Subheadline style={{ marginBottom: "4px" }}>
+                      {promo.title}
+                    </Subheadline>
+                    <Text
+                      style={{
+                        whiteSpace: "pre-line",
+                        wordBreak: "break-word",
+                        fontSize: "14px",
+                      }}
+                    >
+                      {promo.description}
+                    </Text>
+                  </div>
+                </Card>
+              </div>
+            ))}
+          </div>
+        )}
       </Section>
     </Page>
   );
