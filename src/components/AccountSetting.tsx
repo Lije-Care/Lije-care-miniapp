@@ -171,7 +171,7 @@ const AccountSettings = () => {
       </Button>
 
       <Button className="w-full bg-red-600 text-white" onClick={() => setIsDeleting(true)}>
-        🗑️ {t("Delete Account")}
+         {t("Delete Account")}
       </Button>
 
       {/* Forgot Password Modal */}

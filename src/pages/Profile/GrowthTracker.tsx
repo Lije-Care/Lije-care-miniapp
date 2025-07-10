@@ -46,8 +46,6 @@ const classifyZ = (z: number, type: string) => {
 
 
 
-
-
 interface ChildProfile {
   date_of_birth: any;
   name: string;
@@ -58,10 +56,11 @@ interface ChildProfile {
   muac: number;
 }
 
-const GrowthTracker = ({ childProfile }: { childProfile: any }) => {
+const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
   const [child, setChild] = useState<ChildProfile | null>(null);
   const [zScores, setZScores] = useState<any>(null);
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
+const gender = childProfile?.gender.toLowerCase() === "female" ? "girl" : "boy";
 
   useEffect(() => {
     if (childProfile) {
@@ -71,11 +70,19 @@ const GrowthTracker = ({ childProfile }: { childProfile: any }) => {
   85,      // heightCm
   29,      // ageInWeeks
   7,       // ageInMonths
-  "girl"   // gender
+  gender   // gender
 );
+
+
 
 console.log("HAZ Z-Score:", hazResult.haz);
 console.log("HAZ Classification:", hazResult.classification);
+
+
+    
+   const birthDate = new Date(childProfile.date_of_birth);
+const today = new Date();
+const ageInWeeks = differenceInWeeks(today, birthDate);
 function differenceInMonthsApprox(end: Date, start: Date): number {
   const msPerDay = 1000 * 60 * 60 * 24;
   const diffInMs = end.getTime() - start.getTime();
@@ -85,20 +92,8 @@ function differenceInMonthsApprox(end: Date, start: Date): number {
 }
 
 
-    
-   const birthDate = new Date(childProfile.date_of_birth);
-const today = new Date();
-const ageInWeeks = differenceInWeeks(today, birthDate);
 const ageInMonths = differenceInMonthsApprox(today, birthDate);
-
-
-console.log( "ageInMonths", ageInMonths)
-
-// 2. Normalize gender to "girl" or "boy"
-const gender = childProfile.gender.toLowerCase() === "female" ? "girl" : "boy";
-
 const measuredStanding = childProfile.height > 87;
-
 const bmiResult = calculateBMIZ(
   childProfile.weight,
   childProfile.height,
@@ -107,12 +102,20 @@ const bmiResult = calculateBMIZ(
   gender,
   measuredStanding
 );
-console.log("BMI  Z-Score:", bmiResult);
 
+console.log("ageInMonths", ageInMonths);
+console.log("BMI Z-Score:", bmiResult);
+console.log("Z-Score:",calculateHAZ(
+            childProfile.height,
+            ageInWeeks,
+            ageInMonths,
+            gender
+          ),)
+// 2. Normalize gender to "girl" or "boy"
 
       const calculatedZScores = {
         BMI: bmiResult,
-        MUAC: calculateMUACZ(childProfile.muac, ageInMonths, gender),
+        MUAC: calculateMUACZ(childProfile.muac, ageInMonths, gender).zScore,
         HAZ: calculateHAZ(
             childProfile.height,
             ageInWeeks,
@@ -120,10 +123,7 @@ console.log("BMI  Z-Score:", bmiResult);
             gender
           ),
         WHZ: calculateWHZ(childProfile.weight, childProfile.height, childProfile.gender === "Male" ? "boy" : "girl", getWHZRange(childProfile.date_of_birth)),
-        WAZ: calculateWAZ(
-          childProfile.weight, 
-          getAgeDetails(childProfile.date_of_birth).age, 
-          getAgeDetails(childProfile.date_of_birth).type, childProfile.gender === "Male" ? "boy" : "girl"),
+        WAZ: calculateWAZ(childProfile.weight, getAgeDetails(childProfile.date_of_birth).age, getAgeDetails(childProfile.date_of_birth).type, childProfile.gender === "Male" ? "boy" : "girl"),
       };
       setZScores(calculatedZScores);
     }
@@ -135,7 +135,7 @@ console.log("BMI  Z-Score:", bmiResult);
     { key: "HAZ", label: "Height for Age", value: zScores.HAZ.haz, result: { label: zScores.HAZ.classification, color: "text-blue-400", note: zScores.HAZ.classification } },
     { key: "WHZ", label: "Weight for Height", value: zScores.WHZ.zScore, result: { label: zScores.WHZ.classification, color: "text-orange-400", note: zScores.WHZ.classification } },
     { key: "WAZ", label: "Weight for Age", value: zScores.WAZ.zScore, result: { label: zScores.WAZ.classification, color: "text-yellow-400", note: zScores.WAZ.classification } },
-    { key: "BMI", label: "BMI for Age", value: zScores.BMI, result: classifyZ(zScores.BMI, "BMI") },
+    { key: "BMI", label: "BMI for Age", value: zScores.BMI.zScore, result: { label: zScores.BMI.classification, color: "text-yellow-400", note: zScores.BMI.classification } },
     { key: "MUAC", label: "MUAC for Age", value: zScores.MUAC, result: classifyZ(zScores.MUAC, "MUAC") },
   ];
 
@@ -149,7 +149,7 @@ console.log("BMI  Z-Score:", bmiResult);
             <h3 className="text-md font-semibold text-gray-300">{label}</h3>
             <div className="flex justify-between mt-2 text-sm">
               <span className="text-gray-400">Z-Score:</span>
-              <span className={`font-bold ${result.color}`}>{value.toFixed(2)}</span>
+              <span className={`font-bold ${result.color}`}>{value?.toFixed(2)}</span>
             </div>
             <div className="mt-1 text-sm">
               <p className={`font-medium ${result.color}`}>{result.label}</p>
@@ -165,7 +165,7 @@ console.log("BMI  Z-Score:", bmiResult);
             onClick={() => setExpanded(!expanded)}
             className="text-teal-400 underline text-sm"
           >
-            {expanded ? "View Less" : "View More"}
+            {expanded ? "" : "View More"}
           </button>
         </div>
       )}
@@ -173,7 +173,7 @@ console.log("BMI  Z-Score:", bmiResult);
   );
 };
 
-export default GrowthTracker;
+export default GrowthTrackerHome;
 
 
 /**
@@ -216,7 +216,7 @@ const getAgeDetails = (dob: string): { age: number; type: "week" | "month" } => 
   const now = new Date();
   const diffInDays = Math.floor((+now - +birthDate) / (1000 * 60 * 60 * 24));
   const ageInWeeks = Math.floor(diffInDays / 7);
-  return ageInWeeks <= 13 ? { age: ageInWeeks, type: "week" } : { age: Math.floor(diffInDays / 30.44), type: "month" };
+  return ageInWeeks <= 13 ? { age: ageInWeeks, type: "week" } : { age: Math.floor(diffInDays / 30), type: "month" };
 };
 
 const getWHZRange = (dob: string): "0_2" | "2_5" => {

@@ -12,7 +12,8 @@ import type { RootState, AppDispatch } from '@/redux/store';
 // import GrowthTracker from './Profile/GrowthTracker';
 import GrowthTrackerAll from './Profile/GrowthTracker';
 import { Page } from '@/components/Page';
-import GrowthTrackerHome from './Profile/GrowthTrackerHome';
+
+import GrowthTracker from './Profile/GrowthTracker';
 
 type ChildFormData = {
   name: string;
@@ -297,7 +298,7 @@ const ChildProfilePage: React.FC = () => {
 
       {/* Growth and Nutrition Tracker (Always visible) */}
       {/* <GrowthTrackerAll childProfile={child} /> */}
-      <GrowthTrackerHome childProfile={child} />
+      <GrowthTracker childProfile={child} />
        <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl mt-4 p-5 space-y-2 mb-5">
         <h3 className="text-lg font-semibold text-center text-gray-300 mb-2">👶 Child Profile</h3>
          <div className="text-sm text-gray-400 space-y-1">
