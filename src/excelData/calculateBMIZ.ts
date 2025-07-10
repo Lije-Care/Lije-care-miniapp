@@ -13,19 +13,19 @@ export const calculateBMIZ = (
 
   // Adjust height if needed
   if (ageType === "week" && ageValue <= 13 && measuredStanding) {
-    heightM += 0.007;
+    // heightM += 0.007;
   } else if (ageType === "month" && ageValue >= 4 && ageValue <= 60 && !measuredStanding) {
-    heightM -= 0.007;
+    // heightM -= 0.007;
   }
 
+  
   const bmi = weightKg / (heightM * heightM);
+  console.log("here is the Bmi value",bmi)
   const roundedBMI = Number(bmi.toFixed(2));
   
   const genderKey = gender.toLowerCase() === "female" ? "girl" : "boy";
 
-  console.log("Testing BMI Calculation");
-  console.log(gender);
-  console.log({ genderKey, ageValue, ageType });
+
 
   const data = getBMIForAgeData(gender, ageValue, ageType);
 
@@ -35,8 +35,6 @@ export const calculateBMIZ = (
       : Number(entry.Months) === ageValue
   );
 
-  console.log("Row found for BMI calculation:", ageValue);
-  console.log("Data fetched for BMI calculation:", row);
 
   if (!row || !row["SD"] || !row["1 SD"]) {
     console.warn("No matching reference for:", { gender, ageValue, ageType });

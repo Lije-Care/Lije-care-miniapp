@@ -38,7 +38,7 @@ export const calculateHAZ = (
   } else {
     return { haz: 0, classification: "Age out of supported range" };
   }
-
+  
   const ageKey = ageInWeeks <= 13 ? ageInWeeks : ageInMonths;
 
   const row = data.reduce((prev, curr) => {
@@ -46,11 +46,14 @@ export const calculateHAZ = (
     const currAge = parseInt(curr.Month || curr.Week || "0");
     return Math.abs(currAge - ageKey) < Math.abs(prevAge - ageKey) ? curr : prev;
   });
-
+  
+console.log("Data fetched for HAZ calculation:", row);
+  
   const median = parseFloat(row["SD(M)"]);
   const plus1SD = parseFloat(row["1 SD"]);
   const SD = plus1SD - median;
-
+  console.log();
+  console.log("Row found for HAZ calculation:", row);
   if (isNaN(median) || isNaN(plus1SD) || Math.abs(SD) < 0.0001) {
     return { haz: 0, classification: "Invalid reference values" };
   }

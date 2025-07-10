@@ -76,15 +76,23 @@ const GrowthTracker = ({ childProfile }: { childProfile: any }) => {
 
 console.log("HAZ Z-Score:", hazResult.haz);
 console.log("HAZ Classification:", hazResult.classification);
+function differenceInMonthsApprox(end: Date, start: Date): number {
+  const msPerDay = 1000 * 60 * 60 * 24;
+  const diffInMs = end.getTime() - start.getTime();
+  const diffInDays = Math.floor(diffInMs / msPerDay);
+  const months = Math.floor(diffInDays / 30);
+  return months;
+}
 
 
     
    const birthDate = new Date(childProfile.date_of_birth);
 const today = new Date();
 const ageInWeeks = differenceInWeeks(today, birthDate);
-const ageInMonths = differenceInMonths(today, birthDate);
+const ageInMonths = differenceInMonthsApprox(today, birthDate);
 
 
+console.log( "ageInMonths", ageInMonths)
 
 // 2. Normalize gender to "girl" or "boy"
 const gender = childProfile.gender.toLowerCase() === "female" ? "girl" : "boy";
@@ -112,7 +120,10 @@ console.log("BMI  Z-Score:", bmiResult);
             gender
           ),
         WHZ: calculateWHZ(childProfile.weight, childProfile.height, childProfile.gender === "Male" ? "boy" : "girl", getWHZRange(childProfile.date_of_birth)),
-        WAZ: calculateWAZ(childProfile.weight, getAgeDetails(childProfile.date_of_birth).age, getAgeDetails(childProfile.date_of_birth).type, childProfile.gender === "Male" ? "boy" : "girl"),
+        WAZ: calculateWAZ(
+          childProfile.weight, 
+          getAgeDetails(childProfile.date_of_birth).age, 
+          getAgeDetails(childProfile.date_of_birth).type, childProfile.gender === "Male" ? "boy" : "girl"),
       };
       setZScores(calculatedZScores);
     }
@@ -164,16 +175,41 @@ console.log("BMI  Z-Score:", bmiResult);
 
 export default GrowthTracker;
 
-export const getAgeValue = (dob: string | Date, ageType: "week" | "month"): number => {
+
+/**
+ * Calculate difference in days between two dates
+ */
+const differenceInDays = (end: Date, start: Date): number => {
+  const msPerDay = 1000 * 60 * 60 * 24;
+  return Math.floor((end.getTime() - start.getTime()) / msPerDay);
+};
+
+/**
+ * Custom month difference assuming 1 month = 30 days
+ */
+const differenceInMonthsApprox = (end: Date, start: Date): number => {
+  return Math.floor(differenceInDays(end, start) / 30);
+};
+
+/**
+ * Custom week difference assuming 1 week = 7 days
+ */
+const differenceInWeeksApprox = (end: Date, start: Date): number => {
+  return Math.floor(differenceInDays(end, start) / 7);
+};
+
+
+export const getAgeValue = (
+  dob: string | Date,
+  ageType: "week" | "month"
+): number => {
   const birthDate = new Date(dob);
   const now = new Date();
-  const diffInMs = now.getTime() - birthDate.getTime();
 
-  if (ageType === "week") return Math.floor(diffInMs / (1000 * 60 * 60 * 24 * 7));
-  const years = now.getFullYear() - birthDate.getFullYear();
-  const months = now.getMonth() - birthDate.getMonth();
-  return now.getDate() < birthDate.getDate() ? years * 12 + months - 1 : years * 12 + months;
+  if (ageType === "week") return differenceInWeeksApprox(now, birthDate);
+  return differenceInMonthsApprox(now, birthDate);
 };
+
 
 const getAgeDetails = (dob: string): { age: number; type: "week" | "month" } => {
   const birthDate = new Date(dob);
