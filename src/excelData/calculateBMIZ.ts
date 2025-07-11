@@ -2,54 +2,65 @@ import { getBMIForAgeData } from "./getBMIForAgeData";
 
 export const calculateBMIZ = (
   weightKg: number,
-  heightM: number,
+  heightCM: number, // <-- Accept height in cm
   ageValue: number,
   ageType: "week" | "month",
   gender: "boy" | "girl",
   measuredStanding: boolean
 ): { bmi: number; zScore: number; classification: string } => {
-  // Height adjustment
+  // Convert height from cm to meters
+  let heightM = heightCM / 100;
+
+  // Adjust height if needed
   if (ageType === "week" && ageValue <= 13 && measuredStanding) {
-    heightM += 0.007;
+    // heightM += 0.007;
   } else if (ageType === "month" && ageValue >= 4 && ageValue <= 60 && !measuredStanding) {
-    heightM -= 0.007;
+    // heightM -= 0.007;
   }
 
+  
   const bmi = weightKg / (heightM * heightM);
+  console.log("here is the Bmi value",bmi)
+  const roundedBMI = Number(bmi.toFixed(2));
+  
+  const genderKey = gender.toLowerCase() === "female" ? "girl" : "boy";
+
+
 
   const data = getBMIForAgeData(gender, ageValue, ageType);
 
   const row = data.find(entry =>
     ageType === "week"
-      ? parseInt(entry.Weeks ?? "") === ageValue
-      : parseInt(entry.Months ?? "") === ageValue
+      ? Number(entry.Weeks) === ageValue
+      : Number(entry.Months) === ageValue
   );
 
+
   if (!row || !row["SD"] || !row["1 SD"]) {
+    console.warn("No matching reference for:", { gender, ageValue, ageType });
     return {
-      bmi: parseFloat(bmi.toFixed(2)),
+      bmi: roundedBMI,
       zScore: 0,
       classification: "No matching BMI-for-age reference found."
     };
   }
 
-  const median = parseFloat(row["SD"]);
-  const plus1SD = parseFloat(row["1 SD"]);
+  const median = Number(row["SD"]);
+  const plus1SD = Number(row["1 SD"]);
   const SD = plus1SD - median;
 
-  if (isNaN(SD) || SD === 0) {
+  if (!isFinite(SD) || SD === 0) {
     return {
-      bmi: parseFloat(bmi.toFixed(2)),
+      bmi: roundedBMI,
       zScore: 0,
       classification: "Invalid SD or median values."
     };
   }
 
-  const zRaw = (bmi - median) / SD;
-  const zScore = parseFloat(zRaw.toFixed(2));
+  const zScore = Number(((bmi - median) / SD).toFixed(2));
   const classification = classifyBMIZ(zScore);
 
-  return { bmi: parseFloat(bmi.toFixed(2)), zScore, classification };
+  return { bmi: roundedBMI, zScore, classification };
 };
 
 const classifyBMIZ = (z: number): string => {

@@ -7,7 +7,25 @@ import { calculateWAZ } from "@/excelData/calculateWAZ";
 import { differenceInWeeks, differenceInMonths } from "date-fns";
 import { useTranslation } from "react-i18next";
 
-const classifyZ = (z: number, type: string, t: any) => {
+import { calculateBMIZ } from "@/excelData/calculateBMIZ";
+import { calculateMUACZ } from "@/excelData/calculateMUACZ";
+ 
+
+
+
+interface ChildProfile {
+  date_of_birth: any;
+  name: string;
+  ageMonths: number;
+  gender: string;
+  weight: number;
+  height: number;
+  muac: number;
+}
+
+const GrowthTracker = ({ childProfile }: { childProfile: any }) => {
+  const { t } = useTranslation();
+  const classifyZ = (z: number, type: string) => {
   if (type === "BMI") {
     if (z < -3) return { label: t("Severe underweight"), color: "text-red-500", note: t("Urgent nutritional intervention needed.") };
     if (z < -2) return { label: t("Moderate underweight"), color: "text-orange-400", note: t("May require monitoring.") };
@@ -41,43 +59,65 @@ const classifyZ = (z: number, type: string, t: any) => {
     note: t("Unrecognized indicator type or missing data."),
   };
 };
-
-const calculateBMIzScore = (weight: number, height: number) => {
-  const bmi = weight / ((height / 100) ** 2);
-  return (bmi - 15) / 2;
-};
-
-const calculateMUACzScore = (muac: number) => (muac - 13) / 2;
-
-interface ChildProfile {
-  date_of_birth: any;
-  name: string;
-  ageMonths: number;
-  gender: string;
-  weight: number;
-  height: number;
-  muac: number;
-}
-
-const GrowthTracker = ({ childProfile }: { childProfile: any }) => {
-  const { t } = useTranslation();
   const [child, setChild] = useState<ChildProfile | null>(null);
   const [zScores, setZScores] = useState<any>(null);
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
+const gender = childProfile?.gender.toLowerCase() === "female" ? "girl" : "boy";
 
   useEffect(() => {
     if (childProfile) {
       setChild(childProfile);
       
-      const birthDate = new Date(childProfile.date_of_birth);
-      const today = new Date();
-      const ageInWeeks = differenceInWeeks(today, birthDate);
-      const ageInMonths = differenceInMonths(today, birthDate);
-      const gender = childProfile.gender.toLowerCase() === "female" ? "girl" : "boy";
+       const hazResult = calculateHAZ(
+  85,      // heightCm
+  29,      // ageInWeeks
+  7,       // ageInMonths
+  gender   // gender
+);
+
+
+
+console.log("HAZ Z-Score:", hazResult.haz);
+console.log("HAZ Classification:", hazResult.classification);
+
+
+    
+   const birthDate = new Date(childProfile.date_of_birth);
+const today = new Date();
+const ageInWeeks = differenceInWeeks(today, birthDate);
+function differenceInMonthsApprox(end: Date, start: Date): number {
+  const msPerDay = 1000 * 60 * 60 * 24;
+  const diffInMs = end.getTime() - start.getTime();
+  const diffInDays = Math.floor(diffInMs / msPerDay);
+  const months = Math.floor(diffInDays / 30);
+  return months;
+}
+
+
+const ageInMonths = differenceInMonthsApprox(today, birthDate);
+const measuredStanding = childProfile.height > 87;
+const bmiResult = calculateBMIZ(
+  childProfile.weight,
+  childProfile.height,
+  ageInWeeks <= 13 ? ageInWeeks : ageInMonths,
+  ageInWeeks <= 13 ? "week" : "month",
+  gender,
+  measuredStanding
+);
+
+console.log("ageInMonths", ageInMonths);
+console.log("BMI Z-Score:", bmiResult);
+console.log("Z-Score:",calculateHAZ(
+            childProfile.height,
+            ageInWeeks,
+            ageInMonths,
+            gender
+          ),)
+// 2. Normalize gender to "girl" or "boy"
 
       const calculatedZScores = {
-        BMI: calculateBMIzScore(childProfile.weight, childProfile.height),
-        MUAC: calculateMUACzScore(childProfile.muac),
+        BMI: bmiResult,
+        MUAC: calculateMUACZ(childProfile.muac, ageInMonths, gender).zScore,
         HAZ: calculateHAZ(
           childProfile.height,
           ageInWeeks,
@@ -94,11 +134,11 @@ const GrowthTracker = ({ childProfile }: { childProfile: any }) => {
   if (!child || !zScores) return <div className="text-center text-gray-400 mt-10">{t("Loading...")}</div>;
 
   const indicators = [
-    { key: "HAZ", label: "Height for Ageiguh", value: zScores.HAZ.haz, result: { label: zScores.HAZ.classification, color: "text-blue-400", note: zScores.HAZ.classification } },
-    { key: "WHZ", label: t("Weight for Height"), value: zScores.WHZ.zScore, result: { label: zScores.WHZ.classification, color: "text-orange-400", note: zScores.WHZ.classification } },
-    { key: "WAZ", label: t("Weight for Age"), value: zScores.WAZ.zScore, result: { label: zScores.WAZ.classification, color: "text-yellow-400", note: zScores.WAZ.classification } },
-    { key: "BMI", label: t("BMI for Age"), value: zScores.BMI, result: classifyZ(zScores.BMI, "BMI", t) },
-    { key: "MUAC", label: t("MUAC for Age"), value: zScores.MUAC, result: classifyZ(zScores.MUAC, "MUAC", t) },
+    { key: "HAZ", label: "Height for Age", value: zScores.HAZ.haz, result: { label: zScores.HAZ.classification, color: "text-blue-400", note: zScores.HAZ.classification } },
+    { key: "WHZ", label: "Weight for Height", value: zScores.WHZ.zScore, result: { label: zScores.WHZ.classification, color: "text-orange-400", note: zScores.WHZ.classification } },
+    { key: "WAZ", label: "Weight for Age", value: zScores.WAZ.zScore, result: { label: zScores.WAZ.classification, color: "text-yellow-400", note: zScores.WAZ.classification } },
+    { key: "BMI", label: "BMI for Age", value: zScores.BMI.zScore, result: { label: zScores.BMI.classification, color: "text-yellow-400", note: zScores.BMI.classification } },
+    { key: "MUAC", label: "MUAC for Age", value: zScores.MUAC, result: classifyZ(zScores.MUAC, "MUAC") },
   ];
 
   const visibleIndicators = expanded ? indicators : indicators.slice(0, 3);
@@ -137,24 +177,48 @@ const GrowthTracker = ({ childProfile }: { childProfile: any }) => {
 
 export default GrowthTracker;
 
-// Helper functions remain the same
-export const getAgeValue = (dob: string | Date, ageType: "week" | "month"): number => {
+
+/**
+ * Calculate difference in days between two dates
+ */
+const differenceInDays = (end: Date, start: Date): number => {
+  const msPerDay = 1000 * 60 * 60 * 24;
+  return Math.floor((end.getTime() - start.getTime()) / msPerDay);
+};
+
+/**
+ * Custom month difference assuming 1 month = 30 days
+ */
+const differenceInMonthsApprox = (end: Date, start: Date): number => {
+  return Math.floor(differenceInDays(end, start) / 30);
+};
+
+/**
+ * Custom week difference assuming 1 week = 7 days
+ */
+const differenceInWeeksApprox = (end: Date, start: Date): number => {
+  return Math.floor(differenceInDays(end, start) / 7);
+};
+
+
+export const getAgeValue = (
+  dob: string | Date,
+  ageType: "week" | "month"
+): number => {
   const birthDate = new Date(dob);
   const now = new Date();
-  const diffInMs = now.getTime() - birthDate.getTime();
 
-  if (ageType === "week") return Math.floor(diffInMs / (1000 * 60 * 60 * 24 * 7));
-  const years = now.getFullYear() - birthDate.getFullYear();
-  const months = now.getMonth() - birthDate.getMonth();
-  return now.getDate() < birthDate.getDate() ? years * 12 + months - 1 : years * 12 + months;
+  if (ageType === "week") return differenceInWeeksApprox(now, birthDate);
+  return differenceInMonthsApprox(now, birthDate);
 };
+
 
 const getAgeDetails = (dob: string): { age: number; type: "week" | "month" } => {
   const birthDate = new Date(dob);
   const now = new Date();
   const diffInDays = Math.floor((+now - +birthDate) / (1000 * 60 * 60 * 24));
   const ageInWeeks = Math.floor(diffInDays / 7);
-  return ageInWeeks <= 13 ? { age: ageInWeeks, type: "week" } : { age: Math.floor(diffInDays / 30.44), type: "month" };
+  return ageInWeeks <= 13 ? { age: ageInWeeks, type: "week" } : { age: Math.floor(diffInDays / 30), type: "month" };
 };
 
 const getWHZRange = (dob: string): "0_2" | "2_5" => {

@@ -85,11 +85,11 @@ const MealPlanSummary = () => {
             >
               {/* Description + Metadata */}
               <div className="space-y-1">
-                <p className="text-sm text-gray-700 line-clamp-2 font-medium">
-                  {mealPlan.meal_description || t("No description available.")}
+                <p className="text-sm line-clamp-2 font-medium">
+                  {mealPlan.meal_description || "No description available."}
                 </p>
-                <p className="text-xs text-gray-500">
-                  🔥 {mealPlan.calories} {t("kcal")} · 🕒{" "}
+                <p className="text-xs ">
+                  🔥 {mealPlan.calories} kcal · 🕒{" "}
                   {new Date(mealPlan.createdAt).toLocaleDateString()}
                 </p>
               </div>
@@ -118,32 +118,21 @@ const MealPlanSummary = () => {
 
               {/* Meals Preview */}
               <div>
-                <h4 className="text-sm font-semibold text-gray-800 mb-1">
-                  {t("🍽️ Meals")}
-                </h4>
+                <h4 className="text-sm font-semibold mb-1">🍽️ Meals</h4>
                 {Array.isArray(mealPlan.meals) && mealPlan.meals.length > 0 ? (
                   <div className="space-y-1">
                     {mealPlan.meals.slice(0, 3).map((meal) => (
-                      <div
-                        key={meal.id}
-                        className="flex justify-between items-center text-sm text-gray-700"
-                      >
-                        <span>{meal.title || t("Untitled")}</span>
-                        <Badge type="dot">
-                          {t(meal.meal_type) || t("Unknown")}
-                        </Badge>
+                      <div key={meal.id} className="flex justify-between items-center text-sm ">
+                        <span>{meal.title || "Untitled"}</span>
+                        <Badge type="dot">{meal.meal_type || "Unknown"}</Badge>
                       </div>
                     ))}
                     {mealPlan.meals.length > 3 && (
-                      <p className="text-xs text-gray-400 italic mt-1">
-                        + {mealPlan.meals.length - 3} {t("more")}
-                      </p>
+                      <p className="text-xs  italic mt-1">+ {mealPlan.meals.length - 3} more</p>
                     )}
                   </div>
                 ) : (
-                  <p className="text-xs text-gray-500">
-                    {t("No meals listed.")}
-                  </p>
+                  <p className="text-xs">No meals listed.</p>
                 )}
               </div>
             </Card>

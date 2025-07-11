@@ -23,7 +23,7 @@ const MealLibraryComponent = () => {
   useEffect(() => {
     const fetchMeals = async () => {
       try {
-        const res = await api.get("meal/find-all?skip=0");
+        const res = await api.get("meal/find-all?skip=0&limit=100");
         const responseData = Array.isArray(res.data) ? res.data : res.data?.data;
         setMeals(responseData || []);
       } catch (err) {
@@ -55,11 +55,37 @@ const MealLibraryComponent = () => {
     );
   };
 
-  const total = (field: keyof Meal) =>
-    selectedMeals.reduce((sum, sm) => {
-      const val = (sm.meal[field] as unknown as number) || 0;
-      return sum + val * sm.multiplier;
-    }, 0);
+  const sumNutrients = () => {
+    const result = {
+      totalVolume: 0,
+      protein: 0,
+      fat: 0,
+      carbs: 0,
+      calories: 0,
+      iron: 0,
+      calcium: 0,
+      vitaminA: 0,
+      vitaminD: 0,
+    };
+
+    selectedMeals.forEach(({ meal, multiplier }) => {
+      result.totalVolume += (meal.totalVolume || 0) * multiplier;
+      meal.totalNutrients?.forEach((nutrient) => {
+        const name = nutrient.name.toLowerCase();
+        const amount = nutrient.amount || 0;
+        if (name.includes("protein")) result.protein += amount * multiplier;
+        else if (name.includes("fat")) result.fat += amount * multiplier;
+        else if (name.includes("carb")) result.carbs += amount * multiplier;
+        else if (name.includes("calorie")) result.calories += amount * multiplier;
+        else if (name.includes("iron")) result.iron += amount * multiplier;
+        else if (name.includes("calcium")) result.calcium += amount * multiplier;
+        else if (name.includes("vitamin a")) result.vitaminA += amount * multiplier;
+        else if (name.includes("vitamin d")) result.vitaminD += amount * multiplier;
+      });
+    });
+
+    return result;
+  };
 
   const handleConfirmMealPlan = async () => {
     if (!children.length) return navigate("/children");
@@ -68,7 +94,7 @@ const MealLibraryComponent = () => {
       expertId: specialists[0]?.id,
       childId: children[0]?.id,
       meal_description: mealDescription,
-      calories: total("totalVolume"),
+      calories: sumNutrients().calories,
       meals: selectedMeals.map(({ meal, multiplier }) => ({ id: meal.id, multiplier })),
     };
 
@@ -85,6 +111,8 @@ const MealLibraryComponent = () => {
     }
   };
 
+  const nutrientTotals = sumNutrients();
+
   return (
     <div className="p-4 max-w-3xl mx-auto text-white space-y-6">
       <h1 className="text-2xl font-bold text-emerald-400">🍽️ {t("Create Meal Plan")}</h1>
@@ -97,91 +125,118 @@ const MealLibraryComponent = () => {
         placeholder={t("Describe the meal plan...")}
       />
 
+      {selectedMeals.length > 0 && (
+        <div className="bg-emerald-900/10 p-4 rounded">
+          <h2 className="text-lg font-bold text-emerald-300 mb-2">📊 Total Nutrients</h2>
+          <ul className="text-sm space-y-1">
+            <li>Total Volume: {nutrientTotals.totalVolume} ml</li>
+            <li>Protein: {nutrientTotals.protein.toFixed(2)} g</li>
+            <li>Fat: {nutrientTotals.fat.toFixed(2)} g</li>
+            <li>Carbohydrates: {nutrientTotals.carbs.toFixed(2)} g</li>
+            <li>Calories: {nutrientTotals.calories.toFixed(2)} kcal</li>
+            <li>Iron: {nutrientTotals.iron.toFixed(2)} mg</li>
+            <li>Calcium: {nutrientTotals.calcium.toFixed(2)} mg</li>
+            <li>Vitamin A: {nutrientTotals.vitaminA.toFixed(2)} IU</li>
+            <li>Vitamin D: {nutrientTotals.vitaminD.toFixed(2)} IU</li>
+          </ul>
+        </div>
+      )}
+
+      {/* Meals List - Keep rest unchanged */}
       {meals.map((meal) => {
-        const selected = selectedMeals.find((m) => m.meal.id === meal.id);
-        const expanded = expandedMealId === meal.id;
+  const selected = selectedMeals.find((m) => m.meal.id === meal.id);
+  const expanded = expandedMealId === meal.id;
 
-        return (
-          <div
-            key={meal.id}
-            className={`p-4 rounded-xl border transition-all duration-200 cursor-pointer ${
-              selected ? "border-emerald-400 bg-emerald-800/10" : "border-gray-700 bg-[#111827]"
-            }`}
-            onClick={() => toggleMealExpand(meal.id)}
-          >
-            <div className="flex gap-4 items-center">
-              <img
-                src={`https://lije-care-api-dev.zikollab.com/uploads/images/MEAL/${meal.imageUrl}`}
-                alt={meal.name}
-                className="w-20 h-20 rounded-lg object-cover border border-gray-700"
-              />
-              <div className="flex-1">
-                <h2 className="text-lg font-bold text-emerald-300">{meal.name}</h2>
-                <p className="text-xs text-gray-400 italic">
-                  {t("Age")}: {meal.ageGroup}+m · {t(meal.mealType)} · {t(meal.mealTime)}
-                </p>
-                <div className="flex gap-2 text-xs mt-1">
-                  {meal.prepTime && <span>⏱️ {meal.prepTime}</span>}
-                  {meal.cost && <span>💰 {meal.cost}</span>}
-                </div>
-              </div>
-            </div>
+  return (
+    <div
+      key={meal.id}
+      className={`p-4 rounded-xl border transition-all duration-200 cursor-pointer ${
+        selected ? "border-emerald-400 bg-emerald-800/10" : "border-gray-700 bg-[#111827]"
+      }`}
+      onClick={() => toggleMealExpand(meal.id)}
+    >
+      <div className="flex gap-4 items-center">
+        <img
+          src={meal.imageUrl}
+          alt={meal.name}
+          className="w-20 h-20 rounded-lg object-cover border border-gray-700"
+        />
+        <div className="flex-1">
+          <h2 className="text-lg font-bold text-emerald-300">{meal.name}</h2>
+          <p className="text-xs text-gray-400 italic">
+            Age: {meal.ageGroup}+m · {meal.mealType} · {meal.mealTime}
+          </p>
+        </div>
+      </div>
 
-            {expanded && (
-              <div className="mt-4 space-y-2 text-sm">
-                <p><strong>{t("Meal Type")}:</strong> {t(meal.mealType)}</p>
-                <p><strong>{t("Meal Time")}:</strong> {t(meal.mealTime)}</p>
-                <p><strong>{t("Prepping Time")}:</strong> {meal.prepTime}</p>
-                <p><strong>{t("Yield Volume")}:</strong> {meal.totalVolume} ml</p>
-                <p><strong>{t("Description")}:</strong> {meal.description}</p>
-                <p><strong>{t("Allergen Description")}:</strong> {meal.allergenDescription}</p>
-                <p><strong>{t("Intolerance Description")}:</strong> {meal.intoleranceDescription}</p>
-                <p><strong>{t("Drug Interaction")}:</strong> {meal.drugInteraction}</p>
-                <p><strong>{t("Direction")}:</strong> {meal.direction}</p>
-                <p><strong>{t("How to Store")}:</strong> {meal.howToStore}</p>
-                <p><strong>{t("Ingredients")}:</strong></p>
-                <ul className="list-disc list-inside ml-4">
-                  {meal?.mealIngredients?.length ? (
-                    meal.mealIngredients.map((mi) => (
-                      <li key={mi.id}>
-                        {mi.quantity} {mi.ingredient?.portionUnit?.abbreviation ?? ''} {t("of")} {mi.ingredient?.name ?? t('Unknown Ingredient')}
-                      </li>
-                    ))
-                  ) : (
-                    <li className="text-gray-400 italic">{t("No ingredients available")}</li>
-                  )}
-                </ul>
-                <p><strong>{t("Nutrients")}:</strong></p>
-                <ul className="list-disc list-inside ml-4">
-                  {meal?.totalNutrients?.length ? (
-                    meal.totalNutrients.map((n) => (
-                      <li key={n.id}>
-                        {n.name ?? t('Unknown Nutrient')} ({n.amount ?? 0} {n.unit ?? ''})
-                      </li>
-                    ))
-                  ) : (
-                    <li className="text-gray-400 italic">{t("No nutrients available")}</li>
-                  )}
-                </ul>
-              </div>
+      {expanded && (
+        <div className="mt-4 space-y-2 text-sm">
+          <p><strong>Description:</strong> {meal.description}</p>
+          <p><strong>Meal Type:</strong> {meal.mealType}</p>
+          <p><strong>Meal Time:</strong> {meal.mealTime}</p>
+          <p><strong>Prepping Time:</strong> {meal.prepTime ?? "N/A"}</p>
+          <p><strong>Yield Volume:</strong> {meal.totalVolume ?? "N/A"} ml</p>
+          <p><strong>Allergen Description:</strong> {meal.allergenDescription}</p>
+          <p><strong>Intolerance Description:</strong> {meal.intoleranceDescription}</p>
+          <p><strong>Drug Interaction:</strong> {meal.drugInteraction}</p>
+          <p><strong>Direction:</strong> {meal.direction}</p>
+          <p><strong>How to Store:</strong> {meal.howToStore}</p>
+          <p><strong>Ingredients:</strong></p>
+          <ul className="list-disc list-inside ml-4">
+            {meal?.mealIngredients?.length ? (
+              meal.mealIngredients.map((mi) => (
+                <li key={mi.id}>
+                  {mi.quantity} {mi.ingredient?.portionUnit?.abbreviation ?? ""} of {mi.ingredient?.name ?? "Unknown"}
+                </li>
+              ))
+            ) : (
+              <li className="text-gray-400 italic">No ingredients available</li>
             )}
-
-            <div className="mt-3 flex justify-end">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleMeal(meal);
-                }}
-                className={`text-xs px-4 py-1.5 rounded font-semibold transition-all ${
-                  selected ? "bg-red-500 hover:bg-red-600" : "bg-blue-500 hover:bg-blue-600"
-                }`}
-              >
-                {selected ? t("Remove") : t("Add")}
-              </button>
-            </div>
+          </ul>
+          <p><strong>Nutrients:</strong></p>
+          <ul className="list-disc list-inside ml-4">
+            {meal?.totalNutrients?.length ? (
+              meal.totalNutrients.map((n) => (
+                <li key={n.id}>
+                  {n.name ?? "Unknown Nutrient"} ({n.amount ?? 0} {n.unit ?? ""})
+                </li>
+              ))
+            ) : (
+              <li className="text-gray-400 italic">No nutrients available</li>
+            )}
+          </ul>
+          <div className="flex gap-2 items-center mt-2">
+            <label className="text-sm text-gray-300">Multiplier:</label>
+            <input
+              type="number"
+              min={1}
+              className="w-16 text-black px-2 py-1 rounded"
+              value={selected?.multiplier ?? 1}
+              onClick={(e) => e.stopPropagation()}
+              onChange={(e) => handleMultiplierChange(meal.id, parseInt(e.target.value))}
+            />
           </div>
-        );
-      })}
+        </div>
+      )}
+
+      <div className="mt-3 flex justify-end">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleMeal(meal);
+          }}
+          className={`text-xs px-4 py-1.5 rounded font-semibold transition-all ${
+            selected ? "bg-red-500 hover:bg-red-600" : "bg-blue-500 hover:bg-blue-600"
+          }`}
+        >
+          {selected ? "Remove" : "Add"}
+        </button>
+      </div>
+    </div>
+  );
+})}
+
+      {/* ... */}
 
       <button
         onClick={handleConfirmMealPlan}

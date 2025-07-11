@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { Button, Input, Select, Spinner } from "@telegram-apps/telegram-ui";
+import { Button, Input, Spinner } from "@telegram-apps/telegram-ui";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { addChild } from "@/redux/slices/childSlice";
@@ -17,9 +17,9 @@ interface FormValues {
   weight: number | string;
   height: number | string;
   muac: number | string;
-  dietary_restrictions: string;
-  allergies: string;
-  medications: string;
+  dietary_restrictions?: string;
+  allergies?: string;
+  medications?: string;
 }
 
 const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
@@ -33,7 +33,7 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
     handleSubmit,
     control,
     reset,
-    formState: { errors }
+    formState: { errors },
   } = useForm<FormValues>({
     defaultValues: {
       name: "",
@@ -53,7 +53,7 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
 
     const childData = {
       ...data,
-      parentId: parentId ?? '',
+      parentId: parentId ?? "",
       weight: parseFloat(data.weight.toString()),
       height: parseFloat(data.height.toString()),
       muac: parseFloat(data.muac.toString()),
@@ -72,62 +72,52 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
   };
 
   const formFields = [
-    { name: 'name', label: t("Name"), placeholder: t("Enter child's name"), type: 'text' },
-    { name: 'date_of_birth', label: t("Date of Birth"), type: 'date' },
-    { name: 'gender', label: t("Gender"), type: 'select', options: [
-      { value: "Male", label: t("Male") },
-      { value: "Female", label: t("Female") }
-    ]},
-    { name: 'weight', label: t("Weight (kg)"), type: 'number' },
-    { name: 'height', label: t("Height (cm)"), type: 'number' },
-    { name: 'muac', label: t("MUAC (cm)"), type: 'number' },
-    { 
-      name: 'dietary_restrictions', 
-      label: t("Dietary Restrictions"), 
-      placeholder: t("e.g., Lactose Intolerance"),
-      type: 'text',
-      required: false
+    { name: "name", label: t("Name"), placeholder: t("Enter child's name"), type: "text", required: true },
+    { name: "date_of_birth", label: t("Date of Birth"), type: "date", required: true },
+    {
+      name: "gender", label: t("Gender"), type: "select", required: true,
+      options: [
+        { value: "Male", label: t("Male") },
+        { value: "Female", label: t("Female") },
+      ],
     },
-    { 
-      name: 'allergies', 
-      label: t("Allergies"), 
-      placeholder: t("e.g., Peanuts"),
-      type: 'text',
-      required: false 
-    },
-    { 
-      name: 'medications', 
-      label: t("Medications"), 
-      placeholder: t("e.g., Vitamin D Supplements"),
-      type: 'text',
-      required: false 
-    },
+    { name: "weight", label: t("Weight (kg)"), type: "number", required: true },
+    { name: "height", label: t("Height (cm)"), type: "number", required: true },
+    { name: "muac", label: t("MUAC (cm)"), type: "number", required: true },
+    { name: "dietary_restrictions", label: t("Dietary Restrictions"), placeholder: t("e.g., Lactose Intolerance"), type: "text", required: false },
+    { name: "allergies", label: t("Allergies"), placeholder: t("e.g., Peanuts"), type: "text", required: false },
+    { name: "medications", label: t("Medications"), placeholder: t("e.g., Vitamin D Supplements"), type: "text", required: false },
   ];
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col space-y-4 max-h-[80vh] overflow-y-auto px-2">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col space-y-4 max-h-[80vh] overflow-y-auto px-2"
+    >
       {formFields.map((field) => (
         <Controller
           key={field.name}
           name={field.name as keyof FormValues}
           control={control}
-          rules={{ 
-            required: field.required === false ? false : t("{{field}} is required", { field: field.label })
-          }}
+          rules={
+            field.required
+              ? { required: t("{{field}} is required", { field: field.label }) }
+              : {}
+          }
           render={({ field: controllerField }) => (
             <div className="flex flex-col">
               <label htmlFor={field.name} className="text-sm font-medium mb-1">
                 {field.label}
-                {field.required !== false && <span className="text-red-500">*</span>}
+                {field.required && <span className="text-red-500"> *</span>}
               </label>
-              
-              {field.type === 'select' ? (
+
+              {field.type === "select" ? (
                 <select
                   {...controllerField}
                   id={field.name}
                   className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full"
                 >
-                  {field.options?.map(option => (
+                  {field.options?.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
                     </option>
@@ -142,10 +132,10 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
                   className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full"
                 />
               )}
-              
+
               {errors[field.name as keyof FormValues] && (
                 <p className="text-red-500 text-xs mt-1">
-                  {errors[field.name as keyof FormValues]?.message}
+                  {errors[field.name as keyof FormValues]?.message?.toString()}
                 </p>
               )}
             </div>

@@ -15,11 +15,13 @@ export const getBMIForAgeData = (
   ageValue: number,
   ageType: "week" | "month"
 ): BMIForAgeEntry[] => {
+
+
   if (gender === "boy" && ageType === "week") {
     return boys0To13Weeks.map((entry: any) => ({
       Weeks: entry.weeks,
       Months: undefined,
-      "SD": entry["SD(BMI)"],
+      "SD": entry["SD(M)"],
       "1 SD": entry["1 SD"],
     }));
   }
@@ -27,7 +29,7 @@ export const getBMIForAgeData = (
     return boys4mTo10y.map((entry: any) => ({
       Months: entry.Month,
       Weeks: undefined,
-      "SD": entry["SD(BMI)"],
+      "SD": entry["SD(M)"],
       "1 SD": entry["1 SD"],
     }));
   }
@@ -35,7 +37,7 @@ export const getBMIForAgeData = (
     return girls0To13Weeks.map((entry: any) => ({
       Weeks: entry.weeks,
       Months: undefined,
-      "SD": entry["SD(BMI)"],
+      "SD": entry["SD(M)"],
       "1 SD": entry["1 SD"],
     }));
   }
@@ -43,7 +45,7 @@ export const getBMIForAgeData = (
     return girls4mTo10y.map((entry: any) => ({
       Months: entry.Month,
       Weeks: undefined,
-      "SD": entry["SD(BMI)"],
+      "SD": entry["SD(M)"],
       "1 SD": entry["1 SD"],
     }));
   }
