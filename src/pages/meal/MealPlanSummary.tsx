@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { Page } from "@/components/Page";
+import { useTranslation } from "react-i18next";
 
 type Meal = {
   id: string;
@@ -31,6 +32,7 @@ type MealPlan = {
 };
 
 const MealPlanSummary = () => {
+  const { t } = useTranslation();
   const [mealPlans, setMealPlans] = useState<MealPlan[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { data } = useSelector((state: RootState) => state.children);
@@ -40,7 +42,7 @@ const MealPlanSummary = () => {
   useEffect(() => {
     if (!childId) {
       setMealPlans([]);
-      setError("No child profile found. Please add a child first.");
+      setError(t("No child profile found. Please add a child first."));
       return;
     }
 
@@ -56,16 +58,16 @@ const MealPlanSummary = () => {
         setMealPlans([]);
         setError(
           err?.response?.data?.message ||
-            "Failed to fetch meal plans. Please try again later."
+            t("Failed to fetch meal plans. Please try again later.")
         );
       });
-  }, [childId]);
+  }, [childId, t]);
 
   return (
     <Page back={true}>
       <div className="p-4 space-y-4">
         <h2 className="text-xl font-bold text-center text-emerald-500">
-          📋 Your Meal Plans
+          {t("📋 Your Meal Plans")}
         </h2>
 
         {error && (
@@ -96,13 +98,19 @@ const MealPlanSummary = () => {
               <div className="my-2 border-t border-gray-200" />
 
               {/* Child Info */}
-              <div className="text-xs ">
-                <span className="font-semibold ">👶 Child:</span>{" "}
-                {mealPlan.child?.name || "Unnamed"} <br />
-                <span className="font-semibold ">Allergies:</span>{" "}
-                {mealPlan.child?.allergies || "None"} <br />
-                <span className="font-semibold ">Restrictions:</span>{" "}
-                {mealPlan.child?.dietary_restrictions || "None"}
+              <div className="text-xs text-gray-600">
+                <span className="font-semibold text-gray-800">
+                  {t("👶 Child")}:
+                </span>{" "}
+                {mealPlan.child?.name || t("Unnamed")} <br />
+                <span className="font-semibold text-gray-800">
+                  {t("Allergies")}:
+                </span>{" "}
+                {mealPlan.child?.allergies || t("None")} <br />
+                <span className="font-semibold text-gray-800">
+                  {t("Restrictions")}:
+                </span>{" "}
+                {mealPlan.child?.dietary_restrictions || t("None")}
               </div>
 
               {/* Divider */}
@@ -132,7 +140,7 @@ const MealPlanSummary = () => {
         ) : (
           !error && (
             <div className="text-center text-gray-500">
-              No meal plans found. You can create one below!
+              {t("No meal plans found. You can create one below!")}
             </div>
           )
         )}
@@ -142,7 +150,7 @@ const MealPlanSummary = () => {
             className="mt-4 w-full bg-emerald-600 text-white"
             onClick={() => navigate("/meal")}
           >
-            ➕ Create a Meal Plan
+            ➕ {t("Create a Meal Plan")}
           </Button>
         </div>
       </div>

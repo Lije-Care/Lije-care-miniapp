@@ -7,33 +7,39 @@ import { RootState, AppDispatch } from '@/redux/store';
 import { fetchSpecialists } from '@/redux/slices/specialistSlice';
 import { Page } from '@/components/Page';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function ConsultationTab() {
+  const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { specialists, loading, error } = useSelector((state: RootState) => state.specialists);
 
-  const categories = ['All', 'nutritionist', 'Medical doctor', 'Any Question(CS)'];
-  const [activeCategory, setActiveCategory] = useState('All');
+  const categories = [
+    t('All'), 
+    t('nutritionist'), 
+    t('Medical doctor'), 
+    t('Any Question(CS)')
+  ];
+  const [activeCategory, setActiveCategory] = useState(t('All'));
 
   useEffect(() => {
     dispatch(fetchSpecialists({ page: 1, limit: 10 }));
   }, [dispatch]);
 
-const filteredSpecialists =
-  activeCategory === 'All'
-    ? specialists.filter(
-        (doc) =>
-          Array.isArray(doc.AvailabilitySlots) &&
-          doc.AvailabilitySlots.some((slot) => slot.isBooked === false)
-      )
-    : specialists.filter(
-        (doc) =>
-          doc?.SpecialistProfile?.specialty?.toLowerCase() === activeCategory.toLowerCase() &&
-          Array.isArray(doc.AvailabilitySlots) &&
-          doc.AvailabilitySlots.some((slot) => slot.isBooked === false)
-      );
-
+  const filteredSpecialists =
+    activeCategory === t('All')
+      ? specialists.filter(
+          (doc) =>
+            Array.isArray(doc.AvailabilitySlots) &&
+            doc.AvailabilitySlots.some((slot) => slot.isBooked === false)
+        )
+      : specialists.filter(
+          (doc) =>
+            doc?.SpecialistProfile?.specialty?.toLowerCase() === activeCategory.toLowerCase() &&
+            Array.isArray(doc.AvailabilitySlots) &&
+            doc.AvailabilitySlots.some((slot) => slot.isBooked === false)
+        );
 
   return (
     <Page>
@@ -43,7 +49,7 @@ const filteredSpecialists =
             className="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded text-white"
             onClick={() => navigate('/my-appointments')}
           >
-            My Appointments
+            {t('My Appointments')}
           </button>
         </div>
 
@@ -63,8 +69,7 @@ const filteredSpecialists =
           ))}
         </div>
 
-
-        <p className="font-medium text-gray-300">👩‍⚕️ Choose a Specialist</p>
+        <p className="font-medium text-gray-300">👩‍⚕️ {t('Choose a Specialist')}</p>
 
         {loading ? (
           <div className="flex justify-center py-4">
@@ -74,40 +79,34 @@ const filteredSpecialists =
           <p className="text-red-500">{error}</p>
         ) : (
           <>
-          {loading ? (
-  <div className="flex justify-center py-4">
-    <Spinner size="l" />
-  </div>
-) : error ? (
-  <p className="text-red-500">{error}</p>
-) : specialists.length === 0 ? (
-  <p className="text-center text-gray-400 py-4">
-    No specialists are currently available. Please try again later.
-  </p>
-) : (
-  <div className="space-y-3">
-    {filteredSpecialists.map((doc) => {
-      const fullName = `${doc?.firstName} ${doc?.lastName}`;
-      return (
-        <div
-          key={doc.id}
-          className="p-4 border rounded-lg flex justify-between items-center border-gray-700 bg-gray-800 cursor-pointer"
-          onClick={() => navigate(`/consultat/${doc.id}`)}
-        >
-          <div className="flex gap-4 items-center">
-            <img
-              src={doc?.avatarUrl || '/doctors/default-avatar.png'}
-              alt={fullName}
-              className="w-12 h-12 rounded-full object-cover"
-            />
-            <p className="font-bold">{fullName}</p>
-          </div>
-        </div>
-      );
-    })}
-  </div>
-)}
-</>
+            {filteredSpecialists.length === 0 ? (
+              <p className="text-center text-gray-400 py-4">
+                {t('No specialists are currently available. Please try again later.')}
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {filteredSpecialists.map((doc) => {
+                  const fullName = `${doc?.firstName} ${doc?.lastName}`;
+                  return (
+                    <div
+                      key={doc.id}
+                      className="p-4 border rounded-lg flex justify-between items-center border-gray-700 bg-gray-800 cursor-pointer"
+                      onClick={() => navigate(`/consultat/${doc.id}`)}
+                    >
+                      <div className="flex gap-4 items-center">
+                        <img
+                          src={doc?.avatarUrl || '/doctors/default-avatar.png'}
+                          alt={fullName}
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                        <p className="font-bold">{fullName}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </>
         )}
       </div>
     </Page>

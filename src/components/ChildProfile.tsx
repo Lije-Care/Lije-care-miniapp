@@ -8,8 +8,6 @@ import { useDispatch } from "react-redux";
 
 const ChildrenDisplay = () => {
   const dispatch = useDispatch();
-  
-
   // const [isEditing, setIsEditing] = useState(false);
   // const handleNext = () => {
   //   if (currentIndex < children.length - 1) {

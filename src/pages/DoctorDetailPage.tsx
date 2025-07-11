@@ -1,14 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
 import api from '@/api/axios';
 import { Spinner, Button } from '@telegram-apps/telegram-ui';
-import useTelegramUser from '@/hooks/useTelegramUser';
 import { Page } from '@/components/Page';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function DoctorDetailPage() {
+  const { t } = useTranslation();
   const { doctorId } = useParams();
   const telegramuser = JSON.parse(localStorage.getItem("user") || "{}");
   const [doctor, setDoctor] = useState<any>(null);
@@ -17,6 +17,7 @@ export default function DoctorDetailPage() {
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [confirmed, setConfirmed] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchDoctorInfo();
@@ -28,7 +29,7 @@ export default function DoctorDetailPage() {
       const res = await api.get(`/specialists/find-one/${doctorId}`);
       setDoctor(res.data);
     } catch (err) {
-      console.error('Doctor fetch failed');
+      console.error(t('Doctor fetch failed'));
     }
   };
 
@@ -43,10 +44,10 @@ export default function DoctorDetailPage() {
       setLoadingSlots(false);
     }
   };
-  const navigate = useNavigate();
+
   const bookSlot = async () => {
     if (!selectedSlot) {
-      setErrorMsg('Please select a slot.');
+      setErrorMsg(t('Please select a slot.'));
       return;
     }
 
@@ -57,10 +58,8 @@ export default function DoctorDetailPage() {
         slotId: selectedSlot,
       });
       navigate(`/consultation/${doctorId}`);
-      //setConfirmed(true);
-
     } catch (err) {
-      setErrorMsg('Booking failed. Try again.');
+      setErrorMsg(t('Booking failed. Try again.'));
     }
   };
 
@@ -68,11 +67,17 @@ export default function DoctorDetailPage() {
     return (
       <Page back={true}>
         <div className="p-6 text-center text-white space-y-4">
-          <h2 className="text-2xl font-semibold text-green-400">🎉 Consultation Confirmed</h2>
+          <h2 className="text-2xl font-semibold text-green-400">
+            🎉 {t('Consultation Confirmed')}
+          </h2>
           <p>
-            Session booked with <span className="font-bold">{doctor?.firstName} {doctor?.lastName}</span>
+            {t('Session booked with')} <span className="font-bold">
+              {doctor?.firstName} {doctor?.lastName}
+            </span>
           </p>
-          <Button className="bg-indigo-600 text-white mt-4">Join Video Call</Button>
+          <Button className="bg-indigo-600 text-white mt-4">
+            {t('Join Video Call')}
+          </Button>
         </div>
       </Page>
     );
@@ -81,7 +86,9 @@ export default function DoctorDetailPage() {
   return (
     <Page back={true}>
       <div className="p-6 space-y-4 text-white">
-        <h2 className="text-xl font-bold text-emerald-400">Doctor Info</h2>
+        <h2 className="text-xl font-bold text-emerald-400">
+          {t('Doctor Info')}
+        </h2>
         {doctor ? (
           <div className="flex gap-4 items-center">
             <img
@@ -93,7 +100,9 @@ export default function DoctorDetailPage() {
               <p className="text-lg font-bold">
                 {doctor.firstName} {doctor.lastName}
               </p>
-              <p className="text-sm text-gray-400">{doctor.SpecialistProfile?.specialty}</p>
+              <p className="text-sm text-gray-400">
+                {doctor.SpecialistProfile?.specialty}
+              </p>
             </div>
           </div>
         ) : (
@@ -101,7 +110,9 @@ export default function DoctorDetailPage() {
         )}
 
         <div>
-          <p className="font-medium mb-2 text-gray-300">📅 Choose a Slot</p>
+          <p className="font-medium mb-2 text-gray-300">
+            📅 {t('Choose a Slot')}
+          </p>
           {loadingSlots ? (
             <Spinner size="l" />
           ) : (
@@ -110,7 +121,7 @@ export default function DoctorDetailPage() {
               onChange={(e) => setSelectedSlot(e.target.value)}
               className="w-full bg-gray-800 border border-gray-600 text-white p-2 rounded"
             >
-              <option value="">Select a time slot</option>
+              <option value="">{t('Select a time slot')}</option>
               {availability
                 .filter((slot) => !slot.isBooked)
                 .map((slot) => (
@@ -125,8 +136,11 @@ export default function DoctorDetailPage() {
         {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
 
         {selectedSlot && (
-          <Button className="w-full mt-4 bg-emerald-600 text-white" onClick={bookSlot}>
-            Confirm Booking
+          <Button 
+            className="w-full mt-4 bg-emerald-600 text-white" 
+            onClick={bookSlot}
+          >
+            {t('Confirm Booking')}
           </Button>
         )}
       </div>

@@ -19,15 +19,16 @@ import { fetchArticles } from '@/redux/slices/articlesSlice';
 import { AppDispatch, RootState } from '@/redux/store';
 import parentAvatar from '@/assets/avatar.png';
 import childAvatar from '@/assets/images/baby.png';
-
 import GrowthTrackerHome from '../Profile/GrowthTrackerHome';
 import { fetchParent } from '@/redux/slices/itemSlice';
 import { fetchChildrenByParentId } from '@/redux/slices/childSlice';
 import { fetchSpecialists } from '@/redux/slices/specialistSlice';
 import { FiBell } from 'react-icons/fi';
 import PromotionsList from '../Profile/PromotionsList';
+import { useTranslation } from 'react-i18next';
 
 export const IndexPage: FC = () => {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -37,7 +38,7 @@ export const IndexPage: FC = () => {
   const parentState = useSelector((state: RootState) => state.parent);
 
   const parent = {
-    name: parentState.parent?.firstName ?? 'Unknown',
+    name: parentState.parent?.firstName ?? t('Unknown'),
     avatar: parentAvatar,
   };
   const favoriteChildId = localStorage.getItem('favorite_child_id');
@@ -82,13 +83,13 @@ export const IndexPage: FC = () => {
             className="flex items-center gap-3 border rounded-xl px-3 py-2 shadow-sm cursor-pointer w-full max-w-xs"
           >
             <img
-              alt="Telegram sticker"
+              alt={t('Parent Avatar')}
               src={parentImage}
               className="w-12 h-12 rounded-full object-cover"
             />
             <div className="flex flex-col min-w-0">
               <p className="text-base font-semibold truncate">{parent.name}</p>
-              <p className="text-sm text-gray-500 truncate">Parent</p>
+              <p className="text-sm text-gray-500 truncate">{t('Parent')}</p>
             </div>
           </div>
 
@@ -100,21 +101,21 @@ export const IndexPage: FC = () => {
             {child ? (
               <>
                 <img
-                  alt="Child avatar"
+                  alt={t('Child Avatar')}
                   src={childAvatar || 'https://via.placeholder.com/48'}
                   className="w-12 h-12 rounded-full object-cover"
                 />
                 <div className="flex flex-col min-w-0">
                   <p className="text-base font-semibold truncate">
                     {child.name}
-                    </p>
-                  <p className="text-sm text-gray-500 truncate">Children</p>
+                  </p>
+                  <p className="text-sm text-gray-500 truncate">{t('Children')}</p>
                 </div>
               </>
             ) : (
               <div className="flex flex-col min-w-0">
-                <p className="text-base font-semibold truncate">No child</p>
-                <p className="text-sm text-gray-500 truncate">Add a profile</p>
+                <p className="text-base font-semibold truncate">{t('No child')}</p>
+                <p className="text-sm text-gray-500 truncate">{t('Add a profile')}</p>
               </div>
             )}
           </div>
@@ -123,25 +124,25 @@ export const IndexPage: FC = () => {
         {/* 📊 Assessment Summary */}
         {child?.assessment && (
           <div className="mx-4 my-4 p-4 rounded-xl shadow-md border">
-            <Headline weight="2" className="mb-2">Health Assessment</Headline>
+            <Headline weight="2" className="mb-2">{t('Health Assessment')}</Headline>
             <div className="grid grid-cols-2 gap-4">
               {Object.entries(child.assessment).map(([label, value]) => (
                 <div key={label} className="text-center p-2 border rounded-lg shadow-sm">
                   <Subheadline>{value}</Subheadline>
-                  <Caption className="text-gray-500">{label.toUpperCase()}</Caption>
+                  <Caption className="text-gray-500">{t(label.toUpperCase())}</Caption>
                 </div>
               ))}
             </div>
             <div className="mt-4">
               <Button size="s" onClick={() => setExpanded(!expanded)}>
-                {expanded ? 'Hide Details' : 'Show Details'}
+                {expanded ? t('Hide Details') : t('Show Details')}
               </Button>
             </div>
           </div>
         )}
 
         <div className="text-center font-bold text-gray-600">
-          Anthropometric
+          {t('Anthropometric')}
         </div>
 
         <Section className="mt-4">

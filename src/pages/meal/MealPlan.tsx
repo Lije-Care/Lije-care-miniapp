@@ -1,17 +1,17 @@
-// Enhanced MealLibraryComponent with expand-on-click for detailed view and nutrient calculator
-
 import { useEffect, useState } from "react";
 import api from "@/api/axios";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { Meal } from "@/types/meal";
+import { useTranslation } from "react-i18next";
 
 const MealLibraryComponent = () => {
+  const { t } = useTranslation();
   const [meals, setMeals] = useState<Meal[]>([]);
   const [expandedMealId, setExpandedMealId] = useState<string | null>(null);
   const [selectedMeals, setSelectedMeals] = useState<{ meal: Meal; multiplier: number }[]>([]);
-  const [mealDescription, setMealDescription] = useState("A healthy and balanced meal plan for the child.");
+  const [mealDescription, setMealDescription] = useState(t("A healthy and balanced meal plan for the child."));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -28,13 +28,13 @@ const MealLibraryComponent = () => {
         setMeals(responseData || []);
       } catch (err) {
         console.error("Error fetching meals:", err);
-        setError("Could not load meals. Please try again.");
+        setError(t("Could not load meals. Please try again."));
       } finally {
         setLoading(false);
       }
     };
     fetchMeals();
-  }, []);
+  }, [t]);
 
   const toggleMealExpand = (mealId: string) => {
     setExpandedMealId((prev) => (prev === mealId ? null : mealId));
@@ -105,7 +105,7 @@ const MealLibraryComponent = () => {
       navigate("/mealplansummary");
     } catch (error) {
       console.error("Submit failed:", error);
-      alert("Something went wrong. Try again.");
+      alert(t("Something went wrong. Try again."));
     } finally {
       setSubmitting(false);
     }
@@ -115,14 +115,14 @@ const MealLibraryComponent = () => {
 
   return (
     <div className="p-4 max-w-3xl mx-auto text-white space-y-6">
-      <h1 className="text-2xl font-bold text-emerald-400">🍽️ Create Meal Plan</h1>
+      <h1 className="text-2xl font-bold text-emerald-400">🍽️ {t("Create Meal Plan")}</h1>
 
       <textarea
         className="w-full p-2 bg-gray-800 text-white rounded"
         rows={2}
         value={mealDescription}
         onChange={(e) => setMealDescription(e.target.value)}
-        placeholder="Describe the meal plan..."
+        placeholder={t("Describe the meal plan...")}
       />
 
       {selectedMeals.length > 0 && (
@@ -247,7 +247,7 @@ const MealLibraryComponent = () => {
             : "bg-emerald-600 hover:bg-emerald-700"
         }`}
       >
-        {submitting ? "Submitting..." : "✅ Confirm Meal Plan"}
+        {submitting ? t("Submitting...") : `✅ ${t("Confirm Meal Plan")}`}
       </button>
     </div>
   );
