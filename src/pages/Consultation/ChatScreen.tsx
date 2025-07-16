@@ -24,10 +24,29 @@ import socket from '@/utils/socket';
 import MessageList from './MessageList';
 import { Message } from '@/types';
 import { Page } from '@/components/Page';
+import { useBookings } from '@/hooks/useBookings';
 
 const ChatScreen = () => {
+
+const { bookings } = useBookings();
+  const isSlotNow = (slot) => {
+  const now = new Date();
+
+  const startDateTime = new Date(`${slot.date.split('T')[0]}T${slot.startTime}:00`);
+  const endDateTime = new Date(`${slot.date.split('T')[0]}T${slot.endTime}:00`);
+
+  return now >= startDateTime && now <= endDateTime;
+};
+
+
+const activeSlotBooking = bookings.find(b => b.slot && isSlotNow(b.slot));
+
   const { doctorId } = useParams();
   const navigate = useNavigate();
+  const [countdown, setCountdown] = useState<string | null>(null);
+
+  console.log("my bookings")
+  console.log(bookings)
   const telegramUser = JSON.parse(localStorage.getItem("user") || "{}");
   const currentUserId = telegramUser?.id;
 
@@ -42,6 +61,35 @@ const ChatScreen = () => {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
   const messagesFetched = useRef(false);
+
+  useEffect(() => {
+  if (!activeSlotBooking || !activeSlotBooking.slot) return;
+
+  const slot = activeSlotBooking.slot;
+  const end = new Date(`${slot.date.split('T')[0]}T${slot.endTime}:00`);
+
+  const updateCountdown = () => {
+    const now = new Date();
+    const diffMs = end.getTime() - now.getTime();
+
+    if (diffMs <= 0) {
+      setCountdown("00:00");
+      // Optionally leave room automatically
+      if (isConnected) leaveRoom();
+      return;
+    }
+
+    const minutes = Math.floor(diffMs / 1000 / 60);
+    const seconds = Math.floor((diffMs / 1000) % 60);
+    setCountdown(`${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
+  };
+
+  updateCountdown();
+  const interval = setInterval(updateCountdown, 1000);
+
+  return () => clearInterval(interval);
+}, [activeSlotBooking, isConnected]);
+
 
   const PeerView = ({ peer }) => {
     const { videoRef } = useVideo({ trackId: peer.videoTrack });
@@ -130,18 +178,26 @@ const ChatScreen = () => {
 
   return (
     <Page back={true}>
+ 
     <div style={{ minHeight: 'calc(100vh - 60px)' }} className="flex flex-col w-full">
       <div className="flex items-center justify-between p-4 shadow-md">
         <h2 className="text-lg font-semibold text-teal-700">{selectedDoctor?.firstName}</h2>
+         {countdown && isConnected && (
+          <span className="text-sm text-red-600 font-medium">
+            Call ends in {countdown}
+          </span>
+        )}
         <div className="flex space-x-2">
-  {!isConnected && (
-    <button className="p-2" onClick={joinRoom}>
-      <FiPhoneCall className="h-6 w-6 text-green-600" />
-    </button>
-  )}
+ {!isConnected && activeSlotBooking && (
+  <button className="p-2" onClick={joinRoom}>
+    <FiPhoneCall className="h-6 w-6 text-green-600" />
+  </button>
+)}
+
 
   {isConnected && peers.some(peer => peer.videoTrack) && (
     <>
+    
       <button className="p-2" onClick={toggleVideo}>
         <MdVideoCameraFront className="h-6 w-6 text-black" />
       </button>
@@ -173,6 +229,7 @@ const ChatScreen = () => {
       )}
 
       <div className="flex-1 overflow-y-auto space-y-1 px-4 py-2">
+        
         <MessageList messages={messages} currentUserId={currentUserId ?? ''} />
       </div>
 
