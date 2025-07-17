@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { Meal } from "@/types/meal";
+import fallback from "@/assets/meal.png";
 import { useTranslation } from "react-i18next";
 
 const MealLibraryComponent = () => {
@@ -156,11 +157,20 @@ const MealLibraryComponent = () => {
       onClick={() => toggleMealExpand(meal.id)}
     >
       <div className="flex gap-4 items-center">
-        <img
-          src={meal.imageUrl}
-          alt={meal.name}
-          className="w-20 h-20 rounded-lg object-cover border border-gray-700"
-        />
+      <img
+            src={
+              typeof meal.imageUrl === 'string' && meal.imageUrl.startsWith('http')
+                ? meal.imageUrl
+                : `${fallback}`
+            }
+            alt={meal.name}
+            className="w-20 h-20 rounded-lg object-cover border border-gray-700"
+            onError={(e) => {
+              const target = e.currentTarget as HTMLImageElement;
+              target.onerror = null; // prevent infinite loop
+              target.src = `${fallback}`;
+            }}
+          />
         <div className="flex-1">
           <h2 className="text-lg font-bold text-emerald-300">{meal.name}</h2>
           <p className="text-xs text-gray-400 italic">
