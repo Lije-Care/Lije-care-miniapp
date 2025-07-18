@@ -17,11 +17,18 @@ export default function DoctorDetailPage() {
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [confirmed, setConfirmed] = useState(false);
+  const [hasFavoriteChild, setHasFavoriteChild] = useState(true); // ✅ Track child presence
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchDoctorInfo();
     fetchAvailability();
+
+    // ✅ Check if favorite child is set
+    const favoriteChildId = localStorage.getItem('favorite_child_id');
+    if (!favoriteChildId) {
+      setHasFavoriteChild(false);
+    }
   }, [doctorId]);
 
   const fetchDoctorInfo = async () => {
@@ -46,8 +53,9 @@ export default function DoctorDetailPage() {
   };
 
   const bookSlot = async () => {
-    if (!selectedSlot) {
-      setErrorMsg(t('Please select a slot.'));
+    const favoriteChildId = localStorage.getItem('favorite_child_id');
+    if (!selectedSlot || !favoriteChildId) {
+      setErrorMsg(t('Please select a slot and ensure child is added.'));
       return;
     }
 
@@ -56,6 +64,7 @@ export default function DoctorDetailPage() {
         parentId: telegramuser?.id,
         expertId: doctorId,
         slotId: selectedSlot,
+        childId: favoriteChildId,
       });
       navigate(`/consultation/${doctorId}`);
     } catch (err) {
@@ -89,6 +98,19 @@ export default function DoctorDetailPage() {
         <h2 className="text-xl font-bold text-emerald-400">
           {t('Doctor Info')}
         </h2>
+
+        {!hasFavoriteChild && (
+          <div className="bg-red-500/10 p-4 rounded border border-red-400 text-white space-y-2">
+            <p>{t('No child selected. Please add a child before booking.')}</p>
+            <Button
+              className="bg-red-500 text-white"
+              onClick={() => navigate('/children')}
+            >
+              ➕ {t('Add Child')}
+            </Button>
+          </div>
+        )}
+
         {doctor ? (
           <div className="flex gap-4 items-center">
             <img
@@ -109,39 +131,43 @@ export default function DoctorDetailPage() {
           <Spinner size="l" />
         )}
 
-        <div>
-          <p className="font-medium mb-2 text-gray-300">
-            📅 {t('Choose a Slot')}
-          </p>
-          {loadingSlots ? (
-            <Spinner size="l" />
-          ) : (
-            <select
-              value={selectedSlot}
-              onChange={(e) => setSelectedSlot(e.target.value)}
-              className="w-full bg-gray-800 border border-gray-600 text-white p-2 rounded"
-            >
-              <option value="">{t('Select a time slot')}</option>
-              {availability
-                .filter((slot) => !slot.isBooked)
-                .map((slot) => (
-                  <option key={slot.id} value={slot.id}>
-                    {slot.startTime} - {slot.endTime}
-                  </option>
-                ))}
-            </select>
-          )}
-        </div>
+        {hasFavoriteChild && (
+          <>
+            <div>
+              <p className="font-medium mb-2 text-gray-300">
+                📅 {t('Choose a Slot')}
+              </p>
+              {loadingSlots ? (
+                <Spinner size="l" />
+              ) : (
+                <select
+                  value={selectedSlot}
+                  onChange={(e) => setSelectedSlot(e.target.value)}
+                  className="w-full bg-gray-800 border border-gray-600 text-white p-2 rounded"
+                >
+                  <option value="">{t('Select a time slot')}</option>
+                  {availability
+                    .filter((slot) => !slot.isBooked)
+                    .map((slot) => (
+                      <option key={slot.id} value={slot.id}>
+                        {slot.startTime} - {slot.endTime}
+                      </option>
+                    ))}
+                </select>
+              )}
+            </div>
 
-        {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
+            {errorMsg && <p className="text-red-500 text-sm">{errorMsg}</p>}
 
-        {selectedSlot && (
-          <Button 
-            className="w-full mt-4 bg-emerald-600 text-white" 
-            onClick={bookSlot}
-          >
-            {t('Confirm Booking')}
-          </Button>
+            {selectedSlot && (
+              <Button
+                className="w-full mt-4 bg-emerald-600 text-white"
+                onClick={bookSlot}
+              >
+                {t('Confirm Booking')}
+              </Button>
+            )}
+          </>
         )}
       </div>
     </Page>
