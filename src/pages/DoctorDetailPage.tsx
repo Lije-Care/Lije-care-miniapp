@@ -17,14 +17,13 @@ export default function DoctorDetailPage() {
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [confirmed, setConfirmed] = useState(false);
-  const [hasFavoriteChild, setHasFavoriteChild] = useState(true); // ✅ Track child presence
+  const [hasFavoriteChild, setHasFavoriteChild] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchDoctorInfo();
     fetchAvailability();
 
-    // ✅ Check if favorite child is set
     const favoriteChildId = localStorage.getItem('favorite_child_id');
     if (!favoriteChildId) {
       setHasFavoriteChild(false);
@@ -80,7 +79,8 @@ export default function DoctorDetailPage() {
             🎉 {t('Consultation Confirmed')}
           </h2>
           <p>
-            {t('Session booked with')} <span className="font-bold">
+            {t('Session booked with')}{' '}
+            <span className="font-bold">
               {doctor?.firstName} {doctor?.lastName}
             </span>
           </p>
@@ -147,10 +147,39 @@ export default function DoctorDetailPage() {
                 >
                   <option value="">{t('Select a time slot')}</option>
                   {availability
-                    .filter((slot) => !slot.isBooked)
+                    .filter((slot) => {
+                      if (slot.isBooked || !slot.startTime || !slot.date) return false;
+
+                      try {
+                        const [hour, minute] = slot.startTime.split(':').map(Number);
+                        const dateObj = new Date(slot.date);
+                        const slotDateTime = new Date(
+                          dateObj.getFullYear(),
+                          dateObj.getMonth(),
+                          dateObj.getDate(),
+                          hour,
+                          minute
+                        );
+
+                        return slotDateTime.getTime() > Date.now();
+                      } catch {
+                        return false;
+                      }
+                    })
+                    .sort((a, b) => {
+                      const [ah, am] = a.startTime.split(':').map(Number);
+                      const [bh, bm] = b.startTime.split(':').map(Number);
+                      const ad = new Date(a.date);
+                      const bd = new Date(b.date);
+
+                      const aTime = new Date(ad.getFullYear(), ad.getMonth(), ad.getDate(), ah, am);
+                      const bTime = new Date(bd.getFullYear(), bd.getMonth(), bd.getDate(), bh, bm);
+
+                      return aTime.getTime() - bTime.getTime();
+                    })
                     .map((slot) => (
                       <option key={slot.id} value={slot.id}>
-                        {slot.startTime} - {slot.endTime}
+                        {slot.date.split('T')[0]} - {slot.startTime} to {slot.endTime}
                       </option>
                     ))}
                 </select>

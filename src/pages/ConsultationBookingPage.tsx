@@ -16,9 +16,9 @@ export default function ConsultationTab() {
   const { specialists, loading, error } = useSelector((state: RootState) => state.specialists);
 
   const categories = [
-    t('All'), 
-    t('nutritionist'), 
-    t('Medical doctor'), 
+    t('All'),
+    t('nutritionist'),
+    t('Medical doctor'),
     t('Any Question(CS)')
   ];
   const [activeCategory, setActiveCategory] = useState(t('All'));
@@ -27,19 +27,36 @@ export default function ConsultationTab() {
     dispatch(fetchSpecialists({ page: 1, limit: 10 }));
   }, [dispatch]);
 
-  const filteredSpecialists =
-    activeCategory === t('All')
-      ? specialists.filter(
-          (doc) =>
-            Array.isArray(doc.AvailabilitySlots) &&
-            doc.AvailabilitySlots.some((slot) => slot.isBooked === false)
-        )
-      : specialists.filter(
-          (doc) =>
-            doc?.SpecialistProfile?.specialty?.toLowerCase() === activeCategory.toLowerCase() &&
-            Array.isArray(doc.AvailabilitySlots) &&
-            doc.AvailabilitySlots.some((slot) => slot.isBooked === false)
+  // ✅ Helper to check future unbooked slots
+  const hasFutureUnbookedSlot = (slots: any[] = []) => {
+    return slots.some((slot) => {
+      if (!slot || slot.isBooked || !slot.startTime || !slot.date) return false;
+      try {
+        const [hour, minute] = slot.startTime.split(':').map(Number);
+        const dateObj = new Date(slot.date);
+        const slotDateTime = new Date(
+          dateObj.getFullYear(),
+          dateObj.getMonth(),
+          dateObj.getDate(),
+          hour,
+          minute
         );
+        return slotDateTime.getTime() > Date.now();
+      } catch {
+        return false;
+      }
+    });
+  };
+
+  const filteredSpecialists = specialists.filter((doc) => {
+    const hasAvailableSlot = hasFutureUnbookedSlot(doc.AvailabilitySlots);
+    if (!hasAvailableSlot) return false;
+
+    if (activeCategory === t('All')) return true;
+
+    const specialty = doc?.SpecialistProfile?.specialty || '';
+    return specialty.toLowerCase() === activeCategory.toLowerCase();
+  });
 
   return (
     <Page>
@@ -53,7 +70,7 @@ export default function ConsultationTab() {
           </button>
         </div>
 
-        <div className="flex bg-gray-900 gap-2">
+         <div className="flex bg-gray-900 gap-2">
           {categories.map((category) => (
             <button
               key={category}
