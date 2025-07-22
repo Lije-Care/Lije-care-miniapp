@@ -34,8 +34,21 @@ const ChildrenListPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    setChildrenData(data);
-  }, [data]);
+  setChildrenData(data);
+
+  // Handle favorite child logic after data is fetched
+  if (data && data.length === 1) {
+    // Only one child — set as favorite
+    const singleChildId = data[0].id;
+    localStorage.setItem(FAVORITE_CHILD_KEY, singleChildId);
+    setFavoriteChildId(singleChildId);
+  } else if (data && data.length === 0) {
+    // No children — remove favorite
+    localStorage.removeItem(FAVORITE_CHILD_KEY);
+    setFavoriteChildId(null);
+  }
+}, [data]);
+
 
   const handleViewChild = (childId: string) => {
     navigate(`/child/${childId}`);
