@@ -167,7 +167,7 @@ console.log("Z-Score:",calculateHAZ(
             onClick={() => setExpanded(!expanded)}
             className="text-teal-400 underline text-sm"
           >
-            {expanded ? t("View Less") : t("View More")}
+            {expanded ? t("") : t("View More")}
           </button>
         </div>
       )}
