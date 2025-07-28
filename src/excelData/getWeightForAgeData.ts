@@ -24,6 +24,7 @@ export const getWeightForAgeData = (
       "1 SD": entry["1 SD"],
     }));
   }
+  console.log(ageValue);
   if (gender === "boy" && ageType === "month") {
     return boys4mTo10y.map((entry: any) => ({
       Months: entry.Month,

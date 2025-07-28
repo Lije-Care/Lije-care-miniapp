@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Button, Headline, Spinner } from "@telegram-apps/telegram-ui";
+import {  Headline, Spinner } from "@telegram-apps/telegram-ui";
 import { useNavigate } from "react-router-dom";
 import { FaPlus, FaExclamationTriangle, FaTrash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchChildrenByParentId, deleteChildById } from "@/redux/slices/childSlice";
 import AddChildForm from "./Profile/AddChildForm";
 import type { RootState, AppDispatch } from "@/redux/store";
-import { Child } from "@/types";
+// import { Child } from "@/types";
 import { Page } from "@/components/Page";
 import { useTranslation } from "react-i18next";
+import { Child } from "@/redux/slices/itemSlice";
 
 const FAVORITE_CHILD_KEY = "favorite_child_id";
 
@@ -34,7 +35,8 @@ const ChildrenListPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-  setChildrenData(data);
+  setChildrenData(data as unknown as Child[]);
+
 
   // Handle favorite child logic after data is fetched
   if (data && data.length === 1) {

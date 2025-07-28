@@ -17,7 +17,7 @@ import { FiPhoneCall } from 'react-icons/fi';
 import { MdVideoCameraFront } from 'react-icons/md';
 import { FaMicrophone, FaMicrophoneSlash, FaPaperPlane } from 'react-icons/fa';
 import { useEffect, useState, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import api from '@/api/axios';
 import socket from '@/utils/socket';
 import MessageList from './MessageList';
@@ -27,7 +27,7 @@ import { useBookings } from '@/hooks/useBookings';
 const ChatScreen = () => {
 
 const { bookings } = useBookings();
-  const isSlotNow = (slot) => {
+  const isSlotNow = (slot:any) => {
   const now = new Date();
 
   const startDateTime = new Date(`${slot.date.split('T')[0]}T${slot.startTime}:00`);
@@ -40,7 +40,7 @@ const { bookings } = useBookings();
 const activeSlotBooking = bookings.find(b => b.slot && isSlotNow(b.slot));
 
   const { doctorId } = useParams();
-  const navigate = useNavigate();
+  
   const [countdown, setCountdown] = useState<string | null>(null);
 
   console.log("my bookings")
@@ -54,9 +54,10 @@ const activeSlotBooking = bookings.find(b => b.slot && isSlotNow(b.slot));
   const isAudioOn = useHMSStore(selectIsLocalAudioEnabled);
   const peers = useHMSStore(selectPeers);
 
-  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  type Doctor = { id: string; firstName?: string; [key: string]: any };
+  const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [chatRoomId, setChatRoomId] = useState(null);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<any[]>([]);
   const [message, setMessage] = useState('');
   const messagesFetched = useRef(false);
 
@@ -90,7 +91,7 @@ const activeSlotBooking = bookings.find(b => b.slot && isSlotNow(b.slot));
 }, [activeSlotBooking, isConnected]);
 
 
-  const PeerView = ({ peer }) => {
+  const PeerView = ({ peer }: { peer: any }) => {
     const { videoRef } = useVideo({ trackId: peer.videoTrack });
     const isVideoEnabled = useHMSStore(selectIsPeerVideoEnabled(peer.id));
     const isAudioEnabled = useHMSStore(selectIsPeerAudioEnabled(peer.id));
@@ -171,9 +172,11 @@ const activeSlotBooking = bookings.find(b => b.slot && isSlotNow(b.slot));
 
   useEffect(() => {
     console.log(selectedDoctor)
-    const handler = (msg) => setMessages((prev) => [...prev, msg]);
+    const handler = (msg:any) => setMessages((prev) => [...prev, msg]);
     socket.on('receive_message', handler);
-    return () => socket.off('receive_message', handler);
+    return () => {
+      socket.off('receive_message', handler);
+    };
   }, []);
 
   return (

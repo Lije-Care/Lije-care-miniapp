@@ -2,6 +2,7 @@ import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaStar, FaRegStar } from "react-icons/fa";
+import { Page } from "@/components/Page";
 
 const ArticleDetail = () => {
   const { id } = useParams();
@@ -29,6 +30,7 @@ const ArticleDetail = () => {
   }
 
   return (
+    <Page back={true}>
     <div className="p-4 max-w-3xl mx-auto space-y-4">
       <button
         className="text-sm text-blue-600 hover:underline"
@@ -66,6 +68,7 @@ const ArticleDetail = () => {
         {article.content}
       </div>
     </div>
+    </Page>
   );
 };
 

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { calculateHAZ } from "@/excelData/calculateHAZ";
 import { calculateWHZ } from "@/excelData/calculateWHZ";
 import { calculateWAZ } from "@/excelData/calculateWAZ";
-import { differenceInWeeks, differenceInMonths } from "date-fns";
+import { differenceInWeeks } from "date-fns";
 import { useTranslation } from "react-i18next";
 
 import { calculateBMIZ } from "@/excelData/calculateBMIZ";

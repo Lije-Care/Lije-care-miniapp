@@ -36,6 +36,7 @@ export type AvailabilitySlot = {
 
 export interface User {
   id: string;
+  AvailabilitySlots?: AvailabilitySlot[];
   telegram_username: string;
   firstName: string;
   lastName: string;

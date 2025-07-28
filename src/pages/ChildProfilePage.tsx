@@ -17,7 +17,7 @@ import { updateChild, Child } from '@/redux/slices/childSlice';
 import type { RootState, AppDispatch } from '@/redux/store';
 
 import GrowthTracker from './Profile/GrowthTracker';
-import GrowthTrackerHome from './Profile/GrowthTrackerHome';
+
 import { Page } from '@/components/Page';
 import { useTranslation } from 'react-i18next';
 
@@ -59,7 +59,8 @@ const ChildProfilePage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
-
+  
+  console.log('Child Profile:', result);
   const { register, handleSubmit, reset, watch } = useForm<ChildFormData>({
     defaultValues: {
       name: '',
@@ -144,8 +145,8 @@ const ChildProfilePage: React.FC = () => {
         Normal = 'Normal',
       }
 
-      const activity: Activity = Activity.Moderate;
-      const condition: Condition = Condition.Normal;
+     const activity: Activity = Activity.Moderate;
+     const condition: Condition = Condition.Normal;
 
       const ActivityFactors: Record<Activity, number> = {
         [Activity.Active]: 1.26,
@@ -159,7 +160,12 @@ const ChildProfilePage: React.FC = () => {
         [Condition.Overweight]: 0.9,
         [Condition.Normal]: 1,
       };
-
+      const WaterMultipliers: Record<Condition, number> = {
+        [Condition.CatchUpGrowth]: 1.2,
+        [Condition.Underweight]: 1.15,
+        [Condition.Overweight]: 1,
+        [Condition.Normal]: 1,
+      };
       calories *= ActivityFactors[activity] * HealthFactors[condition];
 
       const protein = parseFloat((calories * 0.12 / 4).toFixed(2));
@@ -175,12 +181,15 @@ const ChildProfilePage: React.FC = () => {
       else if (ageNum <= 12) baseWater = 900;
       else baseWater = 1300;
 
-      const waterMultiplier =
-        condition === 'Catch-up Growth'
-          ? 1.2
-          : condition === 'Underweight'
-          ? 1.15
-          : 1;
+        // const waterMultiplier =
+        // condition === Condition.CatchUpGrowth
+        //   ? 1.2
+        //   : condition === Condition.Underweight
+        //   ? 1.15
+        //   : 1;
+        const waterMultiplier = WaterMultipliers[condition];
+
+
       const water = parseFloat((baseWater * waterMultiplier).toFixed(2));
 
       let status = 'Normal';

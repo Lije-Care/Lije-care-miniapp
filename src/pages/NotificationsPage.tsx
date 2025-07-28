@@ -11,12 +11,15 @@ import {
 } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllNotifications } from "@/redux/slices/notificationSlice";
-
+import { RootState, AppDispatch } from "@/redux/store";
+ 
 const NotificationsPage: FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   // Safe selector with optional chaining
-  const notificationsState = useSelector((state) => state.notifications);
+  // Import RootState from your store definition
+ 
+  const notificationsState = useSelector((state: RootState) => state.notificartions);
   const { data = [], loading, error } = notificationsState || {};
 
   useEffect(() => {
@@ -39,7 +42,7 @@ const NotificationsPage: FC = () => {
   };
 
   return (
-    <Page back title="Notifications">
+    <Page back={true} >
       <div className="px-4 py-6">
         {loading ? (
           <div className="flex justify-center items-center h-60">

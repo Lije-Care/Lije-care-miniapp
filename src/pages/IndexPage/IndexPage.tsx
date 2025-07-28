@@ -1,9 +1,7 @@
 import {
   Section,
-  Avatar,
   Headline,
   Caption,
-  Title,
   Button,
   Spinner,
   Subheadline,
@@ -32,13 +30,13 @@ export const IndexPage: FC = () => {
   const [expanded, setExpanded] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const [notificationCount, setNotificationCount] = useState(6);
+  
   const { articles, loading } = useSelector((state: RootState) => state.articles);
   const { data: children } = useSelector((state: RootState) => state.children);
   const parentState = useSelector((state: RootState) => state.parent);
 
   const parent = {
-    name: parentState.parent?.firstName ?? t('Unknown'),
+    name: parentState.parent?.name ?? t('Unknown'),
     avatar: parentAvatar,
   };
   const favoriteChildId = localStorage.getItem('favorite_child_id');
@@ -46,7 +44,7 @@ export const IndexPage: FC = () => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
-    const val = JSON.parse(storedUser);
+    const val = JSON.parse(storedUser || '{}');
     dispatch(fetchArticles({ page: 1, limit: 6 }));
     dispatch(fetchParent(val?.id));
     dispatch(fetchChildrenByParentId(val?.id));
@@ -128,7 +126,7 @@ export const IndexPage: FC = () => {
             <div className="grid grid-cols-2 gap-4">
               {Object.entries(child.assessment).map(([label, value]) => (
                 <div key={label} className="text-center p-2 border rounded-lg shadow-sm">
-                  <Subheadline>{value}</Subheadline>
+                  <Subheadline>{String(value)}</Subheadline>
                   <Caption className="text-gray-500">{t(label.toUpperCase())}</Caption>
                 </div>
               ))}

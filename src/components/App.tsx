@@ -15,15 +15,10 @@ import MealDetails from '@/pages/meal/MealView';
 // import ArticleSlider from '@/pages/knowledgebase/ArticleSlider';
 import ArticlesPage from '@/pages/knowledgebase/ArticleSlider';
 import ArticleDetail from '@/pages/knowledgebase/ArticleDetail';
-import useTelegramUser from '@/hooks/useTelegramUser';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-import { fetchParent } from '@/redux/slices/itemSlice';
 import { AppDispatch } from '@/redux/store';
-import { fetchChildrenByParentId } from '@/redux/slices/childSlice';
-import { fetchSpecialists } from '@/redux/slices/specialistSlice';
 import ProtectedRoute from './ProtectedRoute';
-import RequireChildren from './RequireChildren';
 import AddChildPage from './AddChildPage';
 import DoctorDetailPage from '@/pages/DoctorDetailPage';
 import MyAppointments from '@/pages/MyAppointments';
@@ -62,7 +57,7 @@ export function App() {
   JSON.parse(localStorage.getItem("user") || "{}");
   const dispatch = useDispatch<AppDispatch>();
   const storedUser = localStorage.getItem('user');
-  let val = JSON.parse(storedUser);
+  // let val = JSON.parse(storedUser || '{}');
 
   useEffect(() => {
 

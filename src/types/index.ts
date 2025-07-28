@@ -59,21 +59,21 @@ export interface ParentState {
 }
 
 
-export type Child = {
-  id: string;
-  parent_id: string;
-  name: string;
-  date_of_birth: string;
-  gender: string;
-  weight: number;
-  height: number;
-  muac: number | null;
-  dietary_restrictions: string | null;
-  allergies: string | null;
-  medications: string | null;
-  createdAt: string;
-  updatedAt: string;
-};
+// export type Child = {
+//   id: string;
+//   parent_id: string;
+//   name: string;
+//   date_of_birth: string;
+//   gender: string;
+//   weight: number;
+//   height: number;
+//   muac: number | null;
+//   dietary_restrictions: string | null;
+//   allergies: string | null;
+//   medications: string | null;
+//   createdAt: string;
+//   updatedAt: string;
+// };
 
 
 // Types for Telegram WebApp user

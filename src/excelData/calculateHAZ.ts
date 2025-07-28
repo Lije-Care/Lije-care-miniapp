@@ -32,9 +32,19 @@ export const calculateHAZ = (
   let data: GrowthRow[] = [];
 
   if (ageInWeeks <= 13) {
-    data = gender === "boy" ? boys0To13Weeks : girls0To13Weeks;
+    const raw = gender === "boy" ? boys0To13Weeks : girls0To13Weeks;
+    data = raw.map((row: any) => ({
+      age: parseInt(row.weeks),
+      median: row["SD(M)"],
+      plus1SD: row["1 SD"],
+    }));
   } else if (ageInMonths >= 4 && ageInMonths <= 60) {
-    data = gender === "boy" ? boys4mTo5y : girls4mTo5y;
+    const raw = gender === "boy" ? boys4mTo5y : girls4mTo5y;
+    data = raw.map((row: any) => ({
+      age: parseInt(row.months),
+      median: row["SD(M)"],
+      plus1SD: row["1 SD"],
+    }));
   } else {
     return { haz: 0, classification: "Age out of supported range" };
   }
@@ -42,15 +52,13 @@ export const calculateHAZ = (
   const ageKey = ageInWeeks <= 13 ? ageInWeeks : ageInMonths;
 
   const row = data.reduce((prev, curr) => {
-    const prevAge = parseInt(prev.Month || prev.Week || "0");
-    const currAge = parseInt(curr.Month || curr.Week || "0");
-    return Math.abs(currAge - ageKey) < Math.abs(prevAge - ageKey) ? curr : prev;
+    return Math.abs(curr.age - ageKey) < Math.abs(prev.age - ageKey) ? curr : prev;
   });
   
 console.log("Data fetched for HAZ calculation:", row);
   
-  const median = parseFloat(row["SD(M)"]);
-  const plus1SD = parseFloat(row["1 SD"]);
+  const median = parseFloat(row.median as string);
+  const plus1SD = parseFloat(row.plus1SD as string);
   const SD = plus1SD - median;
   console.log();
   console.log("Row found for HAZ calculation:", row);
