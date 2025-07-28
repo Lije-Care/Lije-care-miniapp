@@ -2,7 +2,7 @@
 
     import { useState, useEffect, ChangeEvent } from 'react';
     import { motion } from 'framer-motion';
-    import { Input, Select, Text, Caption, Placeholder, Divider } from '@telegram-apps/telegram-ui';
+    import { Input, Select, Text, Divider } from '@telegram-apps/telegram-ui';
 
     type FormState = {
     age: string;
@@ -152,32 +152,35 @@
         </Select>
 
        
+        {result ? (
             <motion.div
-            className=" text-[15px]"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
+                className=" text-[15px]"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
             >
                 <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl p-6">
-            <Text className="text-emerald-400 text-lg font-semibold text-center">Nutrition Summary</Text>
-            <div className="flex justify-between"><Text>BMI:</Text><Text>{result.bmi}</Text></div>
-            <div className="flex justify-between"><Text>Status:</Text><Text>{result.status}</Text></div>
-            <Divider />
-            <div className="flex justify-between"><Text>🔥 Calories:</Text><Text>{result.calories} kcal</Text></div>
-            <div className="flex justify-between"><Text>💪 Protein:</Text><Text>{result.protein} g</Text></div>
-            <div className="flex justify-between"><Text>🧈 Fat:</Text><Text>{result.fat} g</Text></div>
-            <div className="flex justify-between"><Text>🍞 Carbs:</Text><Text>{result.carbs} g</Text></div>
-            <Divider />
-            <div className="flex justify-between"><Text>🩸 Iron:</Text><Text>{result.iron} mg</Text></div>
-            <div className="flex justify-between"><Text>🦴 Calcium:</Text><Text>{result.calcium} mg</Text></div>
-            <div className="flex justify-between"><Text>👁️ Vitamin A:</Text><Text>{result.vitaminA} mcg</Text></div>
-            <div className="flex justify-between"><Text>👁️ Water</Text><Text>{result.water} mcg</Text></div>
-            </div>
+                    <Text className="text-emerald-400 text-lg font-semibold text-center">Nutrition Summary</Text>
+                    <div className="flex justify-between"><Text>BMI:</Text><Text>{result.bmi}</Text></div>
+                    <div className="flex justify-between"><Text>Status:</Text><Text>{result.status}</Text></div>
+                    <Divider />
+                    <div className="flex justify-between"><Text>🔥 Calories:</Text><Text>{result.calories} kcal</Text></div>
+                    <div className="flex justify-between"><Text>💪 Protein:</Text><Text>{result.protein} g</Text></div>
+                    <div className="flex justify-between"><Text>🧈 Fat:</Text><Text>{result.fat} g</Text></div>
+                    <div className="flex justify-between"><Text>🍞 Carbs:</Text><Text>{result.carbs} g</Text></div>
+                    <Divider />
+                    <div className="flex justify-between"><Text>🩸 Iron:</Text><Text>{result.iron} mg</Text></div>
+                    <div className="flex justify-between"><Text>🦴 Calcium:</Text><Text>{result.calcium} mg</Text></div>
+                    <div className="flex justify-between"><Text>👁️ Vitamin A:</Text><Text>{result.vitaminA} mcg</Text></div>
+                    <div className="flex justify-between"><Text>👁️ Water</Text><Text>{result.water} mcg</Text></div>
+                </div>
             </motion.div>
-        {/* ) : (
-            <Placeholder header="Waiting for input...">
-            <Caption>Fill all fields above to calculate your child's needs.</Caption>
-            </Placeholder>
-        )} */}
+        ) : (
+            // You can uncomment and use your placeholder here if desired
+            // <Placeholder header="Waiting for input...">
+            //     <Caption>Fill all fields above to calculate your child's needs.</Caption>
+            // </Placeholder>
+            null
+        )}
         </div>
     );
     }

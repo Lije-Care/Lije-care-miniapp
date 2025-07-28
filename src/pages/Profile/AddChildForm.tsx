@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
-import { Button, Input, Spinner } from "@telegram-apps/telegram-ui";
+import { Button, Spinner } from "@telegram-apps/telegram-ui";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { addChild } from "@/redux/slices/childSlice";

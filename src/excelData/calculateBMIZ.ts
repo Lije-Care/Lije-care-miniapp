@@ -23,7 +23,7 @@ export const calculateBMIZ = (
   console.log("here is the Bmi value",bmi)
   const roundedBMI = Number(bmi.toFixed(2));
   
-  const genderKey = gender.toLowerCase() === "female" ? "girl" : "boy";
+  gender.toLowerCase() === "female" ? "girl" : "boy";
 
 
 

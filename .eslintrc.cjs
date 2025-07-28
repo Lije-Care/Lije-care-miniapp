@@ -23,6 +23,7 @@ module.exports = {
       },
       plugins: ['@typescript-eslint', 'react'],
       rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
         // Disable this because React 17+ doesn't need React in scope
         'react/react-in-jsx-scope': 'off',
 

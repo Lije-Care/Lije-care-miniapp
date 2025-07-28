@@ -16,7 +16,7 @@ export default function DoctorDetailPage() {
   const [selectedSlot, setSelectedSlot] = useState('');
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [confirmed, setConfirmed] = useState(false);
+  const [confirmed] = useState(false);
   const [hasFavoriteChild, setHasFavoriteChild] = useState(true);
   const navigate = useNavigate();
 

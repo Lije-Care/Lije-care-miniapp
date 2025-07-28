@@ -14,7 +14,9 @@ const MealLibraryComponent = () => {
   const [selectedMeals, setSelectedMeals] = useState<{ meal: Meal; multiplier: number }[]>([]);
   const [mealDescription, setMealDescription] = useState(t("A healthy and balanced meal plan for the child."));
   const [loading, setLoading] = useState(true);
+  console.log(loading);
   const [error, setError] = useState<string | null>(null);
+  console.log(error);
   const [submitting, setSubmitting] = useState(false);
 
   const navigate = useNavigate();

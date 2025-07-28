@@ -53,7 +53,7 @@ const UserOnboardingForm = () => {
     setSubmitError('');
 
     try {
-      const response = await api.post('users/create', formData);
+       await api.post('users/create', formData);
       localStorage.setItem('onboarding_complete', 'true');
       navigate('/');
     } catch (err: any) {

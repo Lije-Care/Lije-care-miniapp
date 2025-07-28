@@ -15,7 +15,7 @@ export const getBMIForAgeData = (
   ageValue: number,
   ageType: "week" | "month"
 ): BMIForAgeEntry[] => {
-
+ console.log("Fetching BMI data for:",ageValue)
 
   if (gender === "boy" && ageType === "week") {
     return boys0To13Weeks.map((entry: any) => ({

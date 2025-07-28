@@ -14,14 +14,24 @@ export interface GrowthEntry {
 type Gender = "boy" | "girl";
 type AgeType = "week" | "month";
 
+const mapToGrowthEntry = (data: any[], ageType: AgeType): GrowthEntry[] => {
+  return data.map((entry) => ({
+    week: ageType === "week" ? Number(entry.Week) : undefined,
+    month: ageType === "month" ? Number(entry.Month) : undefined,
+    median: Number(entry["SD(M)"]),
+    plus1SD: Number(entry["1 SD"]),
+    minus1SD: entry["-1 SD"] !== undefined ? Number(entry["-1 SD"]) : undefined,
+  }));
+};
+
 const growthDataMap: Record<Gender, Record<AgeType, GrowthEntry[]>> = {
   boy: {
-    week: boys0To13Weeks,
-    month: boys4mTo5y,
+    week: mapToGrowthEntry(boys0To13Weeks, "week"),
+    month: mapToGrowthEntry(boys4mTo5y, "month"),
   },
   girl: {
-    week: girls0To13Weeks,
-    month: girls4mTo5y,
+    week: mapToGrowthEntry(girls0To13Weeks, "week"),
+    month: mapToGrowthEntry(girls4mTo5y, "month"),
   },
 };
 

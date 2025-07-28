@@ -14,7 +14,6 @@ import api from "@/api/axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
-const BASE_URL = "https://lije-care-api-dev.zikollab.com/api/v1";
 
 export const SignInPage = () => {
   const [phone, setPhone] = useState("");

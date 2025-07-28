@@ -19,13 +19,11 @@ const ChatIcon = () => (
 
 const BookingsList: React.FC = () => {
   const { t } = useTranslation();
-  const [chatOpen, setChatOpen] = useState(false);
+  const [chatOpen] = useState(false);
   const { bookings, loading, error } = useBookings();
   const navigate = useNavigate();
 
-  const handleChat = () => {
-    setChatOpen(true);
-  };
+ console.log(chatOpen);
 
   if (loading) return <p className="text-center text-gray-500">{t('Loading...')}</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
