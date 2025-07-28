@@ -312,8 +312,65 @@ const ChildProfilePage: React.FC = () => {
           </form>
         )}
 
-        <GrowthTrackerHome childProfile={child} />
+        {/* <GrowthTrackerHome childProfile={child} /> */}
         <GrowthTracker childProfile={child} />
+         <div className="...">
+          <h3>{t('👶 Child Profile')}</h3>
+          <div className="...">
+            {child?.name && <div className="flex justify-between"><span>{t('Name')}:</span><span>{child.name}</span></div>}
+            {child?.gender && <div className="flex justify-between"><span>{t('Gender')}:</span><span>{child.gender}</span></div>}
+            {child?.date_of_birth && <div className="flex justify-between"><span>{t('Date of Birth')}:</span><span>{new Date(child.date_of_birth).toLocaleDateString()}</span></div>}
+            {child?.height && <div className="flex justify-between"><span>{t('Height')}:</span><span>{child.height}</span></div>}
+            {child?.weight && <div className="flex justify-between"><span>{t('Weight')}:</span><span>{child.weight}</span></div>}
+            {child?.muac && <div className="flex justify-between"><span>{t('MUAC')}:</span><span>{child.muac}</span></div>}
+          </div>
+        </div>
+
+      {/* Growth and Nutrition Tracker (Always visible) */}
+      {/* <GrowthTrackerAll childProfile={child} /> */}
+      
+       <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl mt-4 p-5 space-y-2 mb-5">
+        <h3 className="text-lg font-semibold text-center text-gray-300 mb-2">👶 Child Profile</h3>
+         <div className="text-sm text-gray-400 space-y-1">
+            {child?.name && (
+              <div className="flex justify-between">
+                <span className="font-semibold">Name:</span>
+                <span>{child?.name}</span>
+              </div>
+            )}
+            {child?.gender && (
+              <div className="flex justify-between">
+                <span className="font-semibold">Gender:</span>
+                <span>{child.gender}</span>
+              </div>
+            )}
+            {child?.date_of_birth && (
+                    <div className="flex justify-between">
+                      <span className="font-semibold">Date of Birth:</span>
+                      <span>{new Date(child.date_of_birth).toLocaleDateString()}</span>
+                    </div>
+             )}
+
+            {child?.height && (
+            <div className="flex justify-between">
+              <span className="font-semibold">Height:</span>
+              <span>{child.height}</span>
+            </div>
+          )}
+            {child?.weight && (
+              <div className="flex justify-between">
+                <span className="font-semibold">weight:</span>
+                <span>{child.weight}</span>
+              </div>
+            )}
+         {child?.muac && (
+            <div className="flex justify-between"> 
+                 <span className="font-semibold">MUAC:</span>
+                <span>{child.muac}</span>
+              </div>
+            )}
+          </div>
+      </div>
       </div>
     </Page>
   );
