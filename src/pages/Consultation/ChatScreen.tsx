@@ -14,7 +14,6 @@ import {
 
 import { FiPhoneCall } from 'react-icons/fi';
 
-import { ArrowLeftRightIcon, PhoneIcon, PhotoIcon } from '@100mslive/react-icons';
 import { MdVideoCameraFront } from 'react-icons/md';
 import { FaMicrophone, FaMicrophoneSlash, FaPaperPlane } from 'react-icons/fa';
 import { useEffect, useState, useRef } from 'react';
@@ -22,7 +21,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import api from '@/api/axios';
 import socket from '@/utils/socket';
 import MessageList from './MessageList';
-import { Message } from '@/types';
 import { Page } from '@/components/Page';
 import { useBookings } from '@/hooks/useBookings';
 
@@ -63,6 +61,7 @@ const activeSlotBooking = bookings.find(b => b.slot && isSlotNow(b.slot));
   const messagesFetched = useRef(false);
 
   useEffect(() => {
+    
   if (!activeSlotBooking || !activeSlotBooking.slot) return;
 
   const slot = activeSlotBooking.slot;
@@ -158,6 +157,7 @@ const activeSlotBooking = bookings.find(b => b.slot && isSlotNow(b.slot));
         .then(res => setChatRoomId(res.data.id))
         .catch(err => console.error('Failed to load or create chat room:', err));
     }
+    console.log(selectedDoctor, 'useEffect dependencies');
   }, [telegramUser?.id, selectedDoctor?.id]);
 
   useEffect(() => {
