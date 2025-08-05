@@ -1,7 +1,7 @@
 const CheckoutPage = () => {
   return (
     <div>
-      <div className="bg-gray-200 py-8 antialiased dark:bg-gray-800 md:py-16">
+      <section className="bg-gray-200 py-8 antialiased dark:bg-gray-800 md:py-16">
         <form action="#" className="mx-auto max-w-screen-xl px-4 2xl:px-0">
           <ol className="items-center flex w-full max-w-2xl text-center text-sm font-medium text-gray-600 dark:text-gray-300 sm:text-base">
             <li className="after:border-1 flex items-center text-primary-600 after:mx-6 after:hidden after:h-1 after:w-full after:border-b after:border-gray-300 dark:text-primary-400 dark:after:border-gray-600 sm:after:inline-block sm:after:content-[''] md:w-full xl:after:mx-10">
@@ -104,7 +104,7 @@ const CheckoutPage = () => {
                       type="email"
                       id="your_email"
                       className="block w-full rounded-lg border border-black bg-white p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-black dark:bg-white dark:text-gray-900 dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
-                      placeholder="name@flowbite.com"
+                      placeholder="test@lijecare.com"
                       required
                     />
                   </div>
@@ -177,21 +177,6 @@ const CheckoutPage = () => {
                         </p>
                       </div>
                     </div>
-                    <div className="mt-4 flex items-center gap-2">
-                      <button
-                        type="button"
-                        className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-500 dark:hover:text-gray-900"
-                      >
-                        Delete
-                      </button>
-                      <div className="h-3 w-px shrink-0 bg-gray-300 dark:bg-gray-600"></div>
-                      <button
-                        type="button"
-                        className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-500 dark:hover:text-gray-900"
-                      >
-                        Edit
-                      </button>
-                    </div>
                   </div>
                   <div className="rounded-lg border border-gray-300 bg-white p-4 ps-4 dark:border-gray-600 dark:bg-white">
                     <div className="flex items-start">
@@ -217,24 +202,9 @@ const CheckoutPage = () => {
                           id="pay-on-delivery-text"
                           className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-500"
                         >
-                          +$15 payment processing fee
+                          +ETB 5 payment processing fee
                         </p>
                       </div>
-                    </div>
-                    <div className="mt-4 flex items-center gap-2">
-                      <button
-                        type="button"
-                        className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-500 dark:hover:text-gray-900"
-                      >
-                        Delete
-                      </button>
-                      <div className="h-3 w-px shrink-0 bg-gray-300 dark:bg-gray-600"></div>
-                      <button
-                        type="button"
-                        className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-500 dark:hover:text-gray-900"
-                      >
-                        Edit
-                      </button>
                     </div>
                   </div>
                 </div>
@@ -263,7 +233,7 @@ const CheckoutPage = () => {
                           className="font-medium leading-none text-gray-900 dark:text-gray-900"
                         >
                           {" "}
-                          $15 - DHL Fast Delivery{" "}
+                          ETB 50 - DHL Fast Delivery{" "}
                         </label>
                         <p
                           id="dhl-text"
@@ -292,42 +262,13 @@ const CheckoutPage = () => {
                           className="font-medium leading-none text-gray-900 dark:text-gray-900"
                         >
                           {" "}
-                          Free Delivery - FedEx{" "}
+                          Free Delivery
                         </label>
                         <p
                           id="fedex-text"
                           className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-500"
                         >
                           Get it by Friday, 13 Dec 2023
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="rounded-lg border border-gray-300 bg-white p-4 ps-4 dark:border-gray-600 dark:bg-white">
-                    <div className="flex items-start">
-                      <div className="flex h-5 items-center">
-                        <input
-                          id="express"
-                          aria-describedby="express-text"
-                          type="radio"
-                          name="delivery-method"
-                          value=""
-                          className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 dark:border-gray-600 dark:bg-white dark:ring-offset-gray-200 dark:focus:ring-primary-600"
-                        />
-                      </div>
-                      <div className="ms-4 text-sm">
-                        <label
-                          htmlFor="express"
-                          className="font-medium leading-none text-gray-900 dark:text-gray-900"
-                        >
-                          {" "}
-                          $49 - Express Delivery{" "}
-                        </label>
-                        <p
-                          id="express-text"
-                          className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-500"
-                        >
-                          Get it today
                         </p>
                       </div>
                     </div>
@@ -370,20 +311,7 @@ const CheckoutPage = () => {
                       ETB 8,094.00
                     </dd>
                   </dl>
-                  <dl className="flex items-center justify-between gap-4 py-3">
-                    <dt className="text-base font-normal text-gray-600 dark:text-gray-400">
-                      Savings
-                    </dt>
-                    <dd className="text-base font-medium text-green-500">0</dd>
-                  </dl>
-                  <dl className="flex items-center justify-between gap-4 py-3">
-                    <dt className="text-base font-normal text-gray-600 dark:text-gray-400">
-                      Store Pickup
-                    </dt>
-                    <dd className="text-base font-medium text-gray-900 dark:text-white">
-                      ETB 99
-                    </dd>
-                  </dl>
+
                   <dl className="flex items-center justify-between gap-4 py-3">
                     <dt className="text-base font-normal text-gray-600 dark:text-gray-400">
                       Tax
@@ -413,7 +341,7 @@ const CheckoutPage = () => {
             </div>
           </div>
         </form>
-      </div>
+      </section>
     </div>
   );
 };
