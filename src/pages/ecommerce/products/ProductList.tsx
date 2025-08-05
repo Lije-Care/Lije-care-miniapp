@@ -1,73 +1,118 @@
-import { Headline } from "@telegram-apps/telegram-ui";
-import product1 from "@/assets/logo.png";
+import Burger from "@/assets/e-commerce/big-sandwich-hamburger-burger-with-beef-red-onion-tomato-fried-bacon.jpg";
+import Egg from "@/assets/e-commerce/close-up-delicious-egg-toast.jpg";
+import Bread from "@/assets/e-commerce/slices-dark-white-bread-box-tablecloth.jpg";
+
+import Utensils from "@/assets/e-commerce/close-up-sustainable-cutlery-alternatives.jpg";
+import Book from "@/assets/e-commerce/book.jpg";
+
 import { Page } from "@/components/Page";
 import { useTranslation } from "react-i18next";
+import Header from "../header/Header";
 
 const ProductList = () => {
   const { t } = useTranslation();
 
   const products = [
-    { 
-      img: product1, 
-      name: t("Coming"), 
-      description: t("Soon.."), 
-      price: 100 
+    // Food category
+    {
+      id: 1,
+      img: Egg,
+      name: t("Eeg"),
+      description: t("Fresh farm eggs packed with protein."),
+      price: 120,
+      category: "food",
     },
-    { 
-      img: product1, 
-      name: t("Coming"), 
-      description: t("Soon.."), 
-      price: 120 
+    {
+      id: 2,
+      img: Bread,
+      name: t("Bread"),
+      description: t("Soft and fresh bread baked daily."),
+      price: 100,
+      category: "food",
     },
-    { 
-      img: product1, 
-      name: t("Coming"), 
-      description: t("Soon.."), 
-      price: 100 
+    {
+      id: 3,
+      img: Burger,
+      name: t("fish"),
+      description: t("Freshly caught fish, perfect for any meal."),
+      price: 120,
+      category: "food",
     },
-    { 
-      img: product1, 
-      name: t("Coming"), 
-      description: t("Soon.."), 
-      price: 120 
+    {
+      id: 4,
+      img: Bread,
+      name: t("Bread"),
+      description: t("Soft and fresh bread baked daily."),
+      price: 100,
+      category: "food",
     },
-    { 
-      img: product1, 
-      name: t("Coming"), 
-      description: t("Soon.."), 
-      price: 100 
+    {
+      id: 5,
+      img: Burger, // Optional: add this import if you have a meat image
+      name: t("Meat"),
+      description: t("High-quality meat, tender and juicy."),
+      price: 120,
+      category: "food",
     },
-    { 
-      img: product1, 
-      name: t("Coming"), 
-      description: t("Soon.."), 
-      price: 120 
+    {
+      id: 7,
+      img: Burger,
+      name: t("Burger"),
+      description: t("Delicious burger made with fresh ingredients."),
+      price: 120,
+      category: "food",
     },
-    { 
-      img: product1, 
-      name: t("Coming"), 
-      description: t("Soon.."), 
-      price: 100 
+
+    // Educational material category
+    {
+      id: 9,
+      img: Book,
+      name: t("Mathematics Book"),
+      description: t("A comprehensive guide to high school mathematics."),
+      price: 90,
+      category: "educational material",
     },
-    { 
-      img: product1, 
-      name: t("Coming"), 
-      description: t("Soon.."), 
-      price: 120 
+    {
+      id: 10,
+      img: Book,
+      name: t("Science Workbook"),
+      description: t("Interactive workbook for learning basic science."),
+      price: 75,
+      category: "educational material",
+    },
+
+    // Utensils category
+    {
+      id: 11,
+      img: Utensils,
+      name: t("Spoon Set"),
+      description: t("Durable stainless steel spoon set."),
+      price: 45,
+      category: "utensils",
+    },
+    {
+      id: 12,
+      img: Utensils,
+      name: t("Cooking Pan"),
+      description: t("Non-stick cooking pan perfect for everyday meals."),
+      price: 85,
+      category: "utensils",
     },
   ];
 
-  const ProductCard = ({ product }: {product: any}) => {
+  const ProductCard = ({ product }: { product: any }) => {
     return (
       <div className="p-2 rounded-lg shadow-md w-40">
-        <img 
-          src={product.img} 
-          alt={product.name} 
-          className="w-full h-34 object-cover" 
-        />
-        <Headline className="text-sm font-semibold mt-2">
-          {product.name} <span className="text-xs">{product.description}</span>
-        </Headline>
+        <a href="/#/product-detail/2">
+          <img
+            src={product.img}
+            alt={product.name}
+            className="w-full h-34 object-cover"
+          />
+          <p className="flex items-center justify-center text-sm font-semibold mt-2">
+            {product.name}
+          </p>
+        </a>
         <button className="bg-blue-500 text-white text-xs py-1 px-2 rounded w-full mt-2">
           {t("Add to Cart")}
         </button>
@@ -77,10 +122,31 @@ const ProductList = () => {
 
   return (
     <Page back={true}>
-      <div className="p-4">
-        <h2 className="text-white text-lg font-bold mb-3">
-          {t("Products")}
-        </h2>
+      <div className="">
+        <Header />
+
+        <div className=" mt-2 p-2 ">
+          <form className="flex w-full ">
+            <label
+              htmlFor="small"
+              className="  mt-2 w-[180px] block mb-2 text-sm font-medium text-gray-300 dark:text-gray-400"
+            >
+              Select categories
+            </label>
+            <select
+              id="small"
+              className="block w-full p-2 mb-6 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+              <option selected>Choose a Category</option>
+              <option value="all">All</option>
+              <option value="food">Baby food &supplement</option>
+              <option value="utensils">Utensils</option>
+              <option value="educational_materials">
+                Educational Materials
+              </option>
+            </select>
+          </form>
+        </div>
         <div className="grid grid-cols-2 gap-4">
           {products.map((product, index) => (
             <ProductCard key={index} product={product} />
