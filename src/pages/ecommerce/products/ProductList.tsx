@@ -24,6 +24,7 @@ const ProductList = () => {
   const [page, setPage] = useState(1);
   const limit = 10;
   const [totalPages, setTotalPages] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchProducts = async () => {
     try {
@@ -32,6 +33,7 @@ const ProductList = () => {
       const res = await api.get(`/ecommerce?page=${page}&limit=${limit}`, {
         headers: { "Content-Type": "application/json" },
       });
+      console.log(res.data);
 
       setProducts(res.data?.data || []);
 
@@ -50,10 +52,17 @@ const ProductList = () => {
   }, [page]);
 
   // Filter products based on selected category
-  const filteredProducts =
-    selectedCategory === "all"
-      ? products
-      : products.filter((product) => product.category === selectedCategory);
+  // const filteredProducts =
+  //   selectedCategory === "all"
+  //     ? products
+  //     : products.filter((product) => product.category === selectedCategory);
+  const filteredProducts = products
+    .filter((product) =>
+      selectedCategory === "all" ? true : product.category === selectedCategory
+    )
+    .filter((product) =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
   const ProductCard = ({ product }: { product: Product }) => {
     return (
@@ -104,6 +113,49 @@ const ProductList = () => {
             </select>
           </form>
         </div>
+
+        <form className="max-w-md mx-auto px-2 py-1 mb-1">
+          <label
+            htmlFor="default-search"
+            className="mb-2 text-sm font-medium text-gray-white sr-only dark:text-white"
+          >
+            Search
+          </label>
+          <div className="relative">
+            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+              <svg
+                className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                />
+              </svg>
+            </div>
+            <input
+              type="search"
+              id="default-search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="block w-full p-2 ps-6 text-sm text-black border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Search product..."
+            />
+
+            <button
+              type="submit"
+              className=" mt-4 text-white absolute end-2.5 bottom-0.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+              Search
+            </button>
+          </div>
+        </form>
 
         {/* Loading State */}
         {loading && (
