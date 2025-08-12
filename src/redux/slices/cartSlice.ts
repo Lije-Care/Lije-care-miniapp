@@ -16,14 +16,22 @@ interface CartState {
 const initialState: CartState = {
   items: [],
 };
-
+const persistedState = () => {
+  try {
+    const serializedState = localStorage.getItem("cart");
+    if (serializedState === null) return initialState;
+    return JSON.parse(serializedState);
+  } catch {
+    return initialState;
+  }
+};
 const cartSlice = createSlice({
   name: "cart",
-  initialState,
+  initialState: persistedState(),
   reducers: {
     addToCart: (state, action: PayloadAction<CartItem>) => {
       const existingItem = state.items.find(
-        (item) => item.id === action.payload.id
+        (item: any) => item.id === action.payload.id
       );
       if (existingItem) {
         existingItem.quantity += action.payload.quantity;
@@ -32,13 +40,17 @@ const cartSlice = createSlice({
       }
     },
     removeFromCart: (state, action: PayloadAction<number>) => {
-      state.items = state.items.filter((item) => item.id !== action.payload);
+      state.items = state.items.filter(
+        (item: any) => item.id !== action.payload
+      );
     },
     updateQuantity: (
       state,
       action: PayloadAction<{ id: number; quantity: number }>
     ) => {
-      const item = state.items.find((item) => item.id === action.payload.id);
+      const item = state.items.find(
+        (item: any) => item.id === action.payload.id
+      );
       if (item) {
         item.quantity = Math.max(1, action.payload.quantity);
       }

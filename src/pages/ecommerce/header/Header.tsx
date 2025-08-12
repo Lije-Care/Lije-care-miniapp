@@ -9,7 +9,7 @@ const Header = () => {
   const { t } = useTranslation();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const cartCount = useSelector((state: RootState) =>
-    state.cart.items.reduce((sum, item) => sum + item.quantity, 0)
+    state.cart.items.reduce((sum: any, item: any) => sum + item.quantity, 0)
   );
 
   return (
