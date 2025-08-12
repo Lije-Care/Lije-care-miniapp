@@ -2,12 +2,12 @@ import Egg from "@/assets/e-commerce/close-up-delicious-egg-toast.jpg";
 
 import { Page } from "@/components/Page";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import Header from "../header/Header";
 
 const ProductDetailPage = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const products = [
     // Food category
     {

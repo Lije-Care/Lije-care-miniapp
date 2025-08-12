@@ -3,6 +3,8 @@ import { Page } from "@/components/Page";
 import { useTranslation } from "react-i18next";
 import Header from "../header/Header";
 import api from "@/api/axios";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../../redux/slices/cartSlice";
 
 interface Product {
   id: number;
@@ -65,6 +67,20 @@ const ProductList = () => {
     );
 
   const ProductCard = ({ product }: { product: Product }) => {
+    const dispatch = useDispatch();
+
+    const handleAddToCart = () => {
+      dispatch(
+        addToCart({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.img,
+          quantity: 1,
+        })
+      );
+    };
+
     return (
       <div className="p-2 rounded-lg shadow-md w-40">
         <a href={`/#/product-detail/${product.id}`}>
@@ -78,8 +94,11 @@ const ProductList = () => {
             <p>ETB {product.price}</p>
           </div>
         </a>
-        <button className="bg-blue-500 text-white text-xs py-1 px-2 rounded w-full mt-2">
-          {t("Add to Cart")}
+        <button
+          onClick={handleAddToCart}
+          className="bg-blue-500 text-white text-xs py-1 px-2 rounded w-full mt-2"
+        >
+          Add to Cart
         </button>
       </div>
     );
@@ -106,8 +125,8 @@ const ProductList = () => {
             >
               <option value="all">{t("All")}</option>
               <option value="food">{t("Baby Food & Supplement")}</option>
-              <option value="utensils">{t("Utensils")}</option>
-              <option value="educational_materials">
+              <option value="utensil">{t("Utensils")}</option>
+              <option value="educational_material">
                 {t("Educational Materials")}
               </option>
             </select>
@@ -122,7 +141,7 @@ const ProductList = () => {
             Search
           </label>
           <div className="relative">
-            <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+            <div className="absolute inset-y-0 start-0 flex items-center ps-1 pointer-events-none">
               <svg
                 className="w-4 h-4 text-gray-500 dark:text-gray-400"
                 aria-hidden="true"
