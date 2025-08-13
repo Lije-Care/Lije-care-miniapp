@@ -1,18 +1,37 @@
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { RootState } from "../../../redux/store";
 import {
   updateQuantity,
   removeFromCart,
 } from "../../../redux/slices/cartSlice";
 
+interface CartItem {
+  id: string;
+  price: number;
+  quantity: number;
+  name: string;
+  image: string;
+  color?: string;
+}
+
 export const CartPage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const cartItems = useSelector(
+    (state: RootState) => state.cart.items
+  ) as CartItem[];
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const subtotal = cartItems.reduce(
-    (sum: number, item: any) => sum + item.price * item.quantity,
+    (sum: number, item: CartItem) => sum + item.price * item.quantity,
     0
   );
+
+  // Handle Shop Now button click
+  const handleShopNow = () => {
+    navigate("/ecommerce");
+    onClose(); // Close the cart after navigation
+  };
 
   return (
     <div className="flex flex-col h-full overflow-y-auto bg-white shadow-xl">
@@ -47,10 +66,10 @@ export const CartPage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         <div className="mt-8">
           <div className="flow-root">
             {cartItems.length === 0 ? (
-              <p className="text-gray-500">Your cart is empty.</p>
+              <p className="text-gray-500 text-center">Your cart is empty.</p>
             ) : (
               <ul role="list" className="-my-6 divide-y divide-gray-300">
-                {cartItems.map((item: any) => (
+                {cartItems.map((item) => (
                   <li key={item.id} className="flex py-6">
                     <div className="size-24 shrink-0 overflow-hidden rounded-md border border-gray-300">
                       <img
@@ -140,18 +159,29 @@ export const CartPage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           Shipping and taxes calculated at checkout.
         </p>
         <div className="mt-6">
-          <a
-            href="#/checkout/page"
-            className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-xs hover:bg-indigo-700"
-          >
-            Checkout
-          </a>
+          {cartItems.length === 0 ? (
+            <button
+              onClick={handleShopNow}
+              className="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-xs hover:bg-indigo-700"
+            >
+              Shop Now
+            </button>
+          ) : (
+            <a
+              href="#/checkout/page"
+              className={`flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-xs hover:bg-indigo-700 ${
+                cartItems.length === 0 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              Checkout
+            </a>
+          )}
         </div>
         <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
           <p>
             or
             <a
-              href="/"
+              href="/ecommerce"
               className="font-medium text-indigo-600 hover:text-indigo-500"
             >
               Continue Shopping

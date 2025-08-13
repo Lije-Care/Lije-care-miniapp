@@ -3,7 +3,6 @@ import {
   Headline,
   Input,
   Section,
-  Subheadline,
   Text,
   Modal,
 } from "@telegram-apps/telegram-ui";
@@ -13,7 +12,6 @@ import { Page } from "@/components/Page";
 import api from "@/api/axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-
 
 export const SignInPage = () => {
   const [phone, setPhone] = useState("");
@@ -37,7 +35,8 @@ export const SignInPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const tgUserId = (window as any)?.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+    const tgUserId = (window as any)?.Telegram?.WebApp?.initDataUnsafe?.user
+      ?.id;
     if (tgUserId) setTelegramId(tgUserId.toString());
   }, []);
 
@@ -144,22 +143,36 @@ export const SignInPage = () => {
           <Headline style={{ margin: "40px 20px" }}>Sign In</Headline>
 
           <Section>
-            <Subheadline>Phone Number</Subheadline>
-            <Input
-              placeholder="+251912345678"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              disabled={loading}
-            />
+            {/* Phone */}
+            <div>
+              <label htmlFor="phone" className="block font-medium mb-1">
+                Phone Number
+              </label>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                placeholder="+2519XXXXXXXX"
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            </div>
 
-            <Subheadline>Password</Subheadline>
-            <Input
-              type="password"
-              placeholder="Enter Your Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={loading}
-            />
+            <div>
+              <label htmlFor="password" className="block font-medium mb-1">
+                Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="+2519XXXXXXXX"
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
 
             {error && (
               <Text style={{ color: "red", marginTop: "10px" }}>{error}</Text>
@@ -199,7 +212,9 @@ export const SignInPage = () => {
       {/* Forgot Password Modal */}
       <Modal open={showForgotModal} onOpenChange={setShowForgotModal}>
         <div className="p-4">
-          <Headline style={{ marginBottom: "12px" }}>📩 Forgot Password</Headline>
+          <Headline style={{ marginBottom: "12px" }}>
+            📩 Forgot Password
+          </Headline>
           <Text className="text-sm text-gray-600 mb-2">
             Enter your phone number to receive a reset OTP via Telegram.
           </Text>
@@ -210,7 +225,11 @@ export const SignInPage = () => {
             onChange={(e) => setForgotPhone(e.target.value)}
           />
 
-          <Button onClick={handleForgotPassword} stretched style={{ marginTop: "16px" }}>
+          <Button
+            onClick={handleForgotPassword}
+            stretched
+            style={{ marginTop: "16px" }}
+          >
             Send OTP
           </Button>
         </div>
@@ -219,7 +238,9 @@ export const SignInPage = () => {
       {/* Reset Password Modal */}
       <Modal open={showResetModal} onOpenChange={setShowResetModal}>
         <div className="p-4">
-          <Headline style={{ marginBottom: "12px" }}>🔐 Reset Password</Headline>
+          <Headline style={{ marginBottom: "12px" }}>
+            🔐 Reset Password
+          </Headline>
 
           <Input
             name="otp"
