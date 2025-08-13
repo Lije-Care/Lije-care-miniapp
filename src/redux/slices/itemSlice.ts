@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import axios from "axios";
-import api from '@/api/axios';
+import api from "@/api/axios";
 import { ParentInfo } from "@/types";
 
 interface Parent {
@@ -43,42 +43,53 @@ const initialState: ParentState = {
 export const fetchParent = createAsyncThunk(
   "parent/fetchParent",
   async (telegramId: string) => {
-
-
     try {
       const response = await api.get<Parent>(`users/find-one/${telegramId}`);
-     
+
+      console.log("name");
+      console.log(response.data.name);
       return response.data;
     } catch (error: any) {
       console.error("Error fetching parent:", error);
-      throw new Error(error.response?.data?.message || "Failed to fetch parent");
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch parent"
+      );
     }
   }
 );
 
-
-
-
-export const addParent = createAsyncThunk("parent/addParent", async (newParent: Omit<Parent, "id">) => {
-  const response = await api.post<Parent>('', newParent);
-  return response.data;
-});
-
-
+export const addParent = createAsyncThunk(
+  "parent/addParent",
+  async (newParent: Omit<Parent, "id">) => {
+    const response = await api.post<Parent>("", newParent);
+    return response.data;
+  }
+);
 
 export const updateParent = createAsyncThunk(
   "parent/updateParent",
-  async ({ updatedParent, userID }: { updatedParent: ParentInfo; userID: string }) => {
-    const response = await api.patch<Parent>(`users/update/${userID}`, updatedParent);
+  async ({
+    updatedParent,
+    userID,
+  }: {
+    updatedParent: ParentInfo;
+    userID: string;
+  }) => {
+    const response = await api.patch<Parent>(
+      `users/update/${userID}`,
+      updatedParent
+    );
     return response.data;
-  });
+  }
+);
 
-
-
-export const deleteParent = createAsyncThunk("parent/deleteParent", async (id: number) => {
-  await axios.delete(`/${id}`);
-  return id;
-});
+export const deleteParent = createAsyncThunk(
+  "parent/deleteParent",
+  async (id: number) => {
+    await axios.delete(`/${id}`);
+    return id;
+  }
+);
 
 // Redux Slice
 const parentSlice = createSlice({
@@ -91,29 +102,37 @@ const parentSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchParent.fulfilled, (state, action: PayloadAction<Parent>) => {
-        state.loading = false;
-        state.parent = action.payload;
-      })
+      .addCase(
+        fetchParent.fulfilled,
+        (state, action: PayloadAction<Parent>) => {
+          state.loading = false;
+          state.parent = action.payload;
+        }
+      )
       .addCase(fetchParent.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Failed to fetch parent";
       })
 
-     
       .addCase(addParent.fulfilled, (state, action: PayloadAction<Parent>) => {
         state.parent = action.payload;
       })
-      .addCase(updateParent.fulfilled, (state, action: PayloadAction<Parent>) => {
-        if (state.parent && state.parent.id === action.payload.id) {
-          state.parent = action.payload;
+      .addCase(
+        updateParent.fulfilled,
+        (state, action: PayloadAction<Parent>) => {
+          if (state.parent && state.parent.id === action.payload.id) {
+            state.parent = action.payload;
+          }
         }
-      })
-      .addCase(deleteParent.fulfilled, (state, action: PayloadAction<number>) => {
-        if (state.parent && state.parent.id === action.payload) {
-          state.parent = null;
+      )
+      .addCase(
+        deleteParent.fulfilled,
+        (state, action: PayloadAction<number>) => {
+          if (state.parent && state.parent.id === action.payload) {
+            state.parent = null;
+          }
         }
-      });
+      );
   },
 });
 
