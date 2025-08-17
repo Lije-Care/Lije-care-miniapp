@@ -167,7 +167,7 @@ export const SignInPage = () => {
                 id="password"
                 name="password"
                 type="password"
-                placeholder="+2519XXXXXXXX"
+                placeholder="******"
                 className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

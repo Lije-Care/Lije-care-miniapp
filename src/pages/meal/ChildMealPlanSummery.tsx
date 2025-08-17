@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import api from "@/api/axios";
 import { Badge, Button, Card, Placeholder } from "@telegram-apps/telegram-ui";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { Page } from "@/components/Page";
@@ -31,27 +31,28 @@ type MealPlan = {
   meals?: Meal[];
 };
 
-const MealPlanSummary = () => {
+const ChildMealPlanSummery = () => {
   const { t } = useTranslation();
   const [mealPlans, setMealPlans] = useState<MealPlan[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { data } = useSelector((state: RootState) => state.children);
+  //   const { data } = useSelector((state: RootState) => state.children);
+  const { id } = useParams<{ id: string }>();
+  const childId = id;
   const navigate = useNavigate();
+  console.log({ mealPlans });
 
   useEffect(() => {
-    if (!data || data.length === 0) {
+    if (!childId) {
       setMealPlans([]);
       setError(t("No child profile found. Please add a child first."));
       return;
     }
 
-    const childIds = data.map((child) => child.id);
-
-    // Fetch meal plans for all children
-    Promise.all(childIds.map((id) => api.get(`/meal-Plans/by-child/${id}`)))
-      .then((responses) => {
-        const allMealPlans = responses.flatMap((res) => res.data?.data ?? []);
-        setMealPlans(allMealPlans);
+    api
+      .get(`/meal-Plans/by-child/${childId}`)
+      .then((response) => {
+        const fetchedData = response.data?.data ?? [];
+        setMealPlans(fetchedData);
         setError(null);
       })
       .catch((err) => {
@@ -62,7 +63,7 @@ const MealPlanSummary = () => {
             t("Failed to fetch meal plans. Please try again later.")
         );
       });
-  }, [data, t]);
+  }, [childId, t]);
 
   return (
     <Page back={true}>
@@ -82,7 +83,7 @@ const MealPlanSummary = () => {
             <Card
               key={mealPlan.id}
               className="p-4 shadow-sm bg-white rounded-xl w-full border border-gray-200 hover:shadow-md cursor-pointer transition-all"
-              onClick={() => navigate(`/mealplansummary/${mealPlan.id}`)}
+              onClick={() => navigate(`/detail/${mealPlan.id}`)}
             >
               {/* Description + Metadata */}
               <div className="space-y-1">
@@ -132,7 +133,7 @@ const MealPlanSummary = () => {
                       </div>
                     ))}
                     {mealPlan.meals.length > 3 && (
-                      <p className="text-xs italic mt-1">
+                      <p className="text-xs  italic mt-1">
                         + {mealPlan.meals.length - 3} more
                       </p>
                     )}
@@ -154,9 +155,7 @@ const MealPlanSummary = () => {
         <div className="text-center">
           <Button
             className="mt-4 w-full bg-emerald-600 text-white"
-            onClick={
-              () => navigate(`/meal/${data[0]?.id || ""}`) // default to first child for creation
-            }
+            onClick={() => navigate(`/meal/${childId}`)}
           >
             ➕ {t("Create a Meal Plan")}
           </Button>
@@ -166,4 +165,4 @@ const MealPlanSummary = () => {
   );
 };
 
-export default MealPlanSummary;
+export default ChildMealPlanSummery;

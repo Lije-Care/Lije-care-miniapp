@@ -36,10 +36,10 @@ export const IndexPage: FC = () => {
   );
   const { data: children } = useSelector((state: RootState) => state.children);
   const parentState = useSelector((state: RootState) => state.parent);
-  console.log({ parentState });
+  // console.log({ parentState });
 
   const parent = {
-    name: parentState.parent?.name ?? t("Unknown"),
+    name: parentState?.userDetails?.firstName ?? t("Unknown"),
     avatar: parentAvatar,
   };
   const favoriteChildId = localStorage.getItem("favorite_child_id");
@@ -65,7 +65,7 @@ export const IndexPage: FC = () => {
 
   return (
     <Page back={true}>
-      <div className="flex justify-end px-4 mt-3 relative">
+      <div className="flex justify-end px-4 py-2 relative bg-[#013222]">
         <button
           onClick={() => navigate("/notifications")}
           className="relative p-2"
@@ -81,7 +81,7 @@ export const IndexPage: FC = () => {
 
       <Section className="overflow-y-auto pb-8">
         {/* 👨‍👩‍👧 Profile Cards */}
-        <div className="flex gap-4 px-4 py-3 justify-between">
+        <div className="flex gap-1 px-4 py-3 justify-between">
           {/* Parent Card */}
           <div
             onClick={() => navigate("/profile")}
@@ -90,7 +90,7 @@ export const IndexPage: FC = () => {
             <img
               alt={t("Parent Avatar")}
               src={parentImage}
-              className="w-12 h-12 rounded-full object-cover"
+              className="w-10 h-10 rounded-full object-cover"
             />
             <div className="flex flex-col min-w-0">
               <p className="text-base font-semibold truncate">{parent.name}</p>
@@ -101,21 +101,19 @@ export const IndexPage: FC = () => {
           {/* Child Card */}
           <div
             onClick={() => navigate("/children")}
-            className="flex items-center gap-3 border rounded-xl px-3 py-2 shadow-sm cursor-pointer w-full max-w-xs"
+            className="flex items-center gap-1 border rounded-xl ml-1 px-3 py-2 shadow-sm cursor-pointer w-full max-w-xs"
           >
             {child ? (
               <>
                 <img
                   alt={t("Child Avatar")}
                   src={childAvatar || "https://via.placeholder.com/48"}
-                  className="w-12 h-12 rounded-full object-cover"
+                  className="w-10 h-10 rounded-full object-cover"
                 />
                 <div className="flex flex-col min-w-0">
-                  <p className="text-base font-semibold truncate">
-                    {child.name}
-                  </p>
-                  <p className="text-sm text-gray-500 truncate">
-                    {t("Children")}
+                  <p className="text-base font-semibold truncate">View</p>
+                  <p className="text-bold text-gray-500 truncate">
+                    {t("Children's")}
                   </p>
                 </div>
               </>
