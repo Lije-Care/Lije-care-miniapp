@@ -1,10 +1,7 @@
-
 import {
   Input,
-  
   Select,
   Button,
- 
   Text,
   Title,
   Section,
@@ -26,27 +23,27 @@ const SignUpPage = () => {
         <Input placeholder="Enter Your Phone Number" />
         <Text>City</Text>
         <Select header="Select">
-        <option>Addis Ababa</option>
-        <option>Adama</option>
-        <option>Mekelle</option>
-        <option>Hawassa</option>
-          </Select>
+          <option>Addis Ababa</option>
+          <option>Adama</option>
+          <option>Mekelle</option>
+          <option>Hawassa</option>
+        </Select>
         <Text>Child Status</Text>
         {/* <Select placeholder="Enter Child Status" /> */}
         <Select header="Select">
-        <option>Pregnant</option>
-        <option>One month </option>
-        <option>One year </option>
-        <option>two year </option>
-      </Select>
+          <option>Pregnant</option>
+          <option>One month </option>
+          <option>One year </option>
+          <option>two year </option>
+        </Select>
         <Text>Child Name</Text>
         <Input placeholder="Enter Child Name" />
         <Text>Child Gender</Text>
         {/* <Select placeholder="Enter Child Gender" /> */}
         <Select header="Select">
-        <option>Male</option>
-        <option>Female</option>
-      </Select>
+          <option>Male</option>
+          <option>Female</option>
+        </Select>
         <Text>Child Date Of Birth</Text>
         <Input placeholder="Enter Child Date Of Birth" />
         <Text>Child Weight</Text>

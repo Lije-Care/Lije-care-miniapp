@@ -1,120 +1,104 @@
-import Burger from "@/assets/e-commerce/big-sandwich-hamburger-burger-with-beef-red-onion-tomato-fried-bacon.jpg";
-import Egg from "@/assets/e-commerce/close-up-delicious-egg-toast.jpg";
-import Bread from "@/assets/e-commerce/slices-dark-white-bread-box-tablecloth.jpg";
-
-import Utensils from "@/assets/e-commerce/close-up-sustainable-cutlery-alternatives.jpg";
-import Book from "@/assets/e-commerce/book.jpg";
-
+import { useEffect, useState } from "react";
 import { Page } from "@/components/Page";
 import { useTranslation } from "react-i18next";
 import Header from "../header/Header";
+import api from "@/api/axios";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../../redux/slices/cartSlice";
+
+interface Product {
+  id: number;
+  img: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+}
 
 const ProductList = () => {
   const { t } = useTranslation();
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const products = [
-    // Food category
-    {
-      id: 1,
-      img: Egg,
-      name: t("Eeg"),
-      description: t("Fresh farm eggs packed with protein."),
-      price: 120,
-      category: "food",
-    },
-    {
-      id: 2,
-      img: Bread,
-      name: t("Bread"),
-      description: t("Soft and fresh bread baked daily."),
-      price: 100,
-      category: "food",
-    },
-    {
-      id: 3,
-      img: Burger,
-      name: t("fish"),
-      description: t("Freshly caught fish, perfect for any meal."),
-      price: 120,
-      category: "food",
-    },
-    {
-      id: 4,
-      img: Bread,
-      name: t("Bread"),
-      description: t("Soft and fresh bread baked daily."),
-      price: 100,
-      category: "food",
-    },
-    {
-      id: 5,
-      img: Burger, // Optional: add this import if you have a meat image
-      name: t("Meat"),
-      description: t("High-quality meat, tender and juicy."),
-      price: 120,
-      category: "food",
-    },
-    {
-      id: 7,
-      img: Burger,
-      name: t("Burger"),
-      description: t("Delicious burger made with fresh ingredients."),
-      price: 120,
-      category: "food",
-    },
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const limit = 10;
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
 
-    // Educational material category
-    {
-      id: 9,
-      img: Book,
-      name: t("Mathematics Book"),
-      description: t("A comprehensive guide to high school mathematics."),
-      price: 90,
-      category: "educational material",
-    },
-    {
-      id: 10,
-      img: Book,
-      name: t("Science Workbook"),
-      description: t("Interactive workbook for learning basic science."),
-      price: 75,
-      category: "educational material",
-    },
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const res = await api.get(`/ecommerce?page=${page}&limit=${limit}`, {
+        headers: { "Content-Type": "application/json" },
+      });
+      console.log(res.data);
 
-    // Utensils category
-    {
-      id: 11,
-      img: Utensils,
-      name: t("Spoon Set"),
-      description: t("Durable stainless steel spoon set."),
-      price: 45,
-      category: "utensils",
-    },
-    {
-      id: 12,
-      img: Utensils,
-      name: t("Cooking Pan"),
-      description: t("Non-stick cooking pan perfect for everyday meals."),
-      price: 85,
-      category: "utensils",
-    },
-  ];
+      setProducts(res.data?.data || []);
 
-  const ProductCard = ({ product }: { product: any }) => {
+      // Assuming API returns total count of products
+      const totalCount = res.data?.total || 0;
+      setTotalPages(Math.max(1, Math.ceil(totalCount / limit)));
+    } catch (err: any) {
+      setError(err?.response?.data?.message || t("Failed to load products."));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, [page]);
+
+  // Filter products based on selected category
+  // const filteredProducts =
+  //   selectedCategory === "all"
+  //     ? products
+  //     : products.filter((product) => product.category === selectedCategory);
+  const filteredProducts = products
+    .filter((product) =>
+      selectedCategory === "all" ? true : product.category === selectedCategory
+    )
+    .filter((product) =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+  const ProductCard = ({ product }: { product: Product }) => {
+    const dispatch = useDispatch();
+
+    const handleAddToCart = () => {
+      dispatch(
+        addToCart({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.img,
+          quantity: 1,
+        })
+      );
+    };
+
     return (
       <div className="p-2 rounded-lg shadow-md w-40">
-        <a href="/#/product-detail/2">
+        <a href={`/#/product-detail/${product.id}`}>
           <img
             src={product.img}
             alt={product.name}
             className="w-full h-34 object-cover"
           />
-          <p className="flex items-center justify-center text-sm font-semibold mt-2">
-            {product.name}
-          </p>
+          <div className="flex item-center justify-between text-sm font-semibold mt-2 mx-2">
+            <p>{product.name}</p>
+            <p>ETB {product.price}</p>
+          </div>
         </a>
-        <button className="bg-blue-500 text-white text-xs py-1 px-2 rounded w-full mt-2">
-          {t("Add to Cart")}
+        <button
+          onClick={handleAddToCart}
+          className="bg-blue-500 text-white text-xs py-1 px-2 rounded w-full mt-2"
+        >
+          Add to Cart
         </button>
       </div>
     );
@@ -122,36 +106,165 @@ const ProductList = () => {
 
   return (
     <Page back={true}>
-      <div className="">
+      <div>
         <Header />
 
-        <div className=" mt-2 p-2 ">
-          <form className="flex w-full ">
+        {/* Category Filter */}
+        <div className="mt-2 p-2">
+          <form className="flex w-full">
             <label
-              htmlFor="small"
-              className="  mt-2 w-[180px] block mb-2 text-sm font-medium text-gray-300 dark:text-gray-400"
+              htmlFor="category"
+              className="mt-2 w-[180px] block mb-2 text-sm font-medium text-gray-300 dark:text-gray-400"
             >
-              Select categories
+              {t("Select Category")}
             </label>
             <select
-              id="small"
+              id="category"
+              onChange={(e) => setSelectedCategory(e.target.value)}
               className="block w-full p-2 mb-6 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
-              <option selected>Choose a Category</option>
-              <option value="all">All</option>
-              <option value="food">Baby food &supplement</option>
-              <option value="utensils">Utensils</option>
-              <option value="educational_materials">
-                Educational Materials
+              <option value="all">{t("All")}</option>
+              <option value="food">{t("Baby Food & Supplement")}</option>
+              <option value="utensil">{t("Utensils")}</option>
+              <option value="educational_material">
+                {t("Educational Materials")}
               </option>
             </select>
           </form>
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          {products.map((product, index) => (
-            <ProductCard key={index} product={product} />
-          ))}
-        </div>
+
+        <form className="max-w-md mx-auto px-2 py-1 mb-1">
+          <label
+            htmlFor="default-search"
+            className="mb-2 text-sm font-medium text-gray-white sr-only dark:text-white"
+          >
+            Search
+          </label>
+          <div className="relative">
+            <div className="absolute inset-y-0 start-0 flex items-center ps-1 pointer-events-none">
+              <svg
+                className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                />
+              </svg>
+            </div>
+            <input
+              type="search"
+              id="default-search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="block w-full p-2 ps-6 text-sm text-black border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Search product..."
+            />
+
+            <button
+              type="submit"
+              className=" mt-4 text-white absolute end-0.5 bottom-0.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+              Search
+            </button>
+          </div>
+        </form>
+
+        {/* Loading State */}
+        {loading && (
+          <div className="text-center py-6 text-gray-500">
+            {t("Loading products...")}
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && !loading && (
+          <div className="text-center py-6 text-red-500">{error}</div>
+        )}
+
+        {/* Product Grid */}
+        {!loading && !error && (
+          <>
+            <div className="grid grid-cols-2 gap-4">
+              {filteredProducts.length > 0 ? (
+                filteredProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))
+              ) : (
+                <p className="text-center col-span-2 text-gray-500">
+                  {t("No products found in this category.")}
+                </p>
+              )}
+            </div>
+            {/* pagination control */}
+            {/* Pagination Controls */}
+            <div className="flex py-6 px-4">
+              <button
+                onClick={() => setPage((prev) => prev - 1)}
+                disabled={page === 1 || loading}
+                className="flex items-center justify-center px-3 h-8 me-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg 
+               hover:bg-gray-100 hover:text-gray-700 
+               dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 
+               dark:hover:bg-gray-700 dark:hover:text-white 
+               disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg
+                  className="w-3.5 h-3.5 me-2 rtl:rotate-180"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 14 10"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13 5H1m0 0 4 4M1 5l4-4"
+                  />
+                </svg>
+                {t("Previous")}
+              </button>
+
+              <span className="px-2 flex items-center">
+                {t("Page")} {page} {t("of")} {totalPages}
+              </span>
+
+              <button
+                onClick={() => setPage((prev) => prev + 1)}
+                disabled={page === totalPages || loading}
+                className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg 
+               hover:bg-gray-100 hover:text-gray-700 
+               dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 
+               dark:hover:bg-gray-700 dark:hover:text-white 
+               disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {t("Next")}
+                <svg
+                  className="w-3.5 h-3.5 ms-2 rtl:rotate-180"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 14 10"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M1 5h12m0 0L9 1m4 4L9 9"
+                  />
+                </svg>
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </Page>
   );
