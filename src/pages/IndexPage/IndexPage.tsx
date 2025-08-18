@@ -39,7 +39,7 @@ export const IndexPage: FC = () => {
   // console.log({ parentState });
 
   const parent = {
-    name: parentState?.userDetails?.firstName ?? t("Unknown"),
+    name: parentState?.userDetails?.firstName ?? t("S.Admin"),
     avatar: parentAvatar,
   };
   const favoriteChildId = localStorage.getItem("favorite_child_id");

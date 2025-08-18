@@ -141,7 +141,7 @@ const ChildrenListPage: React.FC = () => {
                   <FaTrash />
                 </button>
               </div>
-              <div className=" flex">
+              <div className=" flex gap-1">
                 <div
                   onClick={() => handleViewChild(child.id)}
                   className="cursor-pointer"
@@ -159,7 +159,7 @@ const ChildrenListPage: React.FC = () => {
                   </span>
                 </div>
                 <button
-                  className="text-xl -mt-8 -ml-4"
+                  className="text-xl -mt-8 "
                   onClick={() => toggleFavorite(child.id)}
                   title={
                     favoriteChildId === child.id
@@ -174,15 +174,15 @@ const ChildrenListPage: React.FC = () => {
               <div className="mt-1 flex justify-between">
                 <div className=" mt-4 flex flex-center item-center ">
                   <button
-                    className="bg-purple-700 rounded-lg px-2 py-1 "
+                    className="bg-purple-700 rounded-lg  text-sm px-2 py-1 "
                     onClick={() => navigate(`/meal/${child.id}`)}
                   >
                     + {t("Create meal plan")}
                   </button>
                 </div>
-                <div className=" mt-3">
+                <div className=" mt-4 ">
                   <button
-                    className="bg-teal-300 text-black rounded-lg px-2 py-2 text-sm fw-700 hover:bg-teal-400 transition"
+                    className="bg-teal-300 text-black rounded-lg px-2 py-1 text-sm fw-700 hover:bg-teal-400 transition"
                     onClick={() => {
                       navigate(`/mealplansummary/${child?.id}`);
                     }}
