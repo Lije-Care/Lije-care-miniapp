@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import {  Headline, Spinner } from "@telegram-apps/telegram-ui";
+import { Headline, Spinner } from "@telegram-apps/telegram-ui";
 import { useNavigate } from "react-router-dom";
 import { FaPlus, FaExclamationTriangle, FaTrash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchChildrenByParentId, deleteChildById } from "@/redux/slices/childSlice";
+import {
+  fetchChildrenByParentId,
+  deleteChildById,
+} from "@/redux/slices/childSlice";
 import AddChildForm from "./Profile/AddChildForm";
 import type { RootState, AppDispatch } from "@/redux/store";
 // import { Child } from "@/types";
@@ -25,8 +28,11 @@ const ChildrenListPage: React.FC = () => {
   const [favoriteChildId, setFavoriteChildId] = useState<string | null>(
     localStorage.getItem(FAVORITE_CHILD_KEY)
   );
+  //  const [childId, setCChildId]=useState();
 
-  const { data, loading, error } = useSelector((state: RootState) => state.children);
+  const { data, loading, error } = useSelector(
+    (state: RootState) => state.children
+  );
   const telegramUser = JSON.parse(localStorage.getItem("user") || "{}");
 
   useEffect(() => {
@@ -35,22 +41,20 @@ const ChildrenListPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-  setChildrenData(data as unknown as Child[]);
+    setChildrenData(data as unknown as Child[]);
 
-
-  // Handle favorite child logic after data is fetched
-  if (data && data.length === 1) {
-    // Only one child — set as favorite
-    const singleChildId = data[0].id;
-    localStorage.setItem(FAVORITE_CHILD_KEY, singleChildId);
-    setFavoriteChildId(singleChildId);
-  } else if (data && data.length === 0) {
-    // No children — remove favorite
-    localStorage.removeItem(FAVORITE_CHILD_KEY);
-    setFavoriteChildId(null);
-  }
-}, [data]);
-
+    // Handle favorite child logic after data is fetched
+    if (data && data.length === 1) {
+      // Only one child — set as favorite
+      const singleChildId = data[0].id;
+      localStorage.setItem(FAVORITE_CHILD_KEY, singleChildId);
+      setFavoriteChildId(singleChildId);
+    } else if (data && data.length === 0) {
+      // No children — remove favorite
+      localStorage.removeItem(FAVORITE_CHILD_KEY);
+      setFavoriteChildId(null);
+    }
+  }, [data]);
 
   const handleViewChild = (childId: string) => {
     navigate(`/child/${childId}`);
@@ -61,12 +65,18 @@ const ChildrenListPage: React.FC = () => {
     setShowConfirmDelete(true);
   };
 
+  const childId = (child: Child) => {
+    setSelectedChild(child);
+    // setShowConfirmDelete(true);
+  };
   const handleDeleteChild = async () => {
     if (!selectedChild) return;
     try {
       setDeleting(true);
       await dispatch(deleteChildById(selectedChild.id)).unwrap();
-      setChildrenData((prev) => prev?.filter((c) => c.id !== selectedChild.id) || []);
+      setChildrenData(
+        (prev) => prev?.filter((c) => c.id !== selectedChild.id) || []
+      );
       setShowConfirmDelete(false);
       setSelectedChild(null);
       if (favoriteChildId === selectedChild.id) {
@@ -122,28 +132,63 @@ const ChildrenListPage: React.FC = () => {
               key={child.id}
               className="bg-gray-800 rounded-xl p-5 shadow-md border border-gray-700 hover:shadow-xl transition-all relative"
             >
-              <button
-                className="absolute top-3 right-3 text-2xl"
-                onClick={() => toggleFavorite(child.id)}
-                title={favoriteChildId === child.id ? t("Unmark Favorite") : t("Mark as Favorite")}
-              >
-                {favoriteChildId === child.id ? "✅" : "⬜"}
-              </button>
-
-              <div onClick={() => handleViewChild(child.id)} className="cursor-pointer">
-                <h2 className="text-lg font-bold text-gray-100 mb-1">{child.name}</h2>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-600 text-white">
-                  {child.gender === "Male" ? t("Boy") : t("Girl")}
-                </span>
-              </div>
-
-              <div className="mt-4 flex justify-end">
+              <div className="absolute top-2  right-2">
                 <button
                   className="text-red-500 hover:text-red-300 transition"
                   onClick={() => confirmDelete(child)}
                 >
                   <FaTrash />
                 </button>
+              </div>
+              <div className=" flex">
+                <div
+                  onClick={() => handleViewChild(child.id)}
+                  className="cursor-pointer"
+                >
+                  <div>
+                    <h2 className="text-lg font-bold text-gray-100 mb-1">
+                      Child Name: {child.name}
+                    </h2>
+                  </div>
+                  <span className="inline-flex items-center ml-2  text-sm  text-gray-300">
+                    Gender: {child.gender === "Male" ? t("Boy") : t("Girl")},
+                  </span>
+                  <span className=" text-green-600 ml-2 underline">
+                    View detail
+                  </span>
+                </div>
+                <button
+                  className="text-xl -mt-8 -ml-4"
+                  onClick={() => toggleFavorite(child.id)}
+                  title={
+                    favoriteChildId === child.id
+                      ? t("Unmark Favorite")
+                      : t("Mark as Favorite")
+                  }
+                >
+                  {favoriteChildId === child.id ? "✅" : "⬜"}
+                </button>
+              </div>
+
+              <div className="mt-1 flex justify-between">
+                <div className=" mt-4 flex flex-center item-center ">
+                  <button
+                    className="bg-purple-700 rounded-lg px-2 py-1 "
+                    onClick={() => navigate(`/meal/${child.id}`)}
+                  >
+                    + {t("Create meal plan")}
+                  </button>
+                </div>
+                <div className=" mt-3">
+                  <button
+                    className="bg-teal-300 text-black rounded-lg px-2 py-2 text-sm fw-700 hover:bg-teal-400 transition"
+                    onClick={(e) => {
+                      navigate(`/mealplansummary/${child?.id}`);
+                    }}
+                  >
+                    {t("View meal plans")}
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -153,7 +198,9 @@ const ChildrenListPage: React.FC = () => {
         {showAddModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-gray-800 rounded-lg p-6 max-w-md w-full shadow-xl">
-              <h2 className="text-xl font-semibold mb-4">{t("Add New Child")}</h2>
+              <h2 className="text-xl font-semibold mb-4">
+                {t("Add New Child")}
+              </h2>
               <AddChildForm onClose={() => setShowAddModal(false)} />
             </div>
           </div>
@@ -163,9 +210,12 @@ const ChildrenListPage: React.FC = () => {
         {showConfirmDelete && selectedChild && (
           <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 px-4">
             <div className="bg-gray-800 text-white p-6 rounded-lg max-w-md w-full shadow-xl">
-              <h2 className="text-lg font-bold mb-3 text-red-500">{t("Confirm Delete")}</h2>
+              <h2 className="text-lg font-bold mb-3 text-red-500">
+                {t("Confirm Delete")}
+              </h2>
               <p className="mb-4">
-                {t("Are you sure you want to delete")} <strong>{selectedChild.name}</strong>?
+                {t("Are you sure you want to delete")}{" "}
+                <strong>{selectedChild.name}</strong>?
               </p>
               <div className="flex justify-end gap-4">
                 <button

@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   Button,
   Input,
   Spinner,
   Text,
   Divider,
-} from '@telegram-apps/telegram-ui';
-import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
+} from "@telegram-apps/telegram-ui";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import { motion } from "framer-motion";
 
-import { updateChild, Child } from '@/redux/slices/childSlice';
-import type { RootState, AppDispatch } from '@/redux/store';
+import { updateChild, Child } from "@/redux/slices/childSlice";
+import type { RootState, AppDispatch } from "@/redux/store";
 
-import GrowthTracker from './Profile/GrowthTracker';
+import GrowthTracker from "./Profile/GrowthTracker";
 
-import { Page } from '@/components/Page';
-import { useTranslation } from 'react-i18next';
+import { Page } from "@/components/Page";
+import { useTranslation } from "react-i18next";
 
 type ChildFormData = {
   name: string;
@@ -59,28 +59,28 @@ const ChildProfilePage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
-  
-  console.log('Child Profile:', result);
+
+  console.log("Child Profile:", result);
   const { register, handleSubmit, reset, watch } = useForm<ChildFormData>({
     defaultValues: {
-      name: '',
-      date_of_birth: '',
-      gender: 'Male',
+      name: "",
+      date_of_birth: "",
+      gender: "Male",
       weight: 0,
       height: 0,
       muac: 0,
-      dietary_restrictions: '',
-      allergies: '',
-      medications: '',
+      dietary_restrictions: "",
+      allergies: "",
+      medications: "",
     },
   });
 
   const watchFields = watch();
 
   const formatDateToYYYYMMDD = (dateString: string) => {
-    if (!dateString) return '';
+    if (!dateString) return "";
     const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   };
 
   useEffect(() => {
@@ -89,9 +89,9 @@ const ChildProfilePage: React.FC = () => {
         ...child,
         date_of_birth: formatDateToYYYYMMDD(child.date_of_birth),
         muac: child.muac ?? 0,
-        dietary_restrictions: child.dietary_restrictions ?? '',
-        allergies: child.allergies ?? '',
-        medications: child.medications ?? '',
+        dietary_restrictions: child.dietary_restrictions ?? "",
+        allergies: child.allergies ?? "",
+        medications: child.medications ?? "",
       });
       setLoadingPage(false);
     }
@@ -110,12 +110,12 @@ const ChildProfilePage: React.FC = () => {
       const weightNum = Number(weight);
       const ageNum = months;
       const heightNum = Number(height);
-      const bmi = weightNum / ((heightNum / 100) ** 2);
+      const bmi = weightNum / (heightNum / 100) ** 2;
       const roundedBMI = parseFloat(bmi.toFixed(2));
 
       if (ageNum > 36) {
         setResult({
-          bmi: 'NA',
+          bmi: "NA",
           calories: NaN,
           protein: NaN,
           fat: NaN,
@@ -123,7 +123,7 @@ const ChildProfilePage: React.FC = () => {
           iron: NaN,
           calcium: NaN,
           vitaminA: NaN,
-          status: 'Unsupported age',
+          status: "Unsupported age",
           water: NaN,
         });
         return;
@@ -133,20 +133,20 @@ const ChildProfilePage: React.FC = () => {
       let calories = weightNum * caloriePerKg;
 
       enum Activity {
-        Active = 'Active',
-        Moderate = 'Moderate',
-        Sedentary = 'Sedentary',
+        Active = "Active",
+        Moderate = "Moderate",
+        Sedentary = "Sedentary",
       }
 
       enum Condition {
-        CatchUpGrowth = 'Catch-up Growth',
-        Underweight = 'Underweight',
-        Overweight = 'Overweight',
-        Normal = 'Normal',
+        CatchUpGrowth = "Catch-up Growth",
+        Underweight = "Underweight",
+        Overweight = "Overweight",
+        Normal = "Normal",
       }
 
-     const activity: Activity = Activity.Moderate;
-     const condition: Condition = Condition.Normal;
+      const activity: Activity = Activity.Moderate;
+      const condition: Condition = Condition.Normal;
 
       const ActivityFactors: Record<Activity, number> = {
         [Activity.Active]: 1.26,
@@ -168,9 +168,9 @@ const ChildProfilePage: React.FC = () => {
       };
       calories *= ActivityFactors[activity] * HealthFactors[condition];
 
-      const protein = parseFloat((calories * 0.12 / 4).toFixed(2));
-      const fat = parseFloat((calories * 0.35 / 9).toFixed(2));
-      const carbs = parseFloat((calories * 0.53 / 4).toFixed(2));
+      const protein = parseFloat(((calories * 0.12) / 4).toFixed(2));
+      const fat = parseFloat(((calories * 0.35) / 9).toFixed(2));
+      const carbs = parseFloat(((calories * 0.53) / 4).toFixed(2));
 
       const calcium = ageNum <= 6 ? 200 : ageNum <= 12 ? 260 : 700;
       const iron = ageNum <= 6 ? 0.27 : ageNum <= 12 ? 11 : 7;
@@ -181,20 +181,19 @@ const ChildProfilePage: React.FC = () => {
       else if (ageNum <= 12) baseWater = 900;
       else baseWater = 1300;
 
-        // const waterMultiplier =
-        // condition === Condition.CatchUpGrowth
-        //   ? 1.2
-        //   : condition === Condition.Underweight
-        //   ? 1.15
-        //   : 1;
-        const waterMultiplier = WaterMultipliers[condition];
-
+      // const waterMultiplier =
+      // condition === Condition.CatchUpGrowth
+      //   ? 1.2
+      //   : condition === Condition.Underweight
+      //   ? 1.15
+      //   : 1;
+      const waterMultiplier = WaterMultipliers[condition];
 
       const water = parseFloat((baseWater * waterMultiplier).toFixed(2));
 
-      let status = 'Normal';
-      if (bmi < 14) status = 'Underweight';
-      else if (bmi > 17) status = 'Overweight';
+      let status = "Normal";
+      if (bmi < 14) status = "Underweight";
+      else if (bmi > 17) status = "Overweight";
 
       setResult({
         bmi: roundedBMI.toString(),
@@ -225,8 +224,8 @@ const ChildProfilePage: React.FC = () => {
       await dispatch(updateChild({ id: childId, ...updatedData })).unwrap();
       setIsEditing(false);
     } catch (err) {
-      console.error('Update failed', err);
-      alert('Failed to update profile. Please try again.');
+      console.error("Update failed", err);
+      alert("Failed to update profile. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -245,141 +244,133 @@ const ChildProfilePage: React.FC = () => {
       <div className="max-w-4xl mx-auto p-4 text-white">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-emerald-400">
-            {t('Child Profile')}
+            {t("Child Profile")}
           </h1>
           <Button
             onClick={() => setIsEditing(!isEditing)}
             className="bg-gray-800 text-white"
           >
-            {isEditing ? t('Cancel') : t('Edit')}
+            {isEditing ? t("Cancel") : t("Edit")}
           </Button>
         </div>
 
         {isEditing && (
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="space-y-6 mb-6"
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mb-6">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <Text>{t('Basic Information')}</Text>
+              <Text>{t("Basic Information")}</Text>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label>{t('Name')}</label>
-                  <Input {...register('name')} />
+                  <label>{t("Name")}</label>
+                  <Input {...register("name")} />
                 </div>
                 <div>
-                  <label>{t('Date of Birth')}</label>
-                  <Input type="date" {...register('date_of_birth')} />
+                  <label>{t("Date of Birth")}</label>
+                  <Input type="date" {...register("date_of_birth")} />
                 </div>
                 <div>
-                  <label>{t('Gender')}</label>
-                  <select {...register('gender')} className="w-full p-2 bg-black text-white border rounded">
-                    <option value="Male">{t('Male')}</option>
-                    <option value="Female">{t('Female')}</option>
+                  <label>{t("Gender")}</label>
+                  <select
+                    {...register("gender")}
+                    className="w-full p-2 bg-black text-white border rounded"
+                  >
+                    <option value="Male">{t("Male")}</option>
+                    <option value="Female">{t("Female")}</option>
                   </select>
                 </div>
                 <div>
-                  <label>{t('Weight (kg)')}</label>
-                  <Input type="number" {...register('weight')} />
+                  <label>{t("Weight (kg)")}</label>
+                  <Input type="number" {...register("weight")} />
                 </div>
                 <div>
-                  <label>{t('Height (cm)')}</label>
-                  <Input type="number" {...register('height')} />
+                  <label>{t("Height (cm)")}</label>
+                  <Input type="number" {...register("height")} />
                 </div>
                 <div>
-                  <label>{t('MUAC (cm)')}</label>
-                  <Input type="number" {...register('muac')} />
+                  <label>{t("MUAC (cm)")}</label>
+                  <Input type="number" {...register("muac")} />
                 </div>
               </div>
             </motion.div>
 
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <Text>{t('Health Details')}</Text>
+              <Text>{t("Health Details")}</Text>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <Text>{t('Dietary Restrictions')}:</Text>
-                  <Text>{watchFields.dietary_restrictions || '-'}</Text>
+                  <Text>{t("Dietary Restrictions")}:</Text>
+                  <Text>{watchFields.dietary_restrictions || "-"}</Text>
                 </div>
                 <Divider />
                 <div className="flex justify-between">
-                  <Text>{t('Allergies')}:</Text>
-                  <Text>{watchFields.allergies || '-'}</Text>
+                  <Text>{t("Allergies")}:</Text>
+                  <Text>{watchFields.allergies || "-"}</Text>
                 </div>
                 <Divider />
                 <div className="flex justify-between">
-                  <Text>{t('Medications')}:</Text>
-                  <Text>{watchFields.medications || '-'}</Text>
+                  <Text>{t("Medications")}:</Text>
+                  <Text>{watchFields.medications || "-"}</Text>
                 </div>
               </div>
             </motion.div>
 
             <div className="flex justify-end mt-4">
               <Button type="submit" stretched disabled={submitting}>
-                {submitting ? <Spinner size="s" /> : t('Save Changes')}
+                {submitting ? <Spinner size="s" /> : t("Save Changes")}
               </Button>
             </div>
           </form>
         )}
 
-        {/* <GrowthTrackerHome childProfile={child} /> */}
-        <GrowthTracker childProfile={child} />
-         <div className="...">
-          <h3>{t('👶 Child Profile')}</h3>
-          <div className="...">
-            {child?.name && <div className="flex justify-between"><span>{t('Name')}:</span><span>{child.name}</span></div>}
-            {child?.gender && <div className="flex justify-between"><span>{t('Gender')}:</span><span>{child.gender}</span></div>}
-            {child?.date_of_birth && <div className="flex justify-between"><span>{t('Date of Birth')}:</span><span>{new Date(child.date_of_birth).toLocaleDateString()}</span></div>}
-            {child?.height && <div className="flex justify-between"><span>{t('Height')}:</span><span>{child.height}</span></div>}
-            {child?.weight && <div className="flex justify-between"><span>{t('Weight')}:</span><span>{child.weight}</span></div>}
-            {child?.muac && <div className="flex justify-between"><span>{t('MUAC')}:</span><span>{child.muac}</span></div>}
-          </div>
-        </div>
+        {!isEditing && (
+          <div>
+            <GrowthTracker childProfile={child} />
+            <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl mt-4 p-5 space-y-2 mb-5">
+              <h3 className="text-lg font-semibold text-center text-gray-300 mb-2">
+                👶 Child Profile
+              </h3>
+              <div className="text-sm text-gray-400 space-y-1">
+                {child?.name && (
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Name:</span>
+                    <span>{child?.name}</span>
+                  </div>
+                )}
+                {child?.gender && (
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Gender:</span>
+                    <span>{child.gender}</span>
+                  </div>
+                )}
+                {child?.date_of_birth && (
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Date of Birth:</span>
+                    <span>
+                      {new Date(child.date_of_birth).toLocaleDateString()}
+                    </span>
+                  </div>
+                )}
 
-      {/* Growth and Nutrition Tracker (Always visible) */}
-      {/* <GrowthTrackerAll childProfile={child} /> */}
-      
-       <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl mt-4 p-5 space-y-2 mb-5">
-        <h3 className="text-lg font-semibold text-center text-gray-300 mb-2">👶 Child Profile</h3>
-         <div className="text-sm text-gray-400 space-y-1">
-            {child?.name && (
-              <div className="flex justify-between">
-                <span className="font-semibold">Name:</span>
-                <span>{child?.name}</span>
+                {child?.height && (
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Height:</span>
+                    <span>{child.height}</span>
+                  </div>
+                )}
+                {child?.weight && (
+                  <div className="flex justify-between">
+                    <span className="font-semibold">weight:</span>
+                    <span>{child.weight}</span>
+                  </div>
+                )}
+                {child?.muac && (
+                  <div className="flex justify-between">
+                    <span className="font-semibold">MUAC:</span>
+                    <span>{child.muac}</span>
+                  </div>
+                )}
               </div>
-            )}
-            {child?.gender && (
-              <div className="flex justify-between">
-                <span className="font-semibold">Gender:</span>
-                <span>{child.gender}</span>
-              </div>
-            )}
-            {child?.date_of_birth && (
-                    <div className="flex justify-between">
-                      <span className="font-semibold">Date of Birth:</span>
-                      <span>{new Date(child.date_of_birth).toLocaleDateString()}</span>
-                    </div>
-             )}
-
-            {child?.height && (
-            <div className="flex justify-between">
-              <span className="font-semibold">Height:</span>
-              <span>{child.height}</span>
             </div>
-          )}
-            {child?.weight && (
-              <div className="flex justify-between">
-                <span className="font-semibold">weight:</span>
-                <span>{child.weight}</span>
-              </div>
-            )}
-         {child?.muac && (
-            <div className="flex justify-between"> 
-                 <span className="font-semibold">MUAC:</span>
-                <span>{child.muac}</span>
-              </div>
-            )}
           </div>
-      </div>
+        )}
       </div>
     </Page>
   );

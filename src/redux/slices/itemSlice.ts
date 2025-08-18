@@ -11,10 +11,10 @@ interface Parent {
 
 interface ParentState {
   parent: Parent | null;
+  userDetails: any | null;
   loading: boolean;
   error: string | null;
 }
-
 export type Child = {
   id: string;
   parent_id: string;
@@ -33,6 +33,7 @@ export type Child = {
 
 const initialState: ParentState = {
   parent: null,
+  userDetails: null,
   loading: false,
   error: null,
 };
@@ -44,11 +45,22 @@ export const fetchParent = createAsyncThunk(
   "parent/fetchParent",
   async (telegramId: string) => {
     try {
+      // First API call: find parent by telegramId
       const response = await api.get<Parent>(`users/find-one/${telegramId}`);
+      const parent = response.data;
 
-      console.log("name");
-      console.log(response.data.name);
-      return response.data;
+      // Second API call: find user by parentId
+      const findOneByIdResponse = await api.get<any>(
+        `users/find-one/${parent.id}`
+      );
+      const userDetails = findOneByIdResponse.data;
+      console.log({ userDetails });
+
+      // Return both results
+      return {
+        parent,
+        userDetails,
+      };
     } catch (error: any) {
       console.error("Error fetching parent:", error);
       throw new Error(
@@ -104,35 +116,19 @@ const parentSlice = createSlice({
       })
       .addCase(
         fetchParent.fulfilled,
-        (state, action: PayloadAction<Parent>) => {
+        (
+          state,
+          action: PayloadAction<{ parent: Parent; userDetails: any }>
+        ) => {
           state.loading = false;
-          state.parent = action.payload;
+          state.parent = action.payload.parent;
+          state.userDetails = action.payload.userDetails;
         }
       )
       .addCase(fetchParent.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Failed to fetch parent";
-      })
-
-      .addCase(addParent.fulfilled, (state, action: PayloadAction<Parent>) => {
-        state.parent = action.payload;
-      })
-      .addCase(
-        updateParent.fulfilled,
-        (state, action: PayloadAction<Parent>) => {
-          if (state.parent && state.parent.id === action.payload.id) {
-            state.parent = action.payload;
-          }
-        }
-      )
-      .addCase(
-        deleteParent.fulfilled,
-        (state, action: PayloadAction<number>) => {
-          if (state.parent && state.parent.id === action.payload) {
-            state.parent = null;
-          }
-        }
-      );
+      });
   },
 });
 

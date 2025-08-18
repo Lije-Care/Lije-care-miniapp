@@ -28,7 +28,6 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
   const [submitting, setSubmitting] = useState(false);
   const telegramUser = JSON.parse(localStorage.getItem("user") || "{}");
   const parentId = telegramUser?.id;
-
   const {
     handleSubmit,
     control,
@@ -50,7 +49,6 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setSubmitting(true);
-
     const childData = {
       ...data,
       parentId: parentId ?? "",
@@ -58,7 +56,6 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
       height: parseFloat(data.height.toString()),
       muac: parseFloat(data.muac.toString()),
     };
-
     try {
       await dispatch(addChild(childData)).unwrap();
       reset();
@@ -71,11 +68,29 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
     }
   };
 
+  // Get today's date in YYYY-MM-DD format
+  const today = new Date().toISOString().split("T")[0];
+
   const formFields = [
-    { name: "name", label: t("Name"), placeholder: t("Enter child's name"), type: "text", required: true },
-    { name: "date_of_birth", label: t("Date of Birth"), type: "date", required: true },
     {
-      name: "gender", label: t("Gender"), type: "select", required: true,
+      name: "name",
+      label: t("Name"),
+      placeholder: t("Enter child's name"),
+      type: "text",
+      required: true,
+    },
+    {
+      name: "date_of_birth",
+      label: t("Date of Birth"),
+      type: "date",
+      required: true,
+      max: today,
+    },
+    {
+      name: "gender",
+      label: t("Gender"),
+      type: "select",
+      required: true,
       options: [
         { value: "Male", label: t("Male") },
         { value: "Female", label: t("Female") },
@@ -84,9 +99,27 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
     { name: "weight", label: t("Weight (kg)"), type: "number", required: true },
     { name: "height", label: t("Height (cm)"), type: "number", required: true },
     { name: "muac", label: t("MUAC (cm)"), type: "number", required: true },
-    { name: "dietary_restrictions", label: t("Dietary Restrictions"), placeholder: t("e.g., Lactose Intolerance"), type: "text", required: false },
-    { name: "allergies", label: t("Allergies"), placeholder: t("e.g., Peanuts"), type: "text", required: false },
-    { name: "medications", label: t("Medications"), placeholder: t("e.g., Vitamin D Supplements"), type: "text", required: false },
+    {
+      name: "dietary_restrictions",
+      label: t("Dietary Restrictions"),
+      placeholder: t("e.g., Lactose Intolerance"),
+      type: "text",
+      required: false,
+    },
+    {
+      name: "allergies",
+      label: t("Allergies"),
+      placeholder: t("e.g., Peanuts"),
+      type: "text",
+      required: false,
+    },
+    {
+      name: "medications",
+      label: t("Medications"),
+      placeholder: t("e.g., Vitamin D Supplements"),
+      type: "text",
+      required: false,
+    },
   ];
 
   return (
@@ -110,7 +143,6 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
                 {field.label}
                 {field.required && <span className="text-red-500"> *</span>}
               </label>
-
               {field.type === "select" ? (
                 <select
                   {...controllerField}
@@ -129,10 +161,10 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
                   id={field.name}
                   type={field.type}
                   placeholder={field.placeholder}
+                  max={field.max} // Apply max attribute for date input
                   className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full"
                 />
               )}
-
               {errors[field.name as keyof FormValues] && (
                 <p className="text-red-500 text-xs mt-1">
                   {errors[field.name as keyof FormValues]?.message?.toString()}
@@ -142,7 +174,6 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
           )}
         />
       ))}
-
       <div className="flex justify-end gap-4 mt-6">
         <Button stretched type="button" onClick={onClose}>
           {t("Cancel")}
