@@ -1,18 +1,19 @@
-import { useState, useEffect } from 'react';
-import { Button, Modal } from '@telegram-apps/telegram-ui';
-import toast from 'react-hot-toast';
-import api from '@/api/axios';
-import axios from 'axios';
-import { useTranslation } from 'react-i18next';
+import { useState, useEffect } from "react";
+import { Button, Modal } from "@telegram-apps/telegram-ui";
+import toast from "react-hot-toast";
+import api from "@/api/axios";
+import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 declare global {
   interface Window {
     Telegram?: any;
   }
 }
-import { useNavigate } from 'react-router-dom';
+// some change
+import { useNavigate } from "react-router-dom";
 
-const BASE_URL = 'https://lije-care-api-dev.zikollab.com/api/v1';
+const BASE_URL = "https://lije-care-api-dev.zikollab.com/api/v1";
 
 const AccountSettings = () => {
   const { t } = useTranslation();
@@ -23,63 +24,64 @@ const AccountSettings = () => {
   const [showChange, setShowChange] = useState(false); // ✅ NEW
 
   const [resetData, setResetData] = useState({
-    otp: '',
-    password: '',
-    confirmPassword: '',
+    otp: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const [changeData, setChangeData] = useState({
-    oldPassword: '',
-    newPassword: '',
-    confirmPassword: '',
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
-  const [resetToken, setResetToken] = useState('');
-  const [userPhone, setUserPhone] = useState('');
-  const [telegramId, setTelegramId] = useState('');
-  const [userId, setUserId] = useState('');
+  const [resetToken, setResetToken] = useState("");
+  const [userPhone, setUserPhone] = useState("");
+  const [telegramId, setTelegramId] = useState("");
+  const [userId, setUserId] = useState("");
 
   useEffect(() => {
-    const localUser = JSON.parse(localStorage.getItem('user') || '{}');
-    setUserPhone(localUser?.phone ?? '');
-    setUserId(localUser?.id ?? '');
+    const localUser = JSON.parse(localStorage.getItem("user") || "{}");
+    setUserPhone(localUser?.phone ?? "");
+    setUserId(localUser?.id ?? "");
 
-    const tgUserId = (window as any)?.Telegram?.WebApp?.initDataUnsafe?.user?.id;
-    setTelegramId(tgUserId ? String(tgUserId) : '');
+    const tgUserId = (window as any)?.Telegram?.WebApp?.initDataUnsafe?.user
+      ?.id;
+    setTelegramId(tgUserId ? String(tgUserId) : "");
   }, []);
 
   const handleChangeReset = (e: any) => {
     const { name, value } = e.target;
-    setResetData(prev => ({ ...prev, [name]: value }));
+    setResetData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleChangePasswordChange = (e: any) => {
     const { name, value } = e.target;
-    setChangeData(prev => ({ ...prev, [name]: value }));
+    setChangeData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleForgotPassword = async () => {
     if (!userPhone) {
-      toast.error('Missing phone number.');
+      toast.error("Missing phone number.");
       return;
     }
 
     try {
-      const res = await api.post('/auth/forget-password', {
+      const res = await api.post("/auth/forget-password", {
         phone: userPhone,
         telegramId: telegramId,
       });
 
       if (res.status === 201) {
-        toast.success('OTP sent to your Telegram bot!');
-        setResetToken(res.data?.token ?? '');
+        toast.success("OTP sent to your Telegram bot!");
+        setResetToken(res.data?.token ?? "");
         setShowForgot(false);
         setShowReset(true);
       } else {
-        toast.error('Unexpected response from server.');
+        toast.error("Unexpected response from server.");
       }
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || t('Failed to send OTP.'));
+      toast.error(error?.response?.data?.message || t("Failed to send OTP."));
     }
   };
 
@@ -98,12 +100,14 @@ const AccountSettings = () => {
         password,
       });
 
-      toast.success(res.data?.message || 'Password reset successfully');
+      toast.success(res.data?.message || "Password reset successfully");
       setShowReset(false);
-      setResetData({ otp: '', password: '', confirmPassword: '' });
-      setResetToken('');
+      setResetData({ otp: "", password: "", confirmPassword: "" });
+      setResetToken("");
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || t('Failed to reset password.'));
+      toast.error(
+        error?.response?.data?.message || t("Failed to reset password.")
+      );
     }
   };
 
@@ -121,68 +125,86 @@ const AccountSettings = () => {
         newPassword,
       });
 
-      toast.success(res.data?.message || 'Password changed successfully');
+      toast.success(res.data?.message || "Password changed successfully");
       setShowChange(false);
-      setChangeData({ oldPassword: '', newPassword: '', confirmPassword: '' });
+      setChangeData({ oldPassword: "", newPassword: "", confirmPassword: "" });
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || 'Failed to change password.');
+      toast.error(
+        error?.response?.data?.message || "Failed to change password."
+      );
     }
   };
   const navigate = useNavigate();
   const handleDeleteAccount = async () => {
-  if (!userId) {
-    toast.error("User ID not found.");
-    return;
-  }
-
-  try {
-    const res = await api.delete(`/users/delete/${userId}`);
-
-    if (res.status === 200) {
-      toast.success("Account deleted successfully.");
-      setIsDeleting(false); // ✅ close modal
-      localStorage.removeItem('user');
-      localStorage.removeItem('access_token');
-      navigate('/signin'); // ✅ navigate to sign-in
-    } else {
-      toast.error("Unexpected response from server.");
+    if (!userId) {
+      toast.error("User ID not found.");
+      return;
     }
-  } catch (error: any) {
-    toast.error(error?.response?.data?.message || "Failed to delete account.");
-  }
-};
+
+    try {
+      const res = await api.delete(`/users/delete/${userId}`);
+
+      if (res.status === 200) {
+        toast.success("Account deleted successfully.");
+        setIsDeleting(false); // ✅ close modal
+        localStorage.removeItem("user");
+        localStorage.removeItem("access_token");
+        navigate("/signin"); // ✅ navigate to sign-in
+      } else {
+        toast.error("Unexpected response from server.");
+      }
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message || "Failed to delete account."
+      );
+    }
+  };
 
   return (
     <div className="p-4 w-full max-w-md mx-auto text-sm">
-      <h2 className="text-lg font-bold mb-4 text-center"> {t("Account Settings")}</h2>
+      <h2 className="text-lg font-bold mb-4 text-center">
+        {" "}
+        {t("Account Settings")}
+      </h2>
 
-      <Button className="w-full mb-3" onClick={() => 
-        {
-          localStorage.removeItem('user');
-          localStorage.removeItem('access_token');
+      <Button
+        className="w-full mb-3"
+        onClick={() => {
+          localStorage.removeItem("user");
+          localStorage.removeItem("access_token");
           window.Telegram.WebApp.close();
-          navigate('/signin'); // Redirect to sign-in page
-        }}>
-         Log out
-      </Button>    
+          navigate("/signin"); // Redirect to sign-in page
+        }}
+      >
+        Log out
+      </Button>
 
       <Button className="w-full mb-3" onClick={() => setShowChange(true)}>
         🔐 Change Password
       </Button>
 
-      <Button className="w-full bg-red-600 text-white" onClick={() => setIsDeleting(true)}>
-         {t("Delete Account")}
+      <Button
+        className="w-full bg-red-600 text-white"
+        onClick={() => setIsDeleting(true)}
+      >
+        {t("Delete Account")}
       </Button>
 
       {/* Forgot Password Modal */}
       <Modal open={showForgot} onOpenChange={setShowForgot}>
         <div className="p-4">
-          <h3 className="text-md font-semibold mb-3 text-center">{t("Send OTP to Telegram")}</h3>
+          <h3 className="text-md font-semibold mb-3 text-center">
+            {t("Send OTP to Telegram")}
+          </h3>
           <div className="mb-4 text-sm text-gray-600">
             We'll send an OTP to your Telegram using:
             <ul className="mt-2 list-disc pl-5 text-xs">
-              <li><strong>{t("Phone")}:</strong> {userPhone}</li>
-              <li><strong>{t("Telegram ID")}:</strong> {telegramId}</li>
+              <li>
+                <strong>{t("Phone")}:</strong> {userPhone}
+              </li>
+              <li>
+                <strong>{t("Telegram ID")}:</strong> {telegramId}
+              </li>
             </ul>
           </div>
           <Button className="w-full" onClick={handleForgotPassword}>
@@ -194,7 +216,9 @@ const AccountSettings = () => {
       {/* Reset Password Modal */}
       <Modal open={showReset} onOpenChange={setShowReset}>
         <div className="p-4">
-          <h3 className="text-md font-semibold mb-3 text-center">{t("Reset Password Title")}</h3>
+          <h3 className="text-md font-semibold mb-3 text-center">
+            {t("Reset Password Title")}
+          </h3>
 
           <input
             name="otp"
@@ -228,7 +252,9 @@ const AccountSettings = () => {
       {/* Change Password Modal */}
       <Modal open={showChange} onOpenChange={setShowChange}>
         <div className="p-4">
-          <h3 className="text-md font-semibold mb-3 text-center">🔁 Change Password</h3>
+          <h3 className="text-md font-semibold mb-3 text-center">
+            🔁 Change Password
+          </h3>
 
           <input
             name="oldPassword"
@@ -266,7 +292,10 @@ const AccountSettings = () => {
           <p className="mb-4 text-red-600 font-semibold">
             {t("Delete Warning")}
           </p>
-          <Button className="w-full bg-red-600 text-white mb-2" onClick={handleDeleteAccount}>
+          <Button
+            className="w-full bg-red-600 text-white mb-2"
+            onClick={handleDeleteAccount}
+          >
             {t("Yes, Delete My Account")}
           </Button>
           <Button className="w-full" onClick={() => setIsDeleting(false)}>
