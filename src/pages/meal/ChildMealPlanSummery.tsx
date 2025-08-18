@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import api from "@/api/axios";
 import { Badge, Button, Card, Placeholder } from "@telegram-apps/telegram-ui";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
 import { Page } from "@/components/Page";
 import { useTranslation } from "react-i18next";
 
