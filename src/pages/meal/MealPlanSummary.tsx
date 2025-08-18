@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "@/api/axios";
-import { Badge, Button, Card, Placeholder } from "@telegram-apps/telegram-ui";
+import { Badge, Card, Placeholder } from "@telegram-apps/telegram-ui";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
@@ -150,17 +150,6 @@ const MealPlanSummary = () => {
             </div>
           )
         )}
-
-        <div className="text-center">
-          <Button
-            className="mt-4 w-full bg-emerald-600 text-white"
-            onClick={
-              () => navigate(`/meal/${data[0]?.id || ""}`) // default to first child for creation
-            }
-          >
-            ➕ {t("Create a Meal Plan")}
-          </Button>
-        </div>
       </div>
     </Page>
   );
