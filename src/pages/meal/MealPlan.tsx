@@ -7,6 +7,7 @@ import { Meal } from "@/types/meal";
 import fallback from "@/assets/meal.png";
 import { useTranslation } from "react-i18next";
 
+// not correctly identify the correct meal, meal id
 const MealLibraryComponent = () => {
   const { t } = useTranslation();
   const [meals, setMeals] = useState<Meal[]>([]);
@@ -168,6 +169,7 @@ const MealLibraryComponent = () => {
       {/* Meals List - Keep rest unchanged */}
       {meals.map((meal) => {
         const selected = selectedMeals.find((m) => m.meal.id === meal.id);
+        console.log({ selected });
         const expanded = expandedMealId === meal.id;
 
         return (

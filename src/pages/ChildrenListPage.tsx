@@ -150,13 +150,15 @@ const ChildrenListPage: React.FC = () => {
                       Child Name: {child.name}
                     </h2>
                   </div>
-
                   <span className="inline-flex items-center ml-2  text-sm  text-gray-300">
-                    Gender: {child.gender === "Male" ? t("Boy") : t("Girl")}
+                    Gender: {child.gender === "Male" ? t("Boy") : t("Girl")},
+                  </span>
+                  <span className=" text-green-600 ml-2 underline">
+                    View detail
                   </span>
                 </div>
                 <button
-                  className="text-xl -mt-8"
+                  className="text-xl -mt-8 -ml-4"
                   onClick={() => toggleFavorite(child.id)}
                   title={
                     favoriteChildId === child.id
