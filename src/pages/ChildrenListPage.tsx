@@ -65,10 +65,11 @@ const ChildrenListPage: React.FC = () => {
     setShowConfirmDelete(true);
   };
 
-  const childId = (child: Child) => {
-    setSelectedChild(child);
-    // setShowConfirmDelete(true);
-  };
+  // child id comment by walleman
+  // const childId = (child: Child) => {
+  //   setSelectedChild(child);
+  //   setShowConfirmDelete(true);
+  // };
   const handleDeleteChild = async () => {
     if (!selectedChild) return;
     try {
@@ -182,7 +183,7 @@ const ChildrenListPage: React.FC = () => {
                 <div className=" mt-3">
                   <button
                     className="bg-teal-300 text-black rounded-lg px-2 py-2 text-sm fw-700 hover:bg-teal-400 transition"
-                    onClick={(e) => {
+                    onClick={() => {
                       navigate(`/mealplansummary/${child?.id}`);
                     }}
                   >
