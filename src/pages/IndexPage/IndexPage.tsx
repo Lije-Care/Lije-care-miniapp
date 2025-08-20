@@ -113,7 +113,7 @@ export const IndexPage: FC = () => {
                 <div className="flex flex-col min-w-0">
                   <p className="text-base font-semibold truncate">View</p>
                   <p className="text-bold text-gray-500 truncate">
-                    {t("Children's")}
+                    {t("Children")}
                   </p>
                 </div>
               </>

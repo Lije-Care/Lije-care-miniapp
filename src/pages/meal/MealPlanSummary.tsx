@@ -36,6 +36,10 @@ const MealPlanSummary = () => {
   const [mealPlans, setMealPlans] = useState<MealPlan[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { data } = useSelector((state: RootState) => state.children);
+
+  // const [selectedChild, setSelectedChild] = useState<Child | null>(null);
+  // const [showConfirmDelete, setShowConfirmDelete] = useState<boolean>(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -141,6 +145,9 @@ const MealPlanSummary = () => {
                   <p className="text-xs">No meals listed.</p>
                 )}
               </div>
+              <span className=" absolute bottom-2 right-2 text-green-600 ml-2 underline">
+                View detail
+              </span>
             </Card>
           ))
         ) : (
@@ -150,6 +157,39 @@ const MealPlanSummary = () => {
             </div>
           )
         )}
+        {/* Confirm Delete Modal */}
+        {/* {showConfirmDelete && selectedChild && (
+          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 px-4">
+            <div className="bg-gray-800 text-white p-6 rounded-lg max-w-md w-full shadow-xl">
+              <h2 className="text-lg font-bold mb-3 text-red-500">
+                {t("Confirm Delete")}
+              </h2>
+              <p className="mb-4">
+                {t("Are you sure you want to delete")}{" "}
+                <strong>{selectedChild.name}</strong>?
+              </p>
+              <div className="flex justify-end gap-4">
+                <button
+                  className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500"
+                  onClick={() => {
+                    setShowConfirmDelete(false);
+                    setSelectedChild(null);
+                  }}
+                  disabled={deleting}
+                >
+                  {t("Cancel")}
+                </button>
+                <button
+                  className="px-4 py-2 bg-red-600 rounded hover:bg-red-500"
+                  onClick={handleDeleteChild}
+                  disabled={deleting}
+                >
+                  {deleting ? t("Deleting...") : t("Delete")}
+                </button>
+              </div>
+            </div>
+          </div>
+        )} */}
       </div>
     </Page>
   );

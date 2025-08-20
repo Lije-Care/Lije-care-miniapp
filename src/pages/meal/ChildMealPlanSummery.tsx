@@ -4,6 +4,7 @@ import { Badge, Button, Card, Placeholder } from "@telegram-apps/telegram-ui";
 import { useNavigate, useParams } from "react-router-dom";
 import { Page } from "@/components/Page";
 import { useTranslation } from "react-i18next";
+import { FaTrash } from "react-icons/fa";
 
 type Meal = {
   id: string;
@@ -33,11 +34,14 @@ const ChildMealPlanSummery = () => {
   const { t } = useTranslation();
   const [mealPlans, setMealPlans] = useState<MealPlan[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  //   const { data } = useSelector((state: RootState) => state.children);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [selectedMealPlan, setSelectedMealPlan] = useState<MealPlan | null>(
+    null
+  );
+  const [deleting, setDeleting] = useState(false);
   const { id } = useParams<{ id: string }>();
   const childId = id;
   const navigate = useNavigate();
-  console.log({ mealPlans });
 
   useEffect(() => {
     if (!childId) {
@@ -63,6 +67,30 @@ const ChildMealPlanSummery = () => {
       });
   }, [childId, t]);
 
+  const handleDeleteMealPlan = async () => {
+    if (!selectedMealPlan) return;
+
+    setDeleting(true);
+    try {
+      await api.delete(`/meal-plans/${selectedMealPlan.id}`);
+      setMealPlans((prev) =>
+        prev ? prev.filter((plan) => plan.id !== selectedMealPlan.id) : []
+      );
+      setShowConfirmDelete(false);
+      setSelectedMealPlan(null);
+    } catch (err) {
+      console.error("Error deleting meal plan:", err);
+      setError(t("Failed to delete meal plan. Please try again."));
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const confirmDelete = (mealPlan: MealPlan) => {
+    setSelectedMealPlan(mealPlan);
+    setShowConfirmDelete(true);
+  };
+
   return (
     <Page back={true}>
       <div className="p-4 space-y-4">
@@ -83,12 +111,23 @@ const ChildMealPlanSummery = () => {
               className="p-4 shadow-sm bg-white rounded-xl w-full border border-gray-200 hover:shadow-md cursor-pointer transition-all"
               onClick={() => navigate(`/detail/${mealPlan.id}`)}
             >
+              <div className="absolute top-2 right-2 mt-2 mr-3">
+                <button
+                  className="text-red-500 hover:text-red-300 transition"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent card click
+                    confirmDelete(mealPlan);
+                  }}
+                >
+                  <FaTrash />
+                </button>
+              </div>
               {/* Description + Metadata */}
               <div className="space-y-1">
-                <p className="text-sm line-clamp-2 font-medium">
+                <p className="text-sm line-clamp-2 font-medium pr-6">
                   {mealPlan.meal_description || "No description available."}
                 </p>
-                <p className="text-xs ">
+                <p className="text-xs">
                   🔥 {mealPlan.calories} kcal · 🕒{" "}
                   {new Date(mealPlan.createdAt).toLocaleDateString()}
                 </p>
@@ -98,16 +137,16 @@ const ChildMealPlanSummery = () => {
               <div className="my-2 border-t border-gray-200" />
 
               {/* Child Info */}
-              <div className="text-xs text-gray-600">
-                <span className="font-semibold text-gray-800">
+              <div className="text-sm py-1 text-gray-300">
+                <span className="text-sm mt-1 text-gray-300">
                   {t("👶 Child")}:
                 </span>{" "}
                 {mealPlan.child?.name || t("Unnamed")} <br />
-                <span className="font-semibold text-gray-800">
+                <span className="text-sm mt-1 text-gray-300">
                   {t("Allergies")}:
                 </span>{" "}
                 {mealPlan.child?.allergies || t("None")} <br />
-                <span className="font-semibold text-gray-800">
+                <span className="text-sm mt-1 text-gray-300">
                   {t("Restrictions")}:
                 </span>{" "}
                 {mealPlan.child?.dietary_restrictions || t("None")}
@@ -124,14 +163,14 @@ const ChildMealPlanSummery = () => {
                     {mealPlan.meals.slice(0, 3).map((meal) => (
                       <div
                         key={meal.id}
-                        className="flex justify-between items-center text-sm "
+                        className="flex justify-between items-center text-sm"
                       >
                         <span>{meal.title || "Untitled"}</span>
                         <Badge type="dot">{meal.meal_type || "Unknown"}</Badge>
                       </div>
                     ))}
                     {mealPlan.meals.length > 3 && (
-                      <p className="text-xs  italic mt-1">
+                      <p className="text-xs italic mt-1">
                         + {mealPlan.meals.length - 3} more
                       </p>
                     )}
@@ -140,6 +179,9 @@ const ChildMealPlanSummery = () => {
                   <p className="text-xs">No meals listed.</p>
                 )}
               </div>
+              <span className=" absolute bottom-2 right-2 text-green-600 ml-2 underline">
+                View detail
+              </span>
             </Card>
           ))
         ) : (
@@ -158,6 +200,40 @@ const ChildMealPlanSummery = () => {
             ➕ {t("Create a Meal Plan")}
           </Button>
         </div>
+
+        {/* Confirm Delete Modal */}
+        {showConfirmDelete && (
+          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 px-4">
+            <div className="bg-gray-800 text-white p-6 rounded-lg max-w-md w-full shadow-xl">
+              <h2 className="text-lg font-bold mb-3 text-red-500">
+                {t("Confirm Delete")}
+              </h2>
+              <p className="mb-4">
+                {t("Are you sure you want to delete this meal plan for")}{" "}
+                <strong>{selectedMealPlan?.child.name}</strong>?
+              </p>
+              <div className="flex justify-end gap-4">
+                <button
+                  className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500"
+                  onClick={() => {
+                    setShowConfirmDelete(false);
+                    setSelectedMealPlan(null);
+                  }}
+                  disabled={deleting}
+                >
+                  {t("Cancel")}
+                </button>
+                <button
+                  className="px-4 py-2 bg-red-600 rounded hover:bg-red-500"
+                  onClick={handleDeleteMealPlan}
+                  disabled={deleting}
+                >
+                  {deleting ? t("Deleting...") : t("Delete")}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </Page>
   );

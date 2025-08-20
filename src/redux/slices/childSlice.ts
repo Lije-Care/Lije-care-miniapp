@@ -93,9 +93,7 @@ export const updateChild = createAsyncThunk<Child, Partial<Child>>(
       );
       return response.data;
     } catch (err: any) {
-      return rejectWithValue(
-        err.response?.data?.message || "Update failed"
-      );
+      return rejectWithValue(err.response?.data?.message || "Update failed");
     }
   }
 );
@@ -120,8 +118,9 @@ const childrenSlice = createSlice({
       })
       .addCase(addChild.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          String(action.payload || action.error.message || "Failed to add child");
+        state.error = String(
+          action.payload || action.error.message || "Failed to add child"
+        );
       })
 
       // Fetch children
@@ -138,18 +137,26 @@ const childrenSlice = createSlice({
       )
       .addCase(fetchChildrenByParentId.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          String(action.payload || action.error.message || "Failed to fetch children");
+        state.error = String(
+          action.payload || action.error.message || "Failed to fetch children"
+        );
       })
 
       // Delete child
-      .addCase(deleteChildById.fulfilled, (state, action: PayloadAction<string>) => {
-        state.data = state.data.filter((child) => child.id !== action.payload);
-      })
+      .addCase(
+        deleteChildById.fulfilled,
+        (state, action: PayloadAction<string>) => {
+          state.data = state.data.filter(
+            (child) => child.id !== action.payload
+          );
+        }
+      )
 
       // Update child
       .addCase(updateChild.fulfilled, (state, action: PayloadAction<Child>) => {
-        const index = state.data.findIndex((child) => child.id === action.payload.id);
+        const index = state.data.findIndex(
+          (child) => child.id === action.payload.id
+        );
         if (index !== -1) {
           state.data[index] = action.payload;
         }

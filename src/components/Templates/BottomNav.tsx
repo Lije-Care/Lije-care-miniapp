@@ -1,20 +1,40 @@
-import { CartIcon, ChatIcon, HomeIcon, PersonIcon } from "@100mslive/react-icons";
-import { TabsList } from "@telegram-apps/telegram-ui"
+import {
+  CartIcon,
+  ChatIcon,
+  HomeIcon,
+  PersonIcon,
+} from "@100mslive/react-icons";
+import { FaChildren } from "react-icons/fa6";
+import { TabsList } from "@telegram-apps/telegram-ui";
 import { useState } from "react";
-import { IoTimeOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-
 
 const BottomNav = () => {
   const navigate = useNavigate();
   const [selected, setSelected] = useState("/");
 
   const tabs = [
-    { label: <HomeIcon />, path: "/" },
-    { label: <IoTimeOutline />, path: "/mealplansummary" },
-    { label: <ChatIcon />, path: "/consultat" },
-    { label: <CartIcon />, path: "/ecommerce" },
-    { label: <PersonIcon />, path: "/profile" },
+    {
+      label: <HomeIcon style={{ width: "28px", height: "28px" }} />,
+      path: "/",
+    },
+
+    {
+      label: <ChatIcon style={{ width: "28px", height: "28px" }} />,
+      path: "/consultat",
+    },
+    {
+      label: <FaChildren style={{ width: "28px", height: "28px" }} />,
+      path: "/children",
+    },
+    {
+      label: <CartIcon style={{ width: "28px", height: "28px" }} />,
+      path: "/ecommerce",
+    },
+    {
+      label: <PersonIcon style={{ width: "28px", height: "28px" }} />,
+      path: "/profile",
+    },
   ];
 
   return (
@@ -37,8 +57,15 @@ const BottomNav = () => {
             navigate(path);
           }}
         >
-          <div style={{width: '100%', display: 'flex', justifyContent: 'center'}}>
-          {label}
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              fontWeight: 800, // Increased font weight
+            }}
+          >
+            {label}
           </div>
         </TabsList.Item>
       ))}

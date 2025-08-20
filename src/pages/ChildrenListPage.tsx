@@ -33,7 +33,9 @@ const ChildrenListPage: React.FC = () => {
   const { data, loading, error } = useSelector(
     (state: RootState) => state.children
   );
+
   const telegramUser = JSON.parse(localStorage.getItem("user") || "{}");
+  console.log({ telegramUser });
 
   useEffect(() => {
     if (!telegramUser?.id) return;

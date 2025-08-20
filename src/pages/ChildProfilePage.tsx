@@ -253,6 +253,9 @@ const ChildProfilePage: React.FC = () => {
             {isEditing ? t("Cancel") : t("Edit")}
           </Button>
         </div>
+        <h2 className=" ml-6 text-gray-300 font-semibold text-xl">
+          Anthropometric Assessment
+        </h2>
 
         {isEditing && (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mb-6">
@@ -325,7 +328,7 @@ const ChildProfilePage: React.FC = () => {
             <GrowthTracker childProfile={child} />
             <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl mt-4 p-5 space-y-2 mb-5">
               <h3 className="text-lg font-semibold text-center text-gray-300 mb-2">
-                👶 Child Profile
+                👶 General Profile
               </h3>
               <div className="text-sm text-gray-400 space-y-1">
                 {child?.name && (
