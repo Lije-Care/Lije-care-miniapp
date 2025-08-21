@@ -15,24 +15,24 @@ const BottomNav = () => {
 
   const tabs = [
     {
-      label: <HomeIcon style={{ width: "28px", height: "28px" }} />,
+      label: <HomeIcon style={{ width: "28px", height: "24px" }} />,
       path: "/",
     },
 
     {
-      label: <ChatIcon style={{ width: "28px", height: "28px" }} />,
+      label: <ChatIcon style={{ width: "28px", height: "24px" }} />,
       path: "/consultat",
     },
     {
-      label: <FaChildren style={{ width: "28px", height: "28px" }} />,
+      label: <FaChildren style={{ width: "28px", height: "24px" }} />,
       path: "/children",
     },
     {
-      label: <CartIcon style={{ width: "28px", height: "28px" }} />,
+      label: <CartIcon style={{ width: "28px", height: "24px" }} />,
       path: "/ecommerce",
     },
     {
-      label: <PersonIcon style={{ width: "28px", height: "28px" }} />,
+      label: <PersonIcon style={{ width: "28px", height: "24px" }} />,
       path: "/profile",
     },
   ];
