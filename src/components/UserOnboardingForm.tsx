@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import api from "@/api/axios";
 import { useNavigate } from "react-router-dom";
 import { Page } from "./Page";
+import { Text } from "@telegram-apps/telegram-ui";
 
 // ✅ Translations dictionary
 const translations: Record<string, { en: string; am: string }> = {
@@ -14,6 +15,7 @@ const translations: Record<string, { en: string; am: string }> = {
   passwordPlaceholder: { en: "At least 6 characters", am: "ቢያንስ 6 አሃዝ ያስገቡ" },
   signup: { en: "Sign Up", am: "ተመዝገብ" },
   signingUp: { en: "Signing up...", am: "በመመዝገብ ላይ..." },
+  signin: { en: "Sign In", am: "ግባ" },
 };
 
 const UserOnboardingForm = () => {
@@ -188,6 +190,20 @@ const UserOnboardingForm = () => {
           >
             {loading ? t("signingUp") : t("signup")}
           </button>
+          <div className="flex justify-end">
+            <Text
+              onClick={() => navigate("/signin")}
+              className="forgot-password text-3xl font-bold"
+              style={{
+                marginTop: "10px",
+                cursor: "pointer",
+                padding: 6,
+                fontSize: 20,
+              }}
+            >
+              {t("signin")}
+            </Text>
+          </div>
         </form>
       </div>
       <div
