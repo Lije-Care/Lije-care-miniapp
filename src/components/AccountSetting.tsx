@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button, Modal } from "@telegram-apps/telegram-ui";
 import toast from "react-hot-toast";
 import api from "@/api/axios";
-import axios from "axios";
+
 import { useTranslation } from "react-i18next";
 
 declare global {
@@ -11,8 +11,6 @@ declare global {
   }
 }
 import { useNavigate } from "react-router-dom";
-
-const BASE_URL = "https://lije-care-api-dev.zikollab.com/api/v1";
 
 const AccountSettings = () => {
   const { t } = useTranslation();
@@ -116,7 +114,7 @@ const AccountSettings = () => {
     }
 
     try {
-      const res = await axios.post(`${BASE_URL}/auth/reset-password`, {
+      const res = await api.post(`auth/reset-password`, {
         token: resetToken,
         otp,
         password,
