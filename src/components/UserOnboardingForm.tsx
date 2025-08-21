@@ -190,6 +190,13 @@ const UserOnboardingForm = () => {
           </button>
         </form>
       </div>
+      <div
+        className="p-4 mt-2 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400"
+        role="alert"
+      >
+        <span className="font-semibold">Remember!,</span> When registering,
+        remember to click "/start" in the Bot.
+      </div>
     </Page>
   );
 };
