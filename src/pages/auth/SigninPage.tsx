@@ -133,28 +133,28 @@ export const SignInPage = () => {
     <Page back={true}>
       <Section
         style={{
-          padding: "20px",
+          padding: "10px",
           borderRadius: "20px",
           height: "100vh",
           margin: "auto",
         }}
       >
-        <div style={{ padding: "20px", borderRadius: "20px" }}>
+        <div style={{ padding: "15px", borderRadius: "20px" }}>
           <Headline className="flex justify-center items-center font-bold text-xl my-5 mx-2.5 py-4">
             Sign In
           </Headline>
 
           <div
-            className="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400"
+            className="p-2 mb-4 mt-3 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400"
             role="alert"
           >
-            <span className="font-medium">If you delete account!</span> please
-            move to bot and click "/start", then Signup
+            <span className="font-medium">If you delete your account, </span>
+            please go to the Bot, click /start, and then sign up again.
           </div>
 
           <Section>
             {/* Phone */}
-            <div>
+            <div className="mt-10">
               <label htmlFor="phone" className="block font-medium mb-1">
                 Phone Number
               </label>
@@ -169,7 +169,7 @@ export const SignInPage = () => {
               />
             </div>
 
-            <div>
+            <div className=" mt-4">
               <label htmlFor="password" className="block font-medium mb-1">
                 Password
               </label>
