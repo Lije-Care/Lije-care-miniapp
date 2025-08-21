@@ -11,6 +11,7 @@ declare global {
   }
 }
 import { useNavigate } from "react-router-dom";
+// remove url from here
 
 const AccountSettings = () => {
   const { t } = useTranslation();
