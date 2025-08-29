@@ -43,6 +43,8 @@ export const IndexPage: FC = () => {
     avatar: parentAvatar,
   };
   const favoriteChildId = localStorage.getItem("favorite_child_id");
+
+  // select favorite
   const child =
     children?.find((c) => c.id === favoriteChildId) ?? children?.[0];
 
@@ -157,9 +159,9 @@ export const IndexPage: FC = () => {
           </div>
         )}
 
-        <div className="text-center font-bold text-gray-600">
+        {/* <div className="text-center font-bold text-gray-600">
           {t("Anthropometric")}
-        </div>
+        </div> */}
 
         <Section className="mt-4">
           <GrowthTrackerHome childProfile={child} />

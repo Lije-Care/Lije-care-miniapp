@@ -6,6 +6,7 @@ import { RootState } from "@/redux/store";
 import { Meal } from "@/types/meal";
 import fallback from "@/assets/meal.png";
 import { useTranslation } from "react-i18next";
+import { Eye } from "lucide-react";
 
 // not correctly identify the correct meal, meal id
 const MealLibraryComponent = () => {
@@ -198,13 +199,24 @@ const MealLibraryComponent = () => {
                   target.src = `${fallback}`;
                 }}
               />
-              <div className="flex-1">
+
+              <div className="flex-1 justify-between">
                 <h2 className="text-lg font-bold text-emerald-300">
                   {meal.name}
                 </h2>
+
                 <p className="text-xs text-gray-400 italic">
-                  Age: {meal.ageGroup}+m · {meal.mealType} · {meal.mealTime}
+                  Age: {meal.ageGroup} m+ · {meal.mealType} · {meal.mealTime}
                 </p>
+                <div className=" flex mt-2">
+                  <div className="text-green-600 ml-2 text-sm  font-serif">
+                    <Eye />
+                  </div>
+
+                  <span className=" text-green-600 ml-1 text-sm  underline font-serif">
+                    View
+                  </span>
+                </div>
               </div>
             </div>
 

@@ -16,11 +16,11 @@
   "cancel": "Cancel",
   "enter": "Enter",
   "n_a": "N/A",
-    "parent_name": "Parent Name",
-    "mobile_no": "Mobile No",
-    "english": "English",
-    "amharic": "Amharic",
-    "Account Settings": "⚙️ Account Settings",
+  "parent_name": "Parent Name",
+  "mobile_no": "Mobile No",
+  "english": "English",
+  "amharic": "Amharic",
+  "Account Settings": "⚙️ Account Settings",
   "Forgot Password (OTP)": "📩 Forgot Password (OTP)",
   "Reset Password": "🔐 Reset Password",
   "Delete Account": "🗑️ Delete Account",
@@ -242,5 +242,4 @@
   "No articles available": "No articles available",
   "Read More": "Read More",
   "No description available": "No description available"
-  
 }

@@ -156,7 +156,7 @@ const ChildrenListPage: React.FC = () => {
                   <span className="inline-flex items-center ml-2  text-sm  text-gray-300">
                     Gender: {child.gender === "Male" ? t("Boy") : t("Girl")},
                   </span>
-                  <span className=" text-green-600 ml-2 underline">
+                  <span className=" text-green-600 ml-2 text-sm underline">
                     View detail
                   </span>
                 </div>
