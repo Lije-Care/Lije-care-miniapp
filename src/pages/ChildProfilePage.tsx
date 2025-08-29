@@ -60,7 +60,6 @@ const ChildProfilePage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
 
-  console.log("Child Profile:", result);
   const { register, handleSubmit, reset, watch } = useForm<ChildFormData>({
     defaultValues: {
       name: "",
@@ -75,7 +74,7 @@ const ChildProfilePage: React.FC = () => {
     },
   });
 
-  const watchFields = watch();
+  // const watchFields = watch();
 
   const formatDateToYYYYMMDD = (dateString: string) => {
     if (!dateString) return "";
@@ -96,24 +95,45 @@ const ChildProfilePage: React.FC = () => {
       setLoadingPage(false);
     }
   }, [child, reset]);
+  const weight = watch("weight");
+  const height = watch("height");
+  const gender = watch("gender");
+  const date_of_birth = watch("date_of_birth");
 
   useEffect(() => {
-    const { weight, height, gender, date_of_birth } = watchFields;
-    const months = date_of_birth
-      ? Math.floor(
-          (new Date().getTime() - new Date(date_of_birth).getTime()) /
-            (1000 * 60 * 60 * 24 * 30)
-        )
-      : 0;
+    // Calculate exact age in months
+    const calculateAgeInMonths = (birthDate: string): number => {
+      if (!birthDate) return 0;
+      const today = new Date();
+      const birth = new Date(birthDate);
 
-    if (weight && height && gender && months) {
+      let years = today.getFullYear() - birth.getFullYear();
+      let months = today.getMonth() - birth.getMonth();
+
+      // Adjust if current day is before birth day in the month
+      if (today.getDate() < birth.getDate()) {
+        months -= 1;
+      }
+
+      // Adjust if negative months
+      if (months < 0) {
+        years -= 1;
+        months += 12;
+      }
+
+      // Total months
+      return years * 12 + months;
+    };
+
+    const months = calculateAgeInMonths(date_of_birth);
+
+    if (weight && height && gender && months >= 0) {
       const weightNum = Number(weight);
-      const ageNum = months;
       const heightNum = Number(height);
       const bmi = weightNum / (heightNum / 100) ** 2;
       const roundedBMI = parseFloat(bmi.toFixed(2));
 
-      if (ageNum > 36) {
+      if (months > 36) {
         setResult({
           bmi: "NA",
           calories: NaN,
@@ -129,7 +149,7 @@ const ChildProfilePage: React.FC = () => {
         return;
       }
 
-      let caloriePerKg = ageNum <= 6 ? 108 : ageNum <= 12 ? 98 : 102;
+      let caloriePerKg = months <= 6 ? 108 : months <= 12 ? 98 : 102;
       let calories = weightNum * caloriePerKg;
 
       enum Activity {
@@ -146,7 +166,15 @@ const ChildProfilePage: React.FC = () => {
       }
 
       const activity: Activity = Activity.Moderate;
-      const condition: Condition = Condition.Normal;
+      let status = "Normal";
+      if (bmi < 14) status = "Underweight";
+      else if (bmi > 17) status = "Overweight";
+      const condition: Condition =
+        status === "Underweight"
+          ? Condition.Underweight
+          : status === "Overweight"
+          ? Condition.Overweight
+          : Condition.Normal;
 
       const ActivityFactors: Record<Activity, number> = {
         [Activity.Active]: 1.26,
@@ -172,28 +200,18 @@ const ChildProfilePage: React.FC = () => {
       const fat = parseFloat(((calories * 0.35) / 9).toFixed(2));
       const carbs = parseFloat(((calories * 0.53) / 4).toFixed(2));
 
-      const calcium = ageNum <= 6 ? 200 : ageNum <= 12 ? 260 : 700;
-      const iron = ageNum <= 6 ? 0.27 : ageNum <= 12 ? 11 : 7;
-      const vitaminA = ageNum <= 6 ? 400 : ageNum <= 12 ? 500 : 300;
+      const calcium = months <= 6 ? 200 : months <= 12 ? 260 : 700;
+      const iron = months <= 6 ? 0.27 : months <= 12 ? 11 : 7;
+      const vitaminA = months <= 6 ? 400 : months <= 12 ? 500 : 300;
 
       let baseWater = 1600;
-      if (ageNum <= 6) baseWater = 700;
-      else if (ageNum <= 12) baseWater = 900;
+      if (months <= 6) baseWater = 700;
+      else if (months <= 12) baseWater = 900;
       else baseWater = 1300;
 
-      // const waterMultiplier =
-      // condition === Condition.CatchUpGrowth
-      //   ? 1.2
-      //   : condition === Condition.Underweight
-      //   ? 1.15
-      //   : 1;
       const waterMultiplier = WaterMultipliers[condition];
 
       const water = parseFloat((baseWater * waterMultiplier).toFixed(2));
-
-      let status = "Normal";
-      if (bmi < 14) status = "Underweight";
-      else if (bmi > 17) status = "Overweight";
 
       setResult({
         bmi: roundedBMI.toString(),
@@ -210,7 +228,13 @@ const ChildProfilePage: React.FC = () => {
     } else {
       setResult(null);
     }
-  }, [watchFields]);
+  }, [weight, height, gender, date_of_birth]);
+
+  useEffect(() => {
+    if (result) {
+      console.log("Child Profile:", result);
+    }
+  }, [result]);
 
   const onSubmit = async (data: any) => {
     setSubmitting(true);
@@ -295,25 +319,23 @@ const ChildProfilePage: React.FC = () => {
               </div>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            {/* <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <Text>{t("Health Details")}</Text>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <Text>{t("Dietary Restrictions")}:</Text>
-                  <Text>{watchFields.dietary_restrictions || "-"}</Text>
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <label>{t("Dietary Restrictions")}</label>
+                  <Textarea {...register("dietary_restrictions")} rows={2} />
                 </div>
-                <Divider />
-                <div className="flex justify-between">
-                  <Text>{t("Allergies")}:</Text>
-                  <Text>{watchFields.allergies || "-"}</Text>
+                <div>
+                  <label>{t("Allergies")}</label>
+                  <Textarea {...register("allergies")} rows={2} />
                 </div>
-                <Divider />
-                <div className="flex justify-between">
-                  <Text>{t("Medications")}:</Text>
-                  <Text>{watchFields.medications || "-"}</Text>
+                <div>
+                  <label>{t("Medications")}</label>
+                  <Textarea {...register("medications")} rows={2} />
                 </div>
               </div>
-            </motion.div>
+            </motion.div> */}
 
             <div className="flex justify-end mt-4">
               <Button type="submit" stretched disabled={submitting}>
@@ -351,27 +373,107 @@ const ChildProfilePage: React.FC = () => {
                     </span>
                   </div>
                 )}
-
                 {child?.height && (
                   <div className="flex justify-between">
-                    <span className="font-semibold">Height:</span>
+                    <span className="font-semibold">Height (cm):</span>
                     <span>{child.height}</span>
                   </div>
                 )}
                 {child?.weight && (
                   <div className="flex justify-between">
-                    <span className="font-semibold">weight:</span>
+                    <span className="font-semibold">Weight (kg):</span>
                     <span>{child.weight}</span>
                   </div>
                 )}
                 {child?.muac && (
                   <div className="flex justify-between">
-                    <span className="font-semibold">MUAC:</span>
+                    <span className="font-semibold">MUAC (cm):</span>
                     <span>{child.muac}</span>
+                  </div>
+                )}
+                <Divider />
+                {child?.dietary_restrictions && (
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Dietary Restrictions:</span>
+                    <span>{child.dietary_restrictions || "-"}</span>
+                  </div>
+                )}
+                {child?.allergies && (
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Allergies:</span>
+                    <span>{child.allergies || "-"}</span>
+                  </div>
+                )}
+                {child?.medications && (
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Medications:</span>
+                    <span>{child.medications || "-"}</span>
                   </div>
                 )}
               </div>
             </div>
+            {result && (
+              <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl mt-4 p-5 space-y-2 mb-5">
+                <h3 className="text-lg font-semibold text-center text-gray-300 mb-2">
+                  📊 Daily nutrient requirements
+                </h3>
+                {result.status === "Unsupported age" ? (
+                  <Text className="text-red-400">
+                    Age over 36 months is not supported for calculations.
+                  </Text>
+                ) : (
+                  <div className="text-sm text-gray-400 space-y-1">
+                    {/*                     
+                    <div className="flex justify-between">
+                      <span className="font-semibold">Status:</span>
+                      <span
+                        className={
+                          result.status === "Normal"
+                            ? "text-green-400"
+                            : result.status === "Underweight"
+                            ? "text-yellow-400"
+                            : "text-red-400"
+                        }
+                      >
+                        {result.status}
+                      </span>
+                    </div> */}
+                    <div className="flex justify-between">
+                      <span className="font-semibold"> Calories:</span>
+                      <span>{result.calories} kcal</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-semibold">Protein:</span>
+                      <span>{result.protein} g</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-semibold">Fat:</span>
+                      <span>{result.fat} g</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-semibold">Carbs:</span>
+                      <span>{result.carbs} g</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-semibold">Iron:</span>
+                      <span>{result.iron} mg</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-semibold">Calcium:</span>
+                      <span>{result.calcium} mg</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-semibold">Vitamin A:</span>
+                      <span>{result.vitaminA} mcg</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-semibold">Water Intake:</span>
+                      <span>{result.water} ml</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
