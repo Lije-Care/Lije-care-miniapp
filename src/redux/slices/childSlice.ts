@@ -12,6 +12,7 @@ export type Child = {
   parentId: string; // ✅ updated from parent_id
   name: string;
   date_of_birth: string;
+  activity_level: "Active" | "Moderate" | "Sedentary";
   gender: string;
   weight: number;
   height: number;

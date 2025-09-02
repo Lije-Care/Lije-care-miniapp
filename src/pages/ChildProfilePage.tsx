@@ -30,6 +30,7 @@ type ChildFormData = {
   muac: number;
   dietary_restrictions: string;
   allergies: string;
+  activity_level: "Active" | "Moderate" | "Sedentary";
   medications: string;
 };
 
@@ -42,9 +43,10 @@ type Result = {
   iron: number;
   calcium: number;
   vitaminA: number;
+  water: number;
+  zinc: number;
   status: string;
   error?: string;
-  water?: number;
 };
 
 const ChildProfilePage: React.FC = () => {
@@ -54,6 +56,7 @@ const ChildProfilePage: React.FC = () => {
   const child = useSelector((state: RootState) =>
     state.children?.data?.find((c: Child) => c.id === childId)
   );
+  console.log(child?.activity_level);
 
   const [loadingPage, setLoadingPage] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -74,8 +77,6 @@ const ChildProfilePage: React.FC = () => {
     },
   });
 
-  // const watchFields = watch();
-
   const formatDateToYYYYMMDD = (dateString: string) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -95,13 +96,13 @@ const ChildProfilePage: React.FC = () => {
       setLoadingPage(false);
     }
   }, [child, reset]);
+
   const weight = watch("weight");
   const height = watch("height");
   const gender = watch("gender");
   const date_of_birth = watch("date_of_birth");
 
   useEffect(() => {
-    // Calculate exact age in months
     const calculateAgeInMonths = (birthDate: string): number => {
       if (!birthDate) return 0;
       const today = new Date();
@@ -110,18 +111,15 @@ const ChildProfilePage: React.FC = () => {
       let years = today.getFullYear() - birth.getFullYear();
       let months = today.getMonth() - birth.getMonth();
 
-      // Adjust if current day is before birth day in the month
       if (today.getDate() < birth.getDate()) {
         months -= 1;
       }
 
-      // Adjust if negative months
       if (months < 0) {
         years -= 1;
         months += 12;
       }
 
-      // Total months
       return years * 12 + months;
     };
 
@@ -133,85 +131,86 @@ const ChildProfilePage: React.FC = () => {
       const bmi = weightNum / (heightNum / 100) ** 2;
       const roundedBMI = parseFloat(bmi.toFixed(2));
 
-      if (months > 36) {
-        setResult({
-          bmi: "NA",
-          calories: NaN,
-          protein: NaN,
-          fat: NaN,
-          carbs: NaN,
-          iron: NaN,
-          calcium: NaN,
-          vitaminA: NaN,
-          status: "Unsupported age",
-          water: NaN,
-        });
-        return;
-      }
-
-      let caloriePerKg = months <= 6 ? 108 : months <= 12 ? 98 : 102;
-      let calories = weightNum * caloriePerKg;
-
-      enum Activity {
-        Active = "Active",
-        Moderate = "Moderate",
-        Sedentary = "Sedentary",
-      }
-
-      enum Condition {
-        CatchUpGrowth = "Catch-up Growth",
-        Underweight = "Underweight",
-        Overweight = "Overweight",
-        Normal = "Normal",
-      }
-
-      const activity: Activity = Activity.Moderate;
       let status = "Normal";
       if (bmi < 14) status = "Underweight";
       else if (bmi > 17) status = "Overweight";
-      const condition: Condition =
-        status === "Underweight"
-          ? Condition.Underweight
-          : status === "Overweight"
-          ? Condition.Overweight
-          : Condition.Normal;
 
-      const ActivityFactors: Record<Activity, number> = {
-        [Activity.Active]: 1.26,
-        [Activity.Moderate]: 1.13,
-        [Activity.Sedentary]: 1,
-      };
+      // Calculate calories based on age
+      let value1: number;
+      if (months <= 6) {
+        value1 = weightNum * 108;
+      } else if (months <= 36) {
+        value1 = weightNum * 102;
+      } else {
+        value1 = weightNum * 90;
+      }
 
-      const HealthFactors: Record<Condition, number> = {
-        [Condition.CatchUpGrowth]: 1.2,
-        [Condition.Underweight]: 1.15,
-        [Condition.Overweight]: 0.9,
-        [Condition.Normal]: 1,
-      };
-      const WaterMultipliers: Record<Condition, number> = {
-        [Condition.CatchUpGrowth]: 1.2,
-        [Condition.Underweight]: 1.15,
-        [Condition.Overweight]: 1,
-        [Condition.Normal]: 1,
-      };
-      calories *= ActivityFactors[activity] * HealthFactors[condition];
+      // Activity level multiplier
+      const activityLevel = "moderate"; // Default value, can be made dynamic
+      let value2: number;
+      if (activityLevel === "moderate") {
+        value2 = 1.13;
+      } else if (activityLevel === "active") {
+        value2 = 1.26;
+      } else {
+        value2 = 1;
+      }
 
+      // Health condition multiplier
+      let value3: number;
+      if (status === "Overweight") {
+        value3 = 0.9;
+      } else if (status === "Underweight") {
+        value3 = 1.15;
+      } else {
+        value3 = 1;
+      }
+
+      // Calculate total calories
+      const calories = value1 * value2 * value3;
+
+      // Calculate macronutrients
       const protein = parseFloat(((calories * 0.12) / 4).toFixed(2));
       const fat = parseFloat(((calories * 0.35) / 9).toFixed(2));
-      const carbs = parseFloat(((calories * 0.53) / 4).toFixed(2));
+      const carbs = parseFloat(((calories * 0.5) / 4).toFixed(2));
 
-      const calcium = months <= 6 ? 200 : months <= 12 ? 260 : 700;
-      const iron = months <= 6 ? 0.27 : months <= 12 ? 11 : 7;
-      const vitaminA = months <= 6 ? 400 : months <= 12 ? 500 : 300;
+      // Calculate micronutrients
+      let iron: number;
+      if (months <= 6) {
+        iron = 0.27;
+      } else if (months <= 12) {
+        iron = 11;
+      } else if (months <= 36) {
+        iron = 7;
+      } else {
+        iron = 10;
+      }
 
-      let baseWater = 1600;
-      if (months <= 6) baseWater = 700;
-      else if (months <= 12) baseWater = 900;
-      else baseWater = 1300;
-
-      const waterMultiplier = WaterMultipliers[condition];
-
-      const water = parseFloat((baseWater * waterMultiplier).toFixed(2));
+      let calcium: number;
+      let vitaminA: number;
+      let water: number;
+      let zinc: number;
+      if (months <= 6) {
+        calcium = 200;
+        vitaminA = 400;
+        water = 700;
+        zinc = 2;
+      } else if (months <= 12) {
+        calcium = 260;
+        vitaminA = 500;
+        water = 900;
+        zinc = 3;
+      } else if (months <= 36) {
+        calcium = 700;
+        vitaminA = 300;
+        water = 1300;
+        zinc = 3;
+      } else {
+        calcium = 1000;
+        vitaminA = 400;
+        water = 1600;
+        zinc = 5;
+      }
 
       setResult({
         bmi: roundedBMI.toString(),
@@ -219,11 +218,12 @@ const ChildProfilePage: React.FC = () => {
         protein,
         fat,
         carbs,
-        iron: parseFloat(iron.toFixed(1)),
+        iron: parseFloat(iron.toFixed(2)),
         calcium,
         vitaminA,
-        status,
         water,
+        zinc,
+        status,
       });
     } else {
       setResult(null);
@@ -319,24 +319,6 @@ const ChildProfilePage: React.FC = () => {
               </div>
             </motion.div>
 
-            {/* <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <Text>{t("Health Details")}</Text>
-              <div className="grid grid-cols-1 gap-4">
-                <div>
-                  <label>{t("Dietary Restrictions")}</label>
-                  <Textarea {...register("dietary_restrictions")} rows={2} />
-                </div>
-                <div>
-                  <label>{t("Allergies")}</label>
-                  <Textarea {...register("allergies")} rows={2} />
-                </div>
-                <div>
-                  <label>{t("Medications")}</label>
-                  <Textarea {...register("medications")} rows={2} />
-                </div>
-              </div>
-            </motion.div> */}
-
             <div className="flex justify-end mt-4">
               <Button type="submit" stretched disabled={submitting}>
                 {submitting ? <Spinner size="s" /> : t("Save Changes")}
@@ -391,6 +373,7 @@ const ChildProfilePage: React.FC = () => {
                     <span>{child.muac}</span>
                   </div>
                 )}
+
                 <Divider />
                 {child?.dietary_restrictions && (
                   <div className="flex justify-between">
@@ -415,63 +398,46 @@ const ChildProfilePage: React.FC = () => {
             {result && (
               <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl mt-4 p-5 space-y-2 mb-5">
                 <h3 className="text-lg font-semibold text-center text-gray-300 mb-2">
-                  📊 Daily nutrient requirements
+                  📊 Daily Nutrient Requirements
                 </h3>
-                {result.status === "Unsupported age" ? (
-                  <Text className="text-red-400">
-                    Age over 36 months is not supported for calculations.
-                  </Text>
-                ) : (
-                  <div className="text-sm text-gray-400 space-y-1">
-                    {/*                     
-                    <div className="flex justify-between">
-                      <span className="font-semibold">Status:</span>
-                      <span
-                        className={
-                          result.status === "Normal"
-                            ? "text-green-400"
-                            : result.status === "Underweight"
-                            ? "text-yellow-400"
-                            : "text-red-400"
-                        }
-                      >
-                        {result.status}
-                      </span>
-                    </div> */}
-                    <div className="flex justify-between">
-                      <span className="font-semibold"> Calories:</span>
-                      <span>{result.calories} kcal</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-semibold">Protein:</span>
-                      <span>{result.protein} g</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-semibold">Fat:</span>
-                      <span>{result.fat} g</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-semibold">Carbs:</span>
-                      <span>{result.carbs} g</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-semibold">Iron:</span>
-                      <span>{result.iron} mg</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-semibold">Calcium:</span>
-                      <span>{result.calcium} mg</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-semibold">Vitamin A:</span>
-                      <span>{result.vitaminA} mcg</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="font-semibold">Water Intake:</span>
-                      <span>{result.water} ml</span>
-                    </div>
+                <div className="text-sm text-gray-400 space-y-1">
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Calories:</span>
+                    <span>{result.calories} kcal/day</span>
                   </div>
-                )}
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Protein:</span>
+                    <span>{result.protein} g/day</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Fat:</span>
+                    <span>{result.fat} g/day</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Carbohydrates:</span>
+                    <span>{result.carbs} g/day</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Iron:</span>
+                    <span>{result.iron} mg/day</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Calcium:</span>
+                    <span>{result.calcium} mg/day</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Vitamin A:</span>
+                    <span>{result.vitaminA} mcg/day</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Water:</span>
+                    <span>{result.water} ml/day</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Zinc:</span>
+                    <span>{result.zinc} mg/day</span>
+                  </div>
+                </div>
               </div>
             )}
           </div>

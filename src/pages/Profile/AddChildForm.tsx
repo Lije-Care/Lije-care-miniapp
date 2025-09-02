@@ -14,6 +14,7 @@ interface FormValues {
   name: string;
   date_of_birth: string;
   gender: "Male" | "Female";
+  activity_level: "Active" | "Moderate" | "Sedentary";
   weight: number | string;
   height: number | string;
   muac: number | string;
@@ -38,6 +39,7 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
       name: "",
       date_of_birth: "",
       gender: "Male",
+      activity_level: "Moderate",
       weight: "",
       height: "",
       muac: "",
@@ -94,6 +96,17 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
       options: [
         { value: "Male", label: t("Male") },
         { value: "Female", label: t("Female") },
+      ],
+    },
+    {
+      name: "activity_level",
+      label: t("Activity Level"),
+      type: "select",
+      required: true,
+      options: [
+        { value: "Active", label: t("Active") },
+        { value: "Moderate", label: t("Moderate") },
+        { value: "Sedentary", label: t("Sedentary") },
       ],
     },
     { name: "weight", label: t("Weight (kg)"), type: "number", required: true },
@@ -161,7 +174,7 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
                   id={field.name}
                   type={field.type}
                   placeholder={field.placeholder}
-                  max={field.max} // Apply max attribute for date input
+                  max={field.max}
                   className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full"
                 />
               )}
