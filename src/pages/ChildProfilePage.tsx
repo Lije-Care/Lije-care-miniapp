@@ -56,7 +56,7 @@ const ChildProfilePage: React.FC = () => {
   const child = useSelector((state: RootState) =>
     state.children?.data?.find((c: Child) => c.id === childId)
   );
-  console.log(child?.activity_level);
+  // console.log(child?.activity_level);
 
   const [loadingPage, setLoadingPage] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -146,11 +146,11 @@ const ChildProfilePage: React.FC = () => {
       }
 
       // Activity level multiplier
-      const activityLevel = "moderate"; // Default value, can be made dynamic
+      const activityLevel = child?.activity_level;
       let value2: number;
-      if (activityLevel === "moderate") {
+      if (activityLevel === "Moderate") {
         value2 = 1.13;
-      } else if (activityLevel === "active") {
+      } else if (activityLevel === "Active") {
         value2 = 1.26;
       } else {
         value2 = 1;
@@ -232,7 +232,7 @@ const ChildProfilePage: React.FC = () => {
 
   useEffect(() => {
     if (result) {
-      console.log("Child Profile:", result);
+      // console.log("Child Profile:", result);
     }
   }, [result]);
 
@@ -345,6 +345,12 @@ const ChildProfilePage: React.FC = () => {
                   <div className="flex justify-between">
                     <span className="font-semibold">Gender:</span>
                     <span>{child.gender}</span>
+                  </div>
+                )}
+                {child?.activity_level && (
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Active Level:</span>
+                    <span>{child.activity_level}</span>
                   </div>
                 )}
                 {child?.date_of_birth && (
