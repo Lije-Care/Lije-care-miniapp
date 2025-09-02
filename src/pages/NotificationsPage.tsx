@@ -12,15 +12,18 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllNotifications } from "@/redux/slices/notificationSlice";
 import { RootState, AppDispatch } from "@/redux/store";
- 
+
 const NotificationsPage: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   // Safe selector with optional chaining
   // Import RootState from your store definition
- 
-  const notificationsState = useSelector((state: RootState) => state.notificartions);
+
+  const notificationsState = useSelector(
+    (state: RootState) => state.notificartions
+  );
   const { data = [], loading, error } = notificationsState || {};
+  console.log({ data });
 
   useEffect(() => {
     dispatch(fetchAllNotifications());
@@ -42,7 +45,7 @@ const NotificationsPage: FC = () => {
   };
 
   return (
-    <Page back={true} >
+    <Page back={true}>
       <div className="px-4 py-6">
         {loading ? (
           <div className="flex justify-center items-center h-60">
@@ -70,7 +73,9 @@ const NotificationsPage: FC = () => {
                 key={notification.id}
                 className="bg-white rounded-xl shadow-sm p-4 flex items-start gap-4 border"
               >
-                <div className="flex-shrink-0">{renderIcon(notification.type)}</div>
+                <div className="flex-shrink-0">
+                  {renderIcon(notification.type)}
+                </div>
                 <div>
                   <h3 className="font-semibold text-gray-800 text-sm">
                     {notification.title}
