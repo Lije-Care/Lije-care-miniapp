@@ -271,8 +271,9 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
 
   return (
     <div className="max-w-3xl mx-auto font-sans text-white space-y-4 p-4">
-      <div className="text-center font-extrabold underline py-1 text-gray-300">
-        {child.name} {t("Anthropometric")}
+      <div className="text-center font-extrabold italic py-1 text-lime-600">
+        Child: <span className=" underline">{child.name}</span>{" "}
+        {t("Anthropometric")}
       </div>
       <div className="grid md:grid-cols-3 gap-4">
         {visibleIndicators.map(({ key, label, value, result }) => (
