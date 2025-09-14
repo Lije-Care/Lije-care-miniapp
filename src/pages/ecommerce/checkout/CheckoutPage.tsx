@@ -4,6 +4,8 @@ import { RootState } from "@/redux/store";
 import { clearCart } from "@/redux/slices/cartSlice";
 import api from "@/api/axios";
 import { useTranslation } from "react-i18next";
+// import axios from "axios";
+// import { ChapaInitializeResponse } from "@/types/chapa";
 
 interface CartItem {
   id: string;
@@ -27,8 +29,8 @@ const CheckoutPage = () => {
     customerEmail: "",
     customerPhone: "",
     city: "",
-    paymentMethod: "Chapa",
-    deliveryMethod: "DHL",
+    paymentMethod: "CASH",
+    deliveryMethod: "PICKUP",
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -40,14 +42,17 @@ const CheckoutPage = () => {
     0
   );
   const tax = subtotal * 0.15; // Example: 15% tax
-  const deliveryFee = formData.deliveryMethod === "DHL" ? 50 : 0;
-  const paymentFee = formData.paymentMethod === "Payment on delivery" ? 5 : 0;
+  const deliveryFee = formData.deliveryMethod === "DELIVERY" ? 50 : 0;
+  const paymentFee = formData.paymentMethod === "CARD" ? 5 : 0;
   const total = subtotal + tax + deliveryFee + paymentFee;
 
   // Handle form input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
+    setError(""); // Clear error on input change
+    const validationError = validateForm();
+    if (validationError) setError(validationError);
   };
 
   // Handle radio button changes
@@ -73,66 +78,76 @@ const CheckoutPage = () => {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     setError("");
     setSuccess("");
-    setIsSubmitting(true);
 
-    const validationError = validateForm();
-    if (validationError) {
-      setError(validationError);
-      setIsSubmitting(false);
-      return;
-    }
-
+    // Validate cart & form
     if (cartItems.length === 0) {
-      setError(t("Your cart is empty."));
+      setError("Your cart is empty.");
       setIsSubmitting(false);
       return;
     }
 
     try {
-      // Prepare order data
       const orderData = {
         customerName: formData.customerName,
         customerEmail: formData.customerEmail,
         customerPhone: formData.customerPhone,
         city: formData.city,
-        paymentMethod: formData.paymentMethod,
         deliveryMethod: formData.deliveryMethod,
-        subtotal,
-        tax,
-        total,
+        paymentMethod: formData.paymentMethod,
         items: cartItems.map((item) => ({
           productId: item.id,
           quantity: item.quantity,
           priceAtPurchase: item.price,
         })),
+        amount: total,
       };
 
-      console.log({ orderData });
-      const response = await api.post("/ecommerce/order", orderData, {
-        headers: { "Content-Type": "application/json" },
-      });
+      if (formData.paymentMethod === "CARD") {
+        // 1️⃣ Initialize Chapa
+        const response = await api.post("/chapa/initialize", orderData);
 
-      // Clear cart on success
-      dispatch(clearCart());
-      setSuccess(
-        "Order placed successfully! Order ID: " + response.data.orderId
-      );
-      setFormData({
-        customerName: "",
-        customerEmail: "",
-        customerPhone: "",
-        city: "",
-        paymentMethod: "Chapa",
-        deliveryMethod: "DHL",
-      });
-    } catch (err: any) {
-      setError(err?.response?.data?.message || t("Failed to place order."));
+        if (
+          response.data.status === "success" ||
+          response.data.status === "created"
+        ) {
+          dispatch(clearCart());
+          window.location.href = response.data.data.checkout_url;
+        } else {
+          setError("Payment initialization failed");
+        }
+      } else {
+        // 2️⃣ Cash payment: directly create order
+        const cashResponse = await api.post("/product/order", {
+          ...orderData,
+          paymentStatus: "pending",
+        });
+
+        if (cashResponse.data.id) {
+          dispatch(clearCart());
+          setSuccess("Order placed successfully!");
+        } else {
+          setError("Failed to save order");
+        }
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to place order");
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  // Calculate dynamic pickup date
+  const pickupDate = new Date();
+  pickupDate.setDate(pickupDate.getDate() + 3);
+  const formattedPickupDate = pickupDate.toLocaleDateString("en-US", {
+    weekday: "long",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 
   return (
     <div>
@@ -234,8 +249,8 @@ const CheckoutPage = () => {
                           aria-describedby="credit-card-text"
                           type="radio"
                           name="paymentMethod"
-                          value="Chapa"
-                          checked={formData.paymentMethod === "Chapa"}
+                          value="CARD"
+                          checked={formData.paymentMethod === "CARD"}
                           onChange={handleRadioChange}
                           className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 dark:border-gray-600 dark:bg-white dark:ring-offset-gray-200 dark:focus:ring-primary-600"
                         />
@@ -251,7 +266,7 @@ const CheckoutPage = () => {
                           id="credit-card-text"
                           className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-500"
                         >
-                          {t("Pay with your Chapa account")}
+                          {t("Pay with your Chapa account (+ETB 5 fee)")}
                         </p>
                       </div>
                     </div>
@@ -264,10 +279,8 @@ const CheckoutPage = () => {
                           aria-describedby="pay-on-delivery-text"
                           type="radio"
                           name="paymentMethod"
-                          value="Payment on delivery"
-                          checked={
-                            formData.paymentMethod === "Payment on delivery"
-                          }
+                          value="CASH"
+                          checked={formData.paymentMethod === "CASH"}
                           onChange={handleRadioChange}
                           className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 dark:border-gray-600 dark:bg-white dark:ring-offset-gray-200 dark:focus:ring-primary-600"
                         />
@@ -277,13 +290,13 @@ const CheckoutPage = () => {
                           htmlFor="pay-on-delivery"
                           className="font-medium leading-none text-gray-900 dark:text-gray-900"
                         >
-                          {t("Payment on delivery")}
+                          {t("CASH")}
                         </label>
                         <p
                           id="pay-on-delivery-text"
                           className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-500"
                         >
-                          {t("+ETB 5 payment processing fee")}
+                          {t("No payment processing fee")}
                         </p>
                       </div>
                     </div>
@@ -299,25 +312,25 @@ const CheckoutPage = () => {
                     <div className="flex items-start">
                       <div className="flex h-5 items-center">
                         <input
-                          id="dhl"
-                          aria-describedby="dhl-text"
+                          id="DELIVERY"
+                          aria-describedby="delivery-text"
                           type="radio"
                           name="deliveryMethod"
-                          value="DHL"
-                          checked={formData.deliveryMethod === "DHL"}
+                          value="DELIVERY"
+                          checked={formData.deliveryMethod === "DELIVERY"}
                           onChange={handleRadioChange}
                           className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 dark:border-gray-600 dark:bg-white dark:ring-offset-gray-200 dark:focus:ring-primary-600"
                         />
                       </div>
                       <div className="ms-4 text-sm">
                         <label
-                          htmlFor="dhl"
+                          htmlFor="DELIVERY"
                           className="font-medium leading-none text-gray-900 dark:text-gray-900"
                         >
-                          {t("ETB 50 - DHL Fast Delivery")}
+                          {t("ETB 50 - Fast Delivery")}
                         </label>
                         <p
-                          id="dhl-text"
+                          id="delivery-text"
                           className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-500"
                         >
                           {t("Get it by Tomorrow")}
@@ -333,8 +346,8 @@ const CheckoutPage = () => {
                           aria-describedby="fedex-text"
                           type="radio"
                           name="deliveryMethod"
-                          value="Free Delivery"
-                          checked={formData.deliveryMethod === "Free Delivery"}
+                          value="PICKUP"
+                          checked={formData.deliveryMethod === "PICKUP"}
                           onChange={handleRadioChange}
                           className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 dark:border-gray-600 dark:bg-white dark:ring-offset-gray-200 dark:focus:ring-primary-600"
                         />
@@ -350,7 +363,7 @@ const CheckoutPage = () => {
                           id="fedex-text"
                           className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-500"
                         >
-                          {t("Get it by Friday, 13 Dec 2023")}
+                          {t("Get it by")} {formattedPickupDate}
                         </p>
                       </div>
                     </div>
@@ -375,6 +388,22 @@ const CheckoutPage = () => {
                     </dt>
                     <dd className="text-base font-medium text-gray-900 dark:text-white">
                       ETB {tax.toFixed(2)}
+                    </dd>
+                  </dl>
+                  <dl className="flex items-center justify-between gap-4 py-3">
+                    <dt className="text-base font-normal text-gray-600 dark:text-gray-400">
+                      {t("Delivery Fee")}
+                    </dt>
+                    <dd className="text-base font-medium text-gray-900 dark:text-white">
+                      ETB {deliveryFee.toFixed(2)}
+                    </dd>
+                  </dl>
+                  <dl className="flex items-center justify-between gap-4 py-3">
+                    <dt className="text-base font-normal text-gray-600 dark:text-gray-400">
+                      {t("Payment Fee")}
+                    </dt>
+                    <dd className="text-base font-medium text-gray-900 dark:text-white">
+                      ETB {paymentFee.toFixed(2)}
                     </dd>
                   </dl>
                   <dl className="flex items-center justify-between gap-4 py-3">
@@ -414,8 +443,7 @@ const CheckoutPage = () => {
               </svg>
               <span className="sr-only">Info</span>
               <div>
-                <span className="font-medium">Danger alert!</span>
-                {error}
+                <span className="font-medium">Danger alert!</span> {error}
               </div>
             </div>
           )}

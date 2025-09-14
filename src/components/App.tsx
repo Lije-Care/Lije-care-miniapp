@@ -25,6 +25,8 @@ import MyAppointments from "@/pages/MyAppointments";
 import ChatScreen from "@/pages/Consultation/ChatScreen";
 import NotificationsPage from "@/pages/NotificationsPage";
 import ChildMealPlanSummery from "@/pages/meal/ChildMealPlanSummery";
+import PaymentForm from "./PaymentForm";
+import PaymentStatus from "./PaymentStatus";
 
 const Layout = ({ children }: { children: any }) => (
   <div>
@@ -98,6 +100,9 @@ export function App() {
                 </ProtectedRoute>
               }
             />
+            {/* Payment routes */}
+            <Route path="/payment-one" element={<PaymentForm />} />
+            <Route path="/payment-status-one" element={<PaymentStatus />} />
 
             <Route path="/articles" element={<ArticlesPage />} />
             <Route path="/articles/:id" element={<ArticleDetail />} />

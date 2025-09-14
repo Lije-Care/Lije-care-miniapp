@@ -74,6 +74,7 @@ const ChildProfilePage: React.FC = () => {
       dietary_restrictions: "",
       allergies: "",
       medications: "",
+      activity_level: "Moderate",
     },
   });
 
@@ -311,6 +312,18 @@ const ChildProfilePage: React.FC = () => {
                 <div>
                   <label>{t("Height (cm)")}</label>
                   <Input type="number" {...register("height")} />
+                </div>
+
+                <div>
+                  <label>{t("Activity Level")}</label>
+                  <select
+                    {...register("activity_level")}
+                    className="w-full p-2 bg-black text-white border rounded"
+                  >
+                    <option value="Active">{t("Active")}</option>
+                    <option value="Moderate">{t("Moderate")}</option>
+                    <option value="Sedentary">{t("Sedentary")}</option>
+                  </select>
                 </div>
                 <div>
                   <label>{t("MUAC (cm)")}</label>
