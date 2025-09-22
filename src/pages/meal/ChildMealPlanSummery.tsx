@@ -10,6 +10,8 @@ type Meal = {
   id: string;
   title: string;
   meal_type: string;
+  mealTime: string;
+  name: string;
 };
 
 type MealPlan = {
@@ -33,39 +35,48 @@ type MealPlan = {
 const ChildMealPlanSummery = () => {
   const { t } = useTranslation();
   const [mealPlans, setMealPlans] = useState<MealPlan[] | null>(null);
+  // console.log(" mealPlans", mealPlans[0]?.meals[0]?.mealTime);
   const [error, setError] = useState<string | null>(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [selectedMealPlan, setSelectedMealPlan] = useState<MealPlan | null>(
     null
   );
+  console.log({ selectedMealPlan });
   const [deleting, setDeleting] = useState(false);
   const { id } = useParams<{ id: string }>();
   const childId = id;
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!childId) {
-      setMealPlans([]);
-      setError(t("No child profile found. Please add a child first."));
-      return;
+  const fetchMealDetails = async (mealPlanId: string) => {
+    try {
+      const res = await api.get(`/meal-plans/find-one/${mealPlanId}`);
+      return res.data;
+    } catch (err) {
+      console.error("Error fetching meal detail:", err);
+      return null;
     }
+  };
+
+  useEffect(() => {
+    if (!childId) return;
 
     api
       .get(`/meal-Plans/by-child/${childId}`)
-      .then((response) => {
-        const fetchedData = response.data?.data ?? [];
-        setMealPlans(fetchedData);
-        setError(null);
+      .then(async (response) => {
+        const basicPlans = response.data?.data ?? [];
+        const detailedPlans = await Promise.all(
+          basicPlans.map(async (plan: MealPlan) => {
+            const detail = await fetchMealDetails(plan.id);
+            return detail || plan;
+          })
+        );
+        setMealPlans(detailedPlans);
       })
       .catch((err) => {
         console.error("Error fetching meal plans:", err);
         setMealPlans([]);
-        setError(
-          err?.response?.data?.message ||
-            t("Failed to fetch meal plans. Please try again later.")
-        );
       });
-  }, [childId, t]);
+  }, [childId]);
 
   const handleDeleteMealPlan = async () => {
     if (!selectedMealPlan) return;
@@ -159,26 +170,46 @@ const ChildMealPlanSummery = () => {
               <div>
                 <h4 className="text-sm font-semibold mb-1">🍽️ Meals</h4>
                 {Array.isArray(mealPlan.meals) && mealPlan.meals.length > 0 ? (
-                  <div className="space-y-1">
-                    {mealPlan.meals.slice(0, 3).map((meal) => (
-                      <div
-                        key={meal.id}
-                        className="flex justify-between items-center text-sm"
-                      >
-                        <span>{meal.title || "Untitled"}</span>
-                        <Badge type="dot">{meal.meal_type || "Unknown"}</Badge>
+                  <div className="space-y-3">
+                    {Object.entries(
+                      mealPlan.meals.reduce(
+                        (acc: Record<string, Meal[]>, meal) => {
+                          const key = meal.mealTime || "Unknown";
+                          if (!acc[key]) acc[key] = [];
+                          acc[key].push(meal);
+                          return acc;
+                        },
+                        {}
+                      )
+                    ).map(([mealTime, meals]) => (
+                      <div key={mealTime}>
+                        {/* Header for each mealTime */}
+                        <h5 className="text-sm font-bold text-emerald-600 mb-1">
+                          meal time: {mealTime}
+                        </h5>
+
+                        {/* Meals under this category */}
+                        <div className="space-y-1">
+                          {meals.map((meal) => (
+                            <div
+                              key={meal.id}
+                              className="flex justify-between items-center text-sm"
+                            >
+                              <span>meal name: {meal.name || "Untitled"}</span>
+                              <Badge type="dot">
+                                {meal.meal_type || "Unknown"}
+                              </Badge>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     ))}
-                    {mealPlan.meals.length > 3 && (
-                      <p className="text-xs italic mt-1">
-                        + {mealPlan.meals.length - 3} more
-                      </p>
-                    )}
                   </div>
                 ) : (
                   <p className="text-xs">No meals listed.</p>
                 )}
               </div>
+
               <span className=" absolute bottom-2 right-2 text-green-600 ml-2 underline">
                 View detail
               </span>
