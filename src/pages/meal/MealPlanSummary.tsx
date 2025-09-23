@@ -72,7 +72,7 @@ const MealPlanSummary = () => {
     <Page back={true}>
       <div className="p-4 space-y-4">
         <h2 className="text-xl font-bold text-center text-emerald-500">
-          {t("📋 Your Meal Plans")}
+          {t("📋 Your Meal Plans tets")}
         </h2>
 
         {error && (
