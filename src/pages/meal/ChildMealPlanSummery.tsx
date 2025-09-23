@@ -102,6 +102,18 @@ const ChildMealPlanSummery = () => {
     setShowConfirmDelete(true);
   };
 
+  // add this state at the top inside your component
+  const [activeTab, setActiveTab] = useState<string>("Lunch"); // default tab
+
+  // extract all unique meal times from all mealPlans (to generate tabs dynamically)
+  const allMealTimes = Array.from(
+    new Set(
+      mealPlans?.flatMap(
+        (plan) => plan.meals?.map((meal) => meal.mealTime) || []
+      )
+    )
+  );
+
   return (
     <Page back={true}>
       <div className="p-4 space-y-4">
@@ -112,6 +124,26 @@ const ChildMealPlanSummery = () => {
         {error && (
           <div className="text-red-500 text-center text-sm">{error}</div>
         )}
+
+        {/* start tab  */}
+
+        <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200">
+          {allMealTimes.map((time) => (
+            <li key={time} className="me-2">
+              <button
+                onClick={() => setActiveTab(time)}
+                className={`inline-block p-4 rounded-t-lg ${
+                  activeTab === time
+                    ? "text-blue-600 bg-gray-100 dark:bg-gray-800 dark:text-blue-500"
+                    : "hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+                }`}
+              >
+                {time}
+              </button>
+            </li>
+          ))}
+        </ul>
+        {/* end tabs */}
 
         {mealPlans === null ? (
           <Placeholder />
@@ -166,6 +198,7 @@ const ChildMealPlanSummery = () => {
               {/* Divider */}
               <div className="my-2 border-t border-gray-200" />
 
+              {/* Meals Preview */}
               {/* Meals Preview */}
               <div>
                 <h4 className="text-sm font-semibold mb-1">🍽️ Meals</h4>
