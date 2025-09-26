@@ -24,6 +24,7 @@ export const SignInPage = () => {
 
   const [forgotPhone, setForgotPhone] = useState(""); // ✅ Separate phone field
   const [telegramId, setTelegramId] = useState("");
+  console.log({ telegramId });
   const [resetToken, setResetToken] = useState("");
 
   const [resetData, setResetData] = useState({
@@ -60,6 +61,14 @@ export const SignInPage = () => {
       const response = await api.post("/auth/signin", { phone, password });
 
       const { access_token, refresh_token, data } = response.data;
+      console.log({ data });
+
+      if (data.role !== "PARENT") {
+        setError("Only parent are allowed to sign in.");
+        toast.error("Only parent are allowed to sign in.");
+        return; // ⛔ stop here, don’t save tokens
+      }
+
       localStorage.setItem("access_token", access_token);
       localStorage.setItem("refresh_token", refresh_token);
       localStorage.setItem("user", JSON.stringify(data));
@@ -84,7 +93,7 @@ export const SignInPage = () => {
         telegramId: telegramId || "359880861",
       });
 
-      if (res.status === 201) {
+      if (res.status === 200 || res.status === 201) {
         toast.success("OTP sent to your Telegram bot.");
         setResetToken(res.data?.token || "");
         setShowForgotModal(false);
@@ -225,9 +234,18 @@ export const SignInPage = () => {
           <Headline style={{ marginBottom: "12px" }}>
             📩 Forgot Password
           </Headline>
-          <Text className="text-sm text-gray-600 mb-2">
-            Enter your phone number to receive a reset OTP via Telegram.
-          </Text>
+
+          <div
+            className="p-2 mb-4 mt-3 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400"
+            role="alert"
+          >
+            <span className="font-medium px-0.5">
+              Forgot password works only on your phone.
+            </span>
+            Please open the Telegram mini app, enter your phone number, and
+            you’ll receive an OTP in your <span className="font-bold">bot</span>
+            .
+          </div>
 
           <Input
             placeholder="+251912345678"
