@@ -1,27 +1,36 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Spinner } from '@telegram-apps/telegram-ui';
-import { RootState, AppDispatch } from '@/redux/store';
-import { fetchSpecialists } from '@/redux/slices/specialistSlice';
-import { Page } from '@/components/Page';
-import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  Button,
+  Caption,
+  Headline,
+  Spinner,
+  Subheadline,
+} from "@telegram-apps/telegram-ui";
+import { RootState, AppDispatch } from "@/redux/store";
+import { fetchSpecialists } from "@/redux/slices/specialistSlice";
+import { Page } from "@/components/Page";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { MdWidthFull } from "react-icons/md";
 
 export default function ConsultationTab() {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { specialists, loading, error } = useSelector((state: RootState) => state.specialists);
+  const { specialists, loading, error } = useSelector(
+    (state: RootState) => state.specialists
+  );
 
   const categories = [
-    t('All'),
-    t('nutritionist'),
-    t('Medical doctor'),
-    t('Any Question(CS)')
+    t("All"),
+    t("Nutritionist"),
+    t("Doctors"),
+    t("Questions"),
   ];
-  const [activeCategory, setActiveCategory] = useState(t('All'));
+  const [activeCategory, setActiveCategory] = useState(t("All"));
 
   useEffect(() => {
     dispatch(fetchSpecialists({ page: 1, limit: 10 }));
@@ -32,7 +41,7 @@ export default function ConsultationTab() {
     return slots.some((slot) => {
       if (!slot || slot.isBooked || !slot.startTime || !slot.date) return false;
       try {
-        const [hour, minute] = slot.startTime.split(':').map(Number);
+        const [hour, minute] = slot.startTime.split(":").map(Number);
         const dateObj = new Date(slot.date);
         const slotDateTime = new Date(
           dateObj.getFullYear(),
@@ -52,9 +61,9 @@ export default function ConsultationTab() {
     const hasAvailableSlot = hasFutureUnbookedSlot(doc.AvailabilitySlots);
     if (!hasAvailableSlot) return false;
 
-    if (activeCategory === t('All')) return true;
+    if (activeCategory === t("All")) return true;
 
-    const specialty = doc?.SpecialistProfile?.specialty || '';
+    const specialty = doc?.SpecialistProfile?.specialty || "";
     return specialty.toLowerCase() === activeCategory.toLowerCase();
   });
 
@@ -62,31 +71,35 @@ export default function ConsultationTab() {
     <Page>
       <div className="p-6 max-w-3xl mx-auto space-y-6 text-white">
         <div className="flex justify-end">
-          <button
+          <Button
             className="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded text-white"
-            onClick={() => navigate('/my-appointments')}
+            onClick={() => navigate("/my-appointments")}
           >
-            {t('My Appointments')}
-          </button>
+            {t("My Appointments")}
+          </Button>
         </div>
 
-         <div className="flex bg-gray-900 gap-2">
+        <div
+          className=" -ml-1 flex flex-wrap rounded-lg  "
+          style={{ background: "var(--tg-theme-bg-color)" }}
+        >
           {categories.map((category) => (
-            <button
+            <Button
               key={category}
+              className="py-1 text-[13px] font-semibold whitespace-nowrap"
+              style={{ paddingLeft: "-2px" }}
+              mode={activeCategory === category ? "filled" : "outline"}
               onClick={() => setActiveCategory(category)}
-              className={`px-3 py-1 font-semibold rounded ${
-                activeCategory === category
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-gray-600 text-gray-100 text-[13px] hover:bg-gray-500'
-              }`}
+              title={`Filter by ${category}`} // <-- Tooltip added here
             >
               {category}
-            </button>
+            </Button>
           ))}
         </div>
 
-        <p className="font-medium text-gray-300">👩‍⚕️ {t('Choose a Specialist')}</p>
+        <Subheadline className="font-sm">
+          👩‍⚕️ {t("Choose a Specialist")}
+        </Subheadline>
 
         {loading ? (
           <div className="flex justify-center py-4">
@@ -97,9 +110,11 @@ export default function ConsultationTab() {
         ) : (
           <>
             {filteredSpecialists.length === 0 ? (
-              <p className="text-center text-gray-400 py-4">
-                {t('No specialists are currently available. Please try again later.')}
-              </p>
+              <Caption className="text-center text-sm font-sm  flex flex-center justify-center py-4">
+                {t(
+                  "No specialists are currently available. Please try again later."
+                )}
+              </Caption>
             ) : (
               <div className="space-y-3">
                 {filteredSpecialists.map((doc) => {
@@ -112,7 +127,7 @@ export default function ConsultationTab() {
                     >
                       <div className="flex gap-4 items-center">
                         <img
-                          src={doc?.avatarUrl || '/doctors/default-avatar.png'}
+                          src={doc?.avatarUrl || "/doctors/default-avatar.png"}
                           alt={fullName}
                           className="w-12 h-12 rounded-full object-cover"
                         />
