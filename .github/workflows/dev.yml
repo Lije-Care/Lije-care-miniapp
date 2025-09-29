@@ -1,0 +1,42 @@
+name: CI/CD React Vite Frontend
+
+on:
+  push:
+    branches: [dev] # Trigger workflow on push to dev branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repo
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Setup SSH key
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # Step 3: Run deployment commands on server
+      - name: Deploy React Vite Frontend
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            cd /var/www/lije-care-miniapp-frontend
+
+            # Backup old build (optional)
+            rm -rf dist-backup
+            mv dist dist-backup || true
+
+            # Pull latest code
+            git stash || true
+            git pull origin dev
+
+            # Install dependencies and build frontend
+            npm ci
+            npm run build
+
+            # Optional: restart static server if using PM2
+            pm2 restart lije-care-miniapp-frontend || true
+          EOF

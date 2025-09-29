@@ -5,6 +5,7 @@ import {
   Button,
   Spinner,
   Subheadline,
+  ButtonCell,
 } from "@telegram-apps/telegram-ui";
 import { useEffect, useState, type FC } from "react";
 import { Page } from "@/components/Page.tsx";
@@ -67,19 +68,18 @@ export const IndexPage: FC = () => {
 
   return (
     <Page back={true}>
-      <div className="flex justify-end px-4 py-2 relative bg-[#013222]">
-        <button
+      <Section
+        className="flex justify-end px-4 py-2 relative"
+        style={{ background: "#013222", color: "white" }}
+      >
+        <ButtonCell
           onClick={() => navigate("/notifications")}
-          className="relative p-2"
+          className="relative p-2 rounded-lg"
+          style={{ background: "#013222", color: "white" }}
         >
           <FiBell size={24} />
-          {/* {notificationCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-              {notificationCount}
-            </span>
-          )} */}
-        </button>
-      </div>
+        </ButtonCell>
+      </Section>
 
       <Section className="overflow-y-auto pb-8">
         {/* 👨‍👩‍👧 Profile Cards */}
