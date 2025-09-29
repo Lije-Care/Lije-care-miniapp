@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   Button,
   Caption,
-  Headline,
+  // Headline,
   Spinner,
   Subheadline,
 } from "@telegram-apps/telegram-ui";
@@ -14,7 +14,7 @@ import { fetchSpecialists } from "@/redux/slices/specialistSlice";
 import { Page } from "@/components/Page";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { MdWidthFull } from "react-icons/md";
+// import { MdWidthFull } from "react-icons/md";
 
 export default function ConsultationTab() {
   const { t } = useTranslation();
