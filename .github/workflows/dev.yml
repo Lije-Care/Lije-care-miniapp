@@ -23,12 +23,11 @@ jobs:
       - name: Deploy to DigitalOcean
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
-          cd lije-care-miniapp/dev
+          cd Lije-care-mini-app/dev
           git stash || true
           export NVM_DIR=~/.nvm
           source ~/.nvm/nvm.sh
           git pull
           npm install
           npm run build
-          pm2 restart lije-care-miniapp-dev
           EOF
