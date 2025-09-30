@@ -69,7 +69,7 @@ export default function ConsultationTab() {
 
   return (
     <Page>
-      <div className="p-6 max-w-3xl mx-auto space-y-6 text-white">
+      <div className="p-2 w-full mx-auto space-y-6 text-white">
         <div className="flex justify-end">
           <Button
             className="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded text-white"
@@ -80,17 +80,16 @@ export default function ConsultationTab() {
         </div>
 
         <div
-          className=" -ml-1 flex flex-wrap rounded-lg  "
+          className="w-full flex flex-between rounded-lg"
           style={{ background: "var(--tg-theme-bg-color)" }}
         >
           {categories.map((category) => (
             <Button
               key={category}
-              className="py-1 text-[13px] font-semibold whitespace-nowrap"
-              style={{ paddingLeft: "-2px" }}
+              className="py-3 -px-2 text-[10px] font-base whitespace-nowrap max-auto w-full"
               mode={activeCategory === category ? "filled" : "outline"}
               onClick={() => setActiveCategory(category)}
-              title={`Filter by ${category}`} // <-- Tooltip added here
+              title={`Filter by ${category}`}
             >
               {category}
             </Button>
