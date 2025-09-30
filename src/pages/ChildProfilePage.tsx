@@ -266,7 +266,7 @@ const ChildProfilePage: React.FC = () => {
 
   return (
     <Page back={true}>
-      <div className="max-w-4xl mx-auto p-4 text-white">
+      <div className="max-w-4xl mx-auto p-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-emerald-400">
             {t("Child Profile")}
@@ -278,56 +278,79 @@ const ChildProfilePage: React.FC = () => {
             {isEditing ? t("Cancel") : t("Edit")}
           </Button>
         </div>
-        <h2 className=" ml-6 text-gray-300 font-semibold text-xl">
+        <h2 className=" ml-6 text-gray-500 font-semibold text-xl">
           Anthropometric Assessment
         </h2>
 
         {isEditing && (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mb-6">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-6 mb-6 px-2 mt-4"
+          >
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <Text>{t("Basic Information")}</Text>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                 <div>
-                  <label>{t("Name")}</label>
-                  <Input {...register("name")} />
+                  <label className="text-gray-400">{t("Name")}</label>
+                  <Input className="bg-gray-500 h-10" {...register("name")} />
                 </div>
                 <div>
-                  <label>{t("Date of Birth")}</label>
-                  <Input type="date" {...register("date_of_birth")} />
+                  <label className="text-gray-400">{t("Date of Birth")}</label>
+                  <Input
+                    className="bg-gray-500 h-10"
+                    type="date"
+                    {...register("date_of_birth")}
+                  />
                 </div>
                 <div>
-                  <label>{t("Gender")}</label>
-                  <select
-                    {...register("gender")}
-                    className="w-full p-2 bg-black text-white border rounded"
-                  >
-                    <option value="Male">{t("Male")}</option>
-                    <option value="Female">{t("Female")}</option>
-                  </select>
+                  <label className="text-gray-400">{t("Gender")}</label>
+                  <div className=" ml-8">
+                    <select
+                      {...register("gender")}
+                      className="w-64 p-2 border rounded-lg bg-gray-500 h-10"
+                    >
+                      <option value="Male">{t("Male")}</option>
+                      <option value="Female">{t("Female")}</option>
+                    </select>
+                  </div>
                 </div>
                 <div>
-                  <label>{t("Weight (kg)")}</label>
-                  <Input type="number" {...register("weight")} />
+                  <label className="text-gray-400">{t("Weight (kg)")}</label>
+                  <Input
+                    className="bg-gray-500 h-10"
+                    type="number"
+                    {...register("weight")}
+                  />
                 </div>
                 <div>
-                  <label>{t("Height (cm)")}</label>
-                  <Input type="number" {...register("height")} />
+                  <label className="text-gray-400">{t("Height (cm)")}</label>
+                  <Input
+                    className="bg-gray-500 h-10"
+                    type="number"
+                    {...register("height")}
+                  />
                 </div>
 
                 <div>
-                  <label>{t("Activity Level")}</label>
-                  <select
-                    {...register("activity_level")}
-                    className="w-full p-2 bg-black text-white border rounded"
-                  >
-                    <option value="Active">{t("Active")}</option>
-                    <option value="Moderate">{t("Moderate")}</option>
-                    <option value="Sedentary">{t("Sedentary")}</option>
-                  </select>
+                  <label className="text-gray-400">{t("Activity Level")}</label>
+                  <div className="ml-8">
+                    <select
+                      {...register("activity_level")}
+                      className=" w-64 p-2 bg-gray-500 h-10  border rounded-lg"
+                    >
+                      <option value="Active">{t("Active")}</option>
+                      <option value="Moderate">{t("Moderate")}</option>
+                      <option value="Sedentary">{t("Sedentary")}</option>
+                    </select>
+                  </div>
                 </div>
                 <div>
-                  <label>{t("MUAC (cm)")}</label>
-                  <Input type="number" {...register("muac")} />
+                  <label className="text-gray-400">{t("MUAC (cm)")}</label>
+                  <Input
+                    className="bg-gray-500 h-10"
+                    type="number"
+                    {...register("muac")}
+                  />
                 </div>
               </div>
             </motion.div>

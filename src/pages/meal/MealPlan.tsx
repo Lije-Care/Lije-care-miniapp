@@ -149,20 +149,38 @@ const MealLibraryComponent = () => {
       />
 
       {selectedMeals.length > 0 && (
-        <div className="bg-emerald-900/10 p-4 rounded">
+        <div className="bg-gray-600 p-4 rounded">
           <h2 className="text-lg font-bold text-emerald-300 mb-2">
             📊 Total Nutrients
           </h2>
           <ul className="text-sm space-y-1">
-            <li>Total Volume: {nutrientTotals.totalVolume} ml</li>
-            <li>Protein: {nutrientTotals.protein.toFixed(2)} g</li>
-            <li>Fat: {nutrientTotals.fat.toFixed(2)} g</li>
-            <li>Carbohydrates: {nutrientTotals.carbs.toFixed(2)} g</li>
-            <li>Calories: {nutrientTotals.calories.toFixed(2)} kcal</li>
-            <li>Iron: {nutrientTotals.iron.toFixed(2)} mg</li>
-            <li>Calcium: {nutrientTotals.calcium.toFixed(2)} mg</li>
-            <li>Vitamin A: {nutrientTotals.vitaminA.toFixed(2)} IU</li>
-            <li>Vitamin D: {nutrientTotals.vitaminD.toFixed(2)} IU</li>
+            <li className="text-gray-300">
+              Total Volume: {nutrientTotals.totalVolume} ml
+            </li>
+            <li className="text-gray-300">
+              Protein: {nutrientTotals.protein.toFixed(2)} g
+            </li>
+            <li className="text-gray-300">
+              Fat: {nutrientTotals.fat.toFixed(2)} g
+            </li>
+            <li className="text-gray-300">
+              Carbohydrates: {nutrientTotals.carbs.toFixed(2)} g
+            </li>
+            <li className="text-gray-300">
+              Calories: {nutrientTotals.calories.toFixed(2)} kcal
+            </li>
+            <li className="text-gray-300">
+              Iron: {nutrientTotals.iron.toFixed(2)} mg
+            </li>
+            <li className="text-gray-300">
+              Calcium: {nutrientTotals.calcium.toFixed(2)} mg
+            </li>
+            <li className="text-gray-300">
+              Vitamin A: {nutrientTotals.vitaminA.toFixed(2)} IU
+            </li>
+            <li className="text-gray-300">
+              Vitamin D: {nutrientTotals.vitaminD.toFixed(2)} IU
+            </li>
           </ul>
         </div>
       )}
@@ -221,40 +239,40 @@ const MealLibraryComponent = () => {
             </div>
 
             {expanded && (
-              <div className="mt-4 space-y-2 text-sm">
-                <p>
+              <div className="mt-4 space-y-2 text-sm bg-gray-600 p-4 rounded-lg">
+                <p className="text-gray-300">
                   <strong>Description:</strong> {meal.description}
                 </p>
-                <p>
+                <p className="text-gray-300">
                   <strong>Meal Type:</strong> {meal.mealType}
                 </p>
-                <p>
+                <p className="text-gray-300">
                   <strong>Meal Time:</strong> {meal.mealTime}
                 </p>
-                <p>
+                <p className="text-gray-300">
                   <strong>Prepping Time:</strong> {meal.prepTime ?? "N/A"}
                 </p>
-                <p>
+                <p className="text-gray-300">
                   <strong>Yield Volume:</strong> {meal.totalVolume ?? "N/A"} ml
                 </p>
-                <p>
+                <p className="text-gray-300">
                   <strong>Allergen Description:</strong>{" "}
                   {meal.allergenDescription}
                 </p>
-                <p>
+                <p className="text-gray-300">
                   <strong>Intolerance Description:</strong>{" "}
                   {meal.intoleranceDescription}
                 </p>
-                <p>
+                <p className="text-gray-300">
                   <strong>Drug Interaction:</strong> {meal.drugInteraction}
                 </p>
-                <p>
+                <p className="text-gray-300">
                   <strong>Direction:</strong> {meal.direction}
                 </p>
-                <p>
+                <p className="text-gray-300">
                   <strong>How to Store:</strong> {meal.howToStore}
                 </p>
-                <p>
+                <p className="text-gray-300">
                   <strong>Ingredients:</strong>
                 </p>
                 <ul className="list-disc list-inside ml-4">
@@ -294,7 +312,7 @@ const MealLibraryComponent = () => {
                   <input
                     type="number"
                     min={1}
-                    className="w-16 text-black px-2 py-1 rounded"
+                    className="w-16 text-gray-400 px-2 py-1 rounded"
                     value={selected?.multiplier ?? 1}
                     onClick={(e) => e.stopPropagation()}
                     onChange={(e) =>
