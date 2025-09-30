@@ -176,7 +176,7 @@ const ChildrenListPage: React.FC = () => {
               <div className="mt-1 flex justify-between">
                 <div className=" mt-4 flex flex-center item-center ">
                   <button
-                    className="bg-purple-700 rounded-lg  text-sm px-2 py-1 "
+                    className="bg-purple-700 rounded-lg  text-sm text-gray-300 px-2 py-1 "
                     onClick={() => navigate(`/meal/${child.id}`)}
                   >
                     + {t("Create meal plan")}

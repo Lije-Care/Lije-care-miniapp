@@ -103,7 +103,7 @@ export default function ConsultationTab() {
         ) : (
           <>
             {filteredSpecialists.length === 0 ? (
-              <p className="  flex flex-center justify-center font-semibold text-gray-400 px-6 mt-12 ">
+              <p className="  flex flex-center justify-center font-sm text-base text-gray-400 px-6 mt-12 ">
                 {t(
                   "No specialists are currently available. Please try again later."
                 )}
