@@ -105,7 +105,7 @@ const ChildrenListPage: React.FC = () => {
 
   return (
     <Page back={true}>
-      <div className="p-4 bg-gray-900 min-h-screen text-white">
+      <div className="p-4 min-h-screen">
         <div className="flex justify-between items-center mb-6">
           <Headline>{t("My Children")}</Headline>
           <button

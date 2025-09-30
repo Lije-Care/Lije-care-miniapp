@@ -2,13 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Button,
-  Caption,
-  // Headline,
-  Spinner,
-  Subheadline,
-} from "@telegram-apps/telegram-ui";
+import { Button, Spinner } from "@telegram-apps/telegram-ui";
 import { RootState, AppDispatch } from "@/redux/store";
 import { fetchSpecialists } from "@/redux/slices/specialistSlice";
 import { Page } from "@/components/Page";
