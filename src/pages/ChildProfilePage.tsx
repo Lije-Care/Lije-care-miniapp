@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   Button,
-  Input,
+  // Input,
   Spinner,
   Text,
   Divider,
@@ -288,70 +288,114 @@ const ChildProfilePage: React.FC = () => {
             className="space-y-6 mb-6 px-2 mt-4"
           >
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <Text>{t("Basic Information")}</Text>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                <div>
-                  <label className="text-gray-400">{t("Name")}</label>
-                  <Input className="bg-gray-500 h-10" {...register("name")} />
-                </div>
-                <div>
-                  <label className="text-gray-400">{t("Date of Birth")}</label>
-                  <Input
-                    className="bg-gray-500 h-10"
-                    type="date"
-                    {...register("date_of_birth")}
-                  />
-                </div>
-                <div>
-                  <label className="text-gray-400">{t("Gender")}</label>
-                  <div className=" ml-8">
-                    <select
-                      {...register("gender")}
-                      className="w-64 p-2 border rounded-lg bg-gray-500 h-10"
-                    >
-                      <option value="Male">{t("Male")}</option>
-                      <option value="Female">{t("Female")}</option>
-                    </select>
-                  </div>
-                </div>
-                <div>
-                  <label className="text-gray-400">{t("Weight (kg)")}</label>
-                  <Input
-                    className="bg-gray-500 h-10"
-                    type="number"
-                    {...register("weight")}
-                  />
-                </div>
-                <div>
-                  <label className="text-gray-400">{t("Height (cm)")}</label>
-                  <Input
-                    className="bg-gray-500 h-10"
-                    type="number"
-                    {...register("height")}
-                  />
-                </div>
+              <Text className="text-lg font-semibold">
+                {t("Basic Information")}
+              </Text>
 
-                <div>
-                  <label className="text-gray-400">{t("Activity Level")}</label>
-                  <div className="ml-8">
-                    <select
-                      {...register("activity_level")}
-                      className=" w-64 p-2 bg-gray-500 h-10  border rounded-lg"
-                    >
-                      <option value="Active">{t("Active")}</option>
-                      <option value="Moderate">{t("Moderate")}</option>
-                      <option value="Sedentary">{t("Sedentary")}</option>
-                    </select>
-                  </div>
-                </div>
-                <div>
-                  <label className="text-gray-400">{t("MUAC (cm)")}</label>
-                  <Input
-                    className="bg-gray-500 h-10"
-                    type="number"
-                    {...register("muac")}
-                  />
-                </div>
+              {/* Name */}
+              <div className="mt-4">
+                <label htmlFor="name" className="block font-medium mb-1">
+                  {t("Name")}
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  placeholder={t("Enter your name")}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
+                  {...register("name")}
+                />
+              </div>
+
+              {/* Date of Birth */}
+              <div className="mt-4">
+                <label
+                  htmlFor="date_of_birth"
+                  className="block font-medium mb-1"
+                >
+                  {t("Date of Birth")}
+                </label>
+                <input
+                  id="date_of_birth"
+                  type="date"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
+                  {...register("date_of_birth")}
+                />
+              </div>
+
+              {/* Gender */}
+              <div className="mt-4">
+                <label htmlFor="gender" className="block font-medium mb-1">
+                  {t("Gender")}
+                </label>
+                <select
+                  id="gender"
+                  {...register("gender")}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none bg-white"
+                >
+                  <option value="Male">{t("Male")}</option>
+                  <option value="Female">{t("Female")}</option>
+                </select>
+              </div>
+
+              {/* Weight */}
+              <div className="mt-4">
+                <label htmlFor="weight" className="block font-medium mb-1">
+                  {t("Weight (kg)")}
+                </label>
+                <input
+                  id="weight"
+                  type="number"
+                  placeholder="e.g. 70"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
+                  {...register("weight")}
+                />
+              </div>
+
+              {/* Height */}
+              <div className="mt-4">
+                <label htmlFor="height" className="block font-medium mb-1">
+                  {t("Height (cm)")}
+                </label>
+                <input
+                  id="height"
+                  type="number"
+                  placeholder="e.g. 175"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
+                  {...register("height")}
+                />
+              </div>
+
+              {/* Activity Level */}
+              <div className="mt-4">
+                <label
+                  htmlFor="activity_level"
+                  className="block font-medium mb-1"
+                >
+                  {t("Activity Level")}
+                </label>
+                <select
+                  id="activity_level"
+                  {...register("activity_level")}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none bg-white"
+                >
+                  <option value="Active">{t("Active")}</option>
+                  <option value="Moderate">{t("Moderate")}</option>
+                  <option value="Sedentary">{t("Sedentary")}</option>
+                </select>
+              </div>
+
+              {/* MUAC */}
+              <div className="mt-4">
+                <label htmlFor="muac" className="block font-medium mb-1">
+                  {t("MUAC (cm)")}
+                </label>
+                <input
+                  id="muac"
+                  type="number"
+                  placeholder="e.g. 23"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
+                  {...register("muac")}
+                />
               </div>
             </motion.div>
 
