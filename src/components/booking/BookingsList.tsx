@@ -18,10 +18,12 @@ const BookingsList: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold mb-2">{t("Your Bookings")}</h2>
+      <h2 className="text-xl font-bold text-gray-400 mb-2">
+        {t("Your Bookings")}
+      </h2>
 
       {bookings.length === 0 ? (
-        <p className="text-center text-gray-500">{t("No bookings found")}</p>
+        <p className="text-center text-gray-400">{t("No bookings found")}</p>
       ) : (
         bookings.map((booking) => (
           <div

@@ -69,10 +69,10 @@ export default function ConsultationTab() {
 
   return (
     <Page>
-      <div className="p-2 w-full mx-auto space-y-6 text-white">
+      <div className="p-2 w-full mx-auto space-y-6 ">
         <div className="flex justify-end">
           <Button
-            className="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded text-white"
+            className="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded "
             onClick={() => navigate("/my-appointments")}
           >
             {t("My Appointments")}
@@ -96,9 +96,9 @@ export default function ConsultationTab() {
           ))}
         </div>
 
-        <Subheadline className="font-sm">
+        <p className="font-extrabold text-gray-400 truncate">
           👩‍⚕️ {t("Choose a Specialist")}
-        </Subheadline>
+        </p>
 
         {loading ? (
           <div className="flex justify-center py-4">
@@ -109,11 +109,11 @@ export default function ConsultationTab() {
         ) : (
           <>
             {filteredSpecialists.length === 0 ? (
-              <Caption className="text-center text-sm font-sm  flex flex-center justify-center py-4">
+              <p className="  flex flex-center justify-center font-semibold text-gray-400 px-6 mt-12 ">
                 {t(
                   "No specialists are currently available. Please try again later."
                 )}
-              </Caption>
+              </p>
             ) : (
               <div className="space-y-3">
                 {filteredSpecialists.map((doc) => {
