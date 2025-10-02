@@ -28,7 +28,7 @@ const BookingsList: React.FC = () => {
         bookings.map((booking) => (
           <div
             key={booking.id}
-            className="flex items-start justify-between shadow-sm border border-gray-200 rounded-xl p-4 hover:shadow-md transition bg-gray-500 text-gray-200"
+            className="flex items-start justify-between shadow-sm border border-gray-200 rounded-xl p-4 hover:shadow-md transition bg-gray-600 text-gray-200"
           >
             <div className="space-y-1">
               <p className="text-sm">
