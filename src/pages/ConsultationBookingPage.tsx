@@ -115,7 +115,7 @@ export default function ConsultationTab() {
                   return (
                     <div
                       key={doc.id}
-                      className="p-4 border rounded-lg flex justify-between items-center border-gray-700 bg-gray-800 cursor-pointer"
+                      className="p-4 border rounded-lg flex justify-between items-center border-gray-400 bg-gray-300 text-gray-700 cursor-pointer"
                       onClick={() => navigate(`/consultat/${doc.id}`)}
                     >
                       <div className="flex gap-4 items-center">
