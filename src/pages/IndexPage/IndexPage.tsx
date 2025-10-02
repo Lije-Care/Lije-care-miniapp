@@ -95,7 +95,9 @@ export const IndexPage: FC = () => {
               className="w-10 h-10 rounded-full object-cover"
             />
             <div className="flex flex-col min-w-0">
-              <p className="text-base font-semibold truncate">{parent.name}</p>
+              <p className="text-base font-semibold truncate text-gray-300">
+                {parent.name}
+              </p>
               <p className="text-sm text-gray-400 truncate">{t("Parent")}</p>
             </div>
           </div>
@@ -113,7 +115,9 @@ export const IndexPage: FC = () => {
                   className="w-10 h-10 rounded-full object-cover"
                 />
                 <div className="flex flex-col min-w-0">
-                  <p className="text-base font-semibold truncate">View</p>
+                  <p className="text-base font-semibold truncate text-gray-300">
+                    View
+                  </p>
                   <p className="text-bold text-gray-400 truncate">
                     {t("Children")}
                   </p>
