@@ -317,7 +317,7 @@ const ChildProfilePage: React.FC = () => {
               <div className="mt-4">
                 <label
                   htmlFor="date_of_birth"
-                  className="block font-medium mb-1"
+                  className="block font-medium mb-1 text-[#FFFFFF]"
                 >
                   {t("Date of Birth")}
                 </label>
@@ -331,7 +331,10 @@ const ChildProfilePage: React.FC = () => {
 
               {/* Gender */}
               <div className="mt-4">
-                <label htmlFor="gender" className="block font-medium mb-1">
+                <label
+                  htmlFor="gender"
+                  className="block font-medium mb-1 text-[#FFFFFF]"
+                >
                   {t("Gender")}
                 </label>
                 <select
@@ -346,7 +349,10 @@ const ChildProfilePage: React.FC = () => {
 
               {/* Weight */}
               <div className="mt-4">
-                <label htmlFor="weight" className="block font-medium mb-1">
+                <label
+                  htmlFor="weight"
+                  className="block font-medium mb-1 text-[#FFFFFF]"
+                >
                   {t("Weight (kg)")}
                 </label>
                 <input
@@ -360,7 +366,10 @@ const ChildProfilePage: React.FC = () => {
 
               {/* Height */}
               <div className="mt-4">
-                <label htmlFor="height" className="block font-medium mb-1">
+                <label
+                  htmlFor="height"
+                  className="block font-medium mb-1 text-[#FFFFFF]"
+                >
                   {t("Height (cm)")}
                 </label>
                 <input
@@ -376,7 +385,7 @@ const ChildProfilePage: React.FC = () => {
               <div className="mt-4">
                 <label
                   htmlFor="activity_level"
-                  className="block font-medium mb-1"
+                  className="block font-medium mb-1 text-[#FFFFFF]"
                 >
                   {t("Activity Level")}
                 </label>
@@ -393,7 +402,10 @@ const ChildProfilePage: React.FC = () => {
 
               {/* MUAC */}
               <div className="mt-4">
-                <label htmlFor="muac" className="block font-medium mb-1">
+                <label
+                  htmlFor="muac"
+                  className="block font-medium mb-1 text-[#FFFFFF]"
+                >
                   {t("MUAC (cm)")}
                 </label>
                 <input
