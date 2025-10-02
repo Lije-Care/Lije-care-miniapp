@@ -152,7 +152,10 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
           }
           render={({ field: controllerField }) => (
             <div className="flex flex-col">
-              <label htmlFor={field.name} className="text-sm font-medium mb-1">
+              <label
+                htmlFor={field.name}
+                className="text-sm font-medium mb-1 text-[#FFFFFF]"
+              >
                 {field.label}
                 {field.required && <span className="text-red-500"> *</span>}
               </label>
@@ -160,7 +163,7 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
                 <select
                   {...controllerField}
                   id={field.name}
-                  className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full"
+                  className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full bg-[#D9D9D94D] text-[#FFFFFF]"
                 >
                   {field.options?.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -175,7 +178,7 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
                   type={field.type}
                   placeholder={field.placeholder}
                   max={field.max}
-                  className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full"
+                  className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full bg-[#D9D9D94D] text-[#FFFFFF]"
                 />
               )}
               {errors[field.name as keyof FormValues] && (
