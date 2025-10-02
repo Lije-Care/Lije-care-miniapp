@@ -63,31 +63,35 @@ export default function ConsultationTab() {
 
   return (
     <Page>
-      <div className="p-2 w-full mx-auto space-y-6 ">
-        <div className="flex justify-end">
-          <button
-            className="bg-[#0B8FAC] hover:bg-[#0ea4c6] px-4 py-2 rounded text-gray-100 "
-            onClick={() => navigate("/my-appointments")}
-          >
-            {t("My Appointments")}
-          </button>
+      <div className=" w-full mx-auto  ">
+        <div className=" flex justify-end bg-[#0B364F] pt-2">
+          <div className=" px-2">
+            <button
+              className="bg-[#0B8FAC] hover:bg-[#0ea4c6] px-4 py-2 rounded text-gray-100 "
+              onClick={() => navigate("/my-appointments")}
+            >
+              {t("My Appointments")}
+            </button>
+          </div>
         </div>
 
-        <div className="w-full flex flex-between rounded-lg">
-          {categories.map((category) => (
-            <button
-              key={category}
-              className={`py-3 px-2 text-[15px] font-normal whitespace-nowrap mx-auto w-full ${
-                activeCategory === category
-                  ? "bg-[#0B8FAC] text-white" // filled style
-                  : " border-gray-300 text-gray-100 text-xl font-extrabold" // outline style
-              } rounded-lg`}
-              onClick={() => setActiveCategory(category)}
-              title={`Filter by ${category}`}
-            >
-              {category}
-            </button>
-          ))}
+        <div className=" bg-[#0B364F] px-2 py-4">
+          <div className="w-full flex flex-between rounded-lg bg-[#0B364F]">
+            {categories.map((category) => (
+              <button
+                key={category}
+                className={`py-1 px-2 text-[15px] font-normal whitespace-nowrap mx-auto w-full ${
+                  activeCategory === category
+                    ? "bg-[#0B8FAC] text-white" // filled style
+                    : " text-gray-200 text-xl font-extrabold" // outline style
+                } rounded-lg`}
+                onClick={() => setActiveCategory(category)}
+                title={`Filter by ${category}`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
         </div>
 
         <p className="font-extrabold text-gray-400 truncate">
