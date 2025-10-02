@@ -201,7 +201,7 @@ const ChildrenListPage: React.FC = () => {
         {showAddModal && (
           <div className="fixed inset-0 bg-[#0B364F] bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-[#0B364F] rounded-lg p-6 max-w-md w-full shadow-xl">
-              <h2 className="text-xl font-semibold mb-4">
+              <h2 className="text-xl font-semibold mb-4 text-gray-300">
                 {t("Add New Child")}
               </h2>
               <AddChildForm onClose={() => setShowAddModal(false)} />
