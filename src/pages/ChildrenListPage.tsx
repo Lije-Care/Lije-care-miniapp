@@ -133,7 +133,7 @@ const ChildrenListPage: React.FC = () => {
           {childrenData?.map((child) => (
             <div
               key={child.id}
-              className="bg-gray-800 rounded-xl p-5 shadow-md border border-gray-700 hover:shadow-xl transition-all relative"
+              className="bg-[#0B364F] rounded-xl p-5 shadow-md border border-gray-700 hover:shadow-xl transition-all relative"
             >
               <div className="absolute top-2  right-2">
                 <button

@@ -279,7 +279,7 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
         {visibleIndicators.map(({ key, label, value, result }) => (
           <div
             key={key}
-            className="rounded-xl bg-[#1E1E2F] border border-gray-700 p-4 shadow-sm"
+            className="rounded-xl bg-[#0B364F] border border-gray-700 p-4 shadow-sm"
           >
             <h3 className="text-md font-semibold text-gray-300">{label}</h3>
             <div className="flex justify-between mt-2 text-sm">
