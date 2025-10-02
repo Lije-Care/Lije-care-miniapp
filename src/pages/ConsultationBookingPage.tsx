@@ -80,7 +80,7 @@ export default function ConsultationTab() {
               className={`py-3 px-2 text-[15px] font-normal whitespace-nowrap mx-auto w-full ${
                 activeCategory === category
                   ? "bg-[#0B8FAC] text-white" // filled style
-                  : " border-gray-300 text-gray-100 text-xl font-extrabold" // outline style
+                  : " border-gray-300 text-xl font-extrabold" // outline style
               } rounded-lg`}
               onClick={() => setActiveCategory(category)}
               title={`Filter by ${category}`}
