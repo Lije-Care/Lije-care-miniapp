@@ -292,7 +292,7 @@ const ChildProfilePage: React.FC = () => {
               animate={{ opacity: 1 }}
               className="bg-[#0B364F] p-2"
             >
-              <Text className="text-lg font-semibold">
+              <Text className="text-lg font-semibold text-gray-300">
                 {t("Basic Information")}
               </Text>
 
@@ -308,7 +308,7 @@ const ChildProfilePage: React.FC = () => {
                   id="name"
                   type="text"
                   placeholder={t("Enter your name")}
-                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] focus:outline-none font-[400]"
+                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] text-[#FFFFFF] focus:outline-none font-[400]"
                   {...register("name")}
                 />
               </div>
@@ -324,7 +324,7 @@ const ChildProfilePage: React.FC = () => {
                 <input
                   id="date_of_birth"
                   type="date"
-                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] focus:outline-none"
+                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] text-[#FFFFFF] focus:outline-none"
                   {...register("date_of_birth")}
                 />
               </div>
@@ -340,7 +340,7 @@ const ChildProfilePage: React.FC = () => {
                 <select
                   id="gender"
                   {...register("gender")}
-                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] focus:outline-none text-white"
+                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D]  focus:outline-none text-white"
                 >
                   <option value="Male">{t("Male")}</option>
                   <option value="Female">{t("Female")}</option>
@@ -359,7 +359,7 @@ const ChildProfilePage: React.FC = () => {
                   id="weight"
                   type="number"
                   placeholder="e.g. 70"
-                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] focus:outline-none"
+                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] text-[#FFFFFF] focus:outline-none"
                   {...register("weight")}
                 />
               </div>
@@ -376,7 +376,7 @@ const ChildProfilePage: React.FC = () => {
                   id="height"
                   type="number"
                   placeholder="e.g. 175"
-                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] focus:outline-none"
+                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] text-[#FFFFFF] focus:outline-none"
                   {...register("height")}
                 />
               </div>
@@ -412,7 +412,7 @@ const ChildProfilePage: React.FC = () => {
                   id="muac"
                   type="number"
                   placeholder="e.g. 23"
-                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] focus:outline-none"
+                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] text-[#FFFFFF] focus:outline-none"
                   {...register("muac")}
                 />
               </div>
