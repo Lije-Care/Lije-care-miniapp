@@ -66,7 +66,7 @@ export default function ConsultationTab() {
       <div className="p-2 w-full mx-auto space-y-6 ">
         <div className="flex justify-end">
           <button
-            className="bg-[#0B8FAC] hover:bg-[#0ea4c6] px-4 py-2 rounded "
+            className="bg-[#0B8FAC] hover:bg-[#0ea4c6] px-4 py-2 rounded text-gray-100 "
             onClick={() => navigate("/my-appointments")}
           >
             {t("My Appointments")}
@@ -80,7 +80,7 @@ export default function ConsultationTab() {
               className={`py-3 px-2 text-[15px] font-normal whitespace-nowrap mx-auto w-full ${
                 activeCategory === category
                   ? "bg-[#0B8FAC] text-white" // filled style
-                  : " border-gray-300 text-gray-400 text-base font-medium" // outline style
+                  : " border-gray-300 text-gray-300 text-xl font-extrabold" // outline style
               } rounded-lg`}
               onClick={() => setActiveCategory(category)}
               title={`Filter by ${category}`}
