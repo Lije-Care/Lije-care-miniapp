@@ -330,7 +330,7 @@ const ChildProfilePage: React.FC = () => {
                 <select
                   id="gender"
                   {...register("gender")}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none bg-white"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none text-white bg-gray-800"
                 >
                   <option value="Male">{t("Male")}</option>
                   <option value="Female">{t("Female")}</option>
@@ -376,7 +376,7 @@ const ChildProfilePage: React.FC = () => {
                 <select
                   id="activity_level"
                   {...register("activity_level")}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none bg-white"
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none text-white bg-gray-800"
                 >
                   <option value="Active">{t("Active")}</option>
                   <option value="Moderate">{t("Moderate")}</option>

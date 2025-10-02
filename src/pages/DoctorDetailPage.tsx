@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import api from '@/api/axios';
-import { Spinner, Button } from '@telegram-apps/telegram-ui';
-import { Page } from '@/components/Page';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from "react";
+import api from "@/api/axios";
+import { Spinner, Button } from "@telegram-apps/telegram-ui";
+import { Page } from "@/components/Page";
+import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function DoctorDetailPage() {
   const { t } = useTranslation();
@@ -13,9 +13,9 @@ export default function DoctorDetailPage() {
   const telegramuser = JSON.parse(localStorage.getItem("user") || "{}");
   const [doctor, setDoctor] = useState<any>(null);
   const [availability, setAvailability] = useState<any[]>([]);
-  const [selectedSlot, setSelectedSlot] = useState('');
+  const [selectedSlot, setSelectedSlot] = useState("");
   const [loadingSlots, setLoadingSlots] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState("");
   const [confirmed] = useState(false);
   const [hasFavoriteChild, setHasFavoriteChild] = useState(true);
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ export default function DoctorDetailPage() {
     fetchDoctorInfo();
     fetchAvailability();
 
-    const favoriteChildId = localStorage.getItem('favorite_child_id');
+    const favoriteChildId = localStorage.getItem("favorite_child_id");
     if (!favoriteChildId) {
       setHasFavoriteChild(false);
     }
@@ -35,7 +35,7 @@ export default function DoctorDetailPage() {
       const res = await api.get(`/specialists/find-one/${doctorId}`);
       setDoctor(res.data);
     } catch (err) {
-      console.error(t('Doctor fetch failed'));
+      console.error(t("Doctor fetch failed"));
     }
   };
 
@@ -52,14 +52,14 @@ export default function DoctorDetailPage() {
   };
 
   const bookSlot = async () => {
-    const favoriteChildId = localStorage.getItem('favorite_child_id');
+    const favoriteChildId = localStorage.getItem("favorite_child_id");
     if (!selectedSlot || !favoriteChildId) {
-      setErrorMsg(t('Please select a slot and ensure child is added.'));
+      setErrorMsg(t("Please select a slot and ensure child is added."));
       return;
     }
 
     try {
-      await api.post('/booking/create', {
+      await api.post("/booking/create", {
         parentId: telegramuser?.id,
         expertId: doctorId,
         slotId: selectedSlot,
@@ -67,7 +67,7 @@ export default function DoctorDetailPage() {
       });
       navigate(`/consultation/${doctorId}`);
     } catch (err) {
-      setErrorMsg(t('Booking failed. Try again.'));
+      setErrorMsg(t("Booking failed. Try again."));
     }
   };
 
@@ -76,16 +76,16 @@ export default function DoctorDetailPage() {
       <Page back={true}>
         <div className="p-6 text-center text-white space-y-4">
           <h2 className="text-2xl font-semibold text-green-400">
-            🎉 {t('Consultation Confirmed')}
+            🎉 {t("Consultation Confirmed")}
           </h2>
           <p>
-            {t('Session booked with')}{' '}
+            {t("Session booked with")}{" "}
             <span className="font-bold">
               {doctor?.firstName} {doctor?.lastName}
             </span>
           </p>
           <Button className="bg-indigo-600 text-white mt-4">
-            {t('Join Video Call')}
+            {t("Join Video Call")}
           </Button>
         </div>
       </Page>
@@ -96,17 +96,17 @@ export default function DoctorDetailPage() {
     <Page back={true}>
       <div className="p-6 space-y-4 text-white">
         <h2 className="text-xl font-bold text-emerald-400">
-          {t('Doctor Info')}
+          {t("Doctor Info")}
         </h2>
 
         {!hasFavoriteChild && (
           <div className="bg-red-500/10 p-4 rounded border border-red-400 text-white space-y-2">
-            <p>{t('No child selected. Please add a child before booking.')}</p>
+            <p>{t("No child selected. Please add a child before booking.")}</p>
             <Button
               className="bg-red-500 text-white"
-              onClick={() => navigate('/children')}
+              onClick={() => navigate("/children")}
             >
-              ➕ {t('Add Child')}
+              ➕ {t("Add Child")}
             </Button>
           </div>
         )}
@@ -114,15 +114,15 @@ export default function DoctorDetailPage() {
         {doctor ? (
           <div className="flex gap-4 items-center">
             <img
-              src={doctor?.avatarUrl || '/doctors/default-avatar.png'}
+              src={doctor?.avatarUrl || "/doctors/default-avatar.png"}
               alt={`${doctor.firstName} ${doctor.lastName}`}
               className="w-16 h-16 rounded-full object-cover"
             />
             <div>
-              <p className="text-lg font-bold">
+              <p className="text-lg font-bold text-gray-300">
                 {doctor.firstName} {doctor.lastName}
               </p>
-              <p className="text-sm text-gray-400">
+              <p className=" text-gray-400 text-base">
                 {doctor.SpecialistProfile?.specialty}
               </p>
             </div>
@@ -134,8 +134,8 @@ export default function DoctorDetailPage() {
         {hasFavoriteChild && (
           <>
             <div>
-              <p className="font-medium mb-2 text-gray-300">
-                📅 {t('Choose a Slot')}
+              <p className="font-medium mb-2 text-gray-400">
+                📅 {t("Choose a Slot")}
               </p>
               {loadingSlots ? (
                 <Spinner size="l" />
@@ -143,15 +143,20 @@ export default function DoctorDetailPage() {
                 <select
                   value={selectedSlot}
                   onChange={(e) => setSelectedSlot(e.target.value)}
-                  className="w-full bg-gray-800 border border-gray-600 text-white p-2 rounded"
+                  className="w-full bg-gray-500 border border-gray-600 text-black p-2 rounded"
                 >
-                  <option value="">{t('Select a time slot')}</option>
+                  <option className="bg-gray-500 text-gray-700" value="">
+                    {t("Select a time slot")}
+                  </option>
                   {availability
                     .filter((slot) => {
-                      if (slot.isBooked || !slot.startTime || !slot.date) return false;
+                      if (slot.isBooked || !slot.startTime || !slot.date)
+                        return false;
 
                       try {
-                        const [hour, minute] = slot.startTime.split(':').map(Number);
+                        const [hour, minute] = slot.startTime
+                          .split(":")
+                          .map(Number);
                         const dateObj = new Date(slot.date);
                         const slotDateTime = new Date(
                           dateObj.getFullYear(),
@@ -167,19 +172,32 @@ export default function DoctorDetailPage() {
                       }
                     })
                     .sort((a, b) => {
-                      const [ah, am] = a.startTime.split(':').map(Number);
-                      const [bh, bm] = b.startTime.split(':').map(Number);
+                      const [ah, am] = a.startTime.split(":").map(Number);
+                      const [bh, bm] = b.startTime.split(":").map(Number);
                       const ad = new Date(a.date);
                       const bd = new Date(b.date);
 
-                      const aTime = new Date(ad.getFullYear(), ad.getMonth(), ad.getDate(), ah, am);
-                      const bTime = new Date(bd.getFullYear(), bd.getMonth(), bd.getDate(), bh, bm);
+                      const aTime = new Date(
+                        ad.getFullYear(),
+                        ad.getMonth(),
+                        ad.getDate(),
+                        ah,
+                        am
+                      );
+                      const bTime = new Date(
+                        bd.getFullYear(),
+                        bd.getMonth(),
+                        bd.getDate(),
+                        bh,
+                        bm
+                      );
 
                       return aTime.getTime() - bTime.getTime();
                     })
                     .map((slot) => (
                       <option key={slot.id} value={slot.id}>
-                        {slot.date.split('T')[0]} - {slot.startTime} to {slot.endTime}
+                        {slot.date.split("T")[0]} - {slot.startTime} to{" "}
+                        {slot.endTime}
                       </option>
                     ))}
                 </select>
@@ -193,7 +211,7 @@ export default function DoctorDetailPage() {
                 className="w-full mt-4 bg-emerald-600 text-white"
                 onClick={bookSlot}
               >
-                {t('Confirm Booking')}
+                {t("Confirm Booking")}
               </Button>
             )}
           </>
