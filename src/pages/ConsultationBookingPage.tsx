@@ -65,12 +65,12 @@ export default function ConsultationTab() {
     <Page>
       <div className="p-2 w-full mx-auto space-y-6 ">
         <div className="flex justify-end">
-          <Button
-            className="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded "
+          <button
+            className="bg-[#0B8FAC] hover:bg-[#0ea4c6] px-4 py-2 rounded "
             onClick={() => navigate("/my-appointments")}
           >
             {t("My Appointments")}
-          </Button>
+          </button>
         </div>
 
         <div
@@ -78,15 +78,18 @@ export default function ConsultationTab() {
           style={{ background: "var(--tg-theme-bg-color)" }}
         >
           {categories.map((category) => (
-            <Button
+            <button
               key={category}
-              className="py-3 -px-2 text-[10px] font-base whitespace-nowrap max-auto w-full"
-              mode={activeCategory === category ? "filled" : "outline"}
+              className={`py-3 px-2 text-[13px] font-normal whitespace-nowrap mx-auto w-full ${
+                activeCategory === category
+                  ? "bg-[#0B8FAC] text-white" // filled style
+                  : " border-gray-300 text-gray-400 text-base font-medium" // outline style
+              } rounded-lg`}
               onClick={() => setActiveCategory(category)}
               title={`Filter by ${category}`}
             >
               {category}
-            </Button>
+            </button>
           ))}
         </div>
 
