@@ -110,11 +110,11 @@ const ProductList = () => {
         <Header />
 
         {/* Category Filter */}
-        <div className="mt-2 p-2">
+        <div className="mt-2 p-2 ">
           <form className="flex w-full">
             <label
               htmlFor="category"
-              className="mt-2 w-[180px] block mb-2 text-sm font-medium text-gray-300 dark:text-gray-400"
+              className="mt-2 w-[180px] block mb-2 text-sm font-medium text-gray-400 dark:text-gray-400"
             >
               {t("Select Category")}
             </label>
@@ -140,8 +140,8 @@ const ProductList = () => {
           >
             Search
           </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 start-0 flex items-center ps-1 pointer-events-none ml-2 px-2">
+          <div className="relative px-2">
+            <div className="absolute inset-y-0 start-0 flex items-center ps-1 pointer-events-none ml-5 px-2">
               <svg
                 className="w-4 h-4 text-gray-500 dark:text-gray-400"
                 aria-hidden="true"
@@ -163,13 +163,13 @@ const ProductList = () => {
               id="default-search"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="block w-[350px] p-2 ps-6 ml-2 text-sm text-white border border-gray-500 rounded-lg bg-gray-700 focus:ring-blue-500 focus:border-blue-500"
+              className=" w-full p-2 mr-12  ps-8 ml-2 text-sm text-white border border-gray-500 rounded-lg bg-[#D9D9D94D] "
               placeholder="Search product..."
             />
 
             <button
               type="submit"
-              className=" mt-4 text-white absolute end-0.5 bottom-0.5 bg-blue-700 hover:bg-blue-800  font-medium rounded-lg text-sm px-4   pt-1.5 pb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className=" mt-4 text-white absolute end-0.5 bottom-0.5 bg-[#0B364F] hover:bg-[#124766]  font-medium rounded-lg text-sm px-4   pt-1.5 pb-2 "
             >
               Search
             </button>
@@ -204,7 +204,7 @@ const ProductList = () => {
             </div>
             {/* pagination control */}
             {/* Pagination Controls */}
-            <div className="flex py-6 px-4">
+            <div className="flex items-center justify-center py-6 px-4 ">
               <button
                 onClick={() => setPage((prev) => prev - 1)}
                 disabled={page === 1 || loading}
