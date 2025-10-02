@@ -35,7 +35,7 @@ const ChildrenListPage: React.FC = () => {
   );
 
   const telegramUser = JSON.parse(localStorage.getItem("user") || "{}");
-  console.log({ telegramUser });
+  // console.log({ telegramUser });
 
   useEffect(() => {
     if (!telegramUser?.id) return;
@@ -133,7 +133,7 @@ const ChildrenListPage: React.FC = () => {
           {childrenData?.map((child) => (
             <div
               key={child.id}
-              className="bg-[#0B364F] rounded-xl p-5 shadow-md border border-gray-700 hover:shadow-xl transition-all relative"
+              className="bg-[#0B8FAC] rounded-xl p-5 shadow-md border border-gray-700 hover:shadow-xl transition-all relative"
             >
               <div className="absolute top-2  right-2">
                 <button
@@ -156,7 +156,7 @@ const ChildrenListPage: React.FC = () => {
                   <span className="inline-flex items-center ml-2  text-sm  text-gray-300">
                     Gender: {child.gender === "Male" ? t("Boy") : t("Girl")},
                   </span>
-                  <span className=" text-green-600 ml-2 text-sm underline">
+                  <span className=" text-gray-200 ml-2 text-base underline">
                     View detail
                   </span>
                 </div>
