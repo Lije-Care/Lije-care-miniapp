@@ -83,7 +83,7 @@ export const IndexPage: FC = () => {
 
       <Section className="overflow-y-auto pb-8">
         {/* 👨‍👩‍👧 Profile Cards */}
-        <div className="flex gap-1 px-4 py-3 justify-between">
+        <div className="flex gap-1 px-4 py-3 justify-between bg-[#0B364F]">
           {/* Parent Card */}
           <div
             onClick={() => navigate("/profile")}
@@ -96,7 +96,7 @@ export const IndexPage: FC = () => {
             />
             <div className="flex flex-col min-w-0">
               <p className="text-base font-semibold truncate">{parent.name}</p>
-              <p className="text-sm text-gray-500 truncate">{t("Parent")}</p>
+              <p className="text-sm text-gray-400 truncate">{t("Parent")}</p>
             </div>
           </div>
 
@@ -114,7 +114,7 @@ export const IndexPage: FC = () => {
                 />
                 <div className="flex flex-col min-w-0">
                   <p className="text-base font-semibold truncate">View</p>
-                  <p className="text-bold text-gray-500 truncate">
+                  <p className="text-bold text-gray-400 truncate">
                     {t("Children")}
                   </p>
                 </div>
