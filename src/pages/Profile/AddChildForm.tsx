@@ -138,7 +138,7 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col space-y-4 max-h-[80vh] overflow-y-auto px-2"
+      className="flex flex-col space-y-4 max-h-[80vh] overflow-y-auto px-2 "
     >
       {formFields.map((field) => (
         <Controller
