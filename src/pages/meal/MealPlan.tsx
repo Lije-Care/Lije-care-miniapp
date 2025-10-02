@@ -135,7 +135,7 @@ const MealLibraryComponent = () => {
   const nutrientTotals = sumNutrients();
 
   return (
-    <div className="p-4 max-w-3xl mx-auto text-white space-y-6">
+    <div className="p-4 max-w-3xl mx-auto text-white space-y-6 bg-[#0B364F]">
       <h1 className="text-2xl font-bold text-emerald-400">
         🍽️ {t("Create Meal Plan")}
       </h1>
