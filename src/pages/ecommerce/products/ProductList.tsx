@@ -35,7 +35,7 @@ const ProductList = () => {
       const res = await api.get(`/ecommerce?page=${page}&limit=${limit}`, {
         headers: { "Content-Type": "application/json" },
       });
-      console.log(res.data);
+      // console.log(res.data);
 
       setProducts(res.data?.data || []);
 
@@ -121,7 +121,7 @@ const ProductList = () => {
             <select
               id="category"
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="block w-full p-2 mb-6 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="block w-full  mb-6 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             >
               <option value="all">{t("All")}</option>
               <option value="food">{t("Baby Food & Supplement")}</option>
@@ -163,7 +163,7 @@ const ProductList = () => {
               id="default-search"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className=" w-full p-2 mr-12  ps-8 ml-2 text-sm text-white border border-gray-500 rounded-lg bg-[#D9D9D94D] "
+              className=" w-full p-2   ps-8 ml-2 text-sm text-black border border-gray-500 rounded-lg bg-[#D9D9D94D] "
               placeholder="Search product..."
             />
 
