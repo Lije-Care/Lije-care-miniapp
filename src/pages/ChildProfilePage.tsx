@@ -266,7 +266,7 @@ const ChildProfilePage: React.FC = () => {
 
   return (
     <Page back={true}>
-      <div className="max-w-4xl mx-auto p-4">
+      <div className="max-w-4xl mx-auto p-4 bg-[#0B364F]">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-emerald-400">
             {t("Child Profile")}
@@ -287,21 +287,28 @@ const ChildProfilePage: React.FC = () => {
             onSubmit={handleSubmit(onSubmit)}
             className="space-y-6 mb-6 px-2 mt-4"
           >
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="bg-[#0B364F] p-2"
+            >
               <Text className="text-lg font-semibold">
                 {t("Basic Information")}
               </Text>
 
               {/* Name */}
-              <div className="mt-4">
-                <label htmlFor="name" className="block font-medium mb-1">
+              <div className="mt-4 ">
+                <label
+                  htmlFor="name"
+                  className="block mb-1 text-[#FFFFFF] font-[600]"
+                >
                   {t("Name")}
                 </label>
                 <input
                   id="name"
                   type="text"
                   placeholder={t("Enter your name")}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
+                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] focus:outline-none font-[400]"
                   {...register("name")}
                 />
               </div>
@@ -317,7 +324,7 @@ const ChildProfilePage: React.FC = () => {
                 <input
                   id="date_of_birth"
                   type="date"
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
+                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] focus:outline-none"
                   {...register("date_of_birth")}
                 />
               </div>
@@ -330,7 +337,7 @@ const ChildProfilePage: React.FC = () => {
                 <select
                   id="gender"
                   {...register("gender")}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none text-white bg-gray-800"
+                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] focus:outline-none text-white"
                 >
                   <option value="Male">{t("Male")}</option>
                   <option value="Female">{t("Female")}</option>
@@ -346,7 +353,7 @@ const ChildProfilePage: React.FC = () => {
                   id="weight"
                   type="number"
                   placeholder="e.g. 70"
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
+                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] focus:outline-none"
                   {...register("weight")}
                 />
               </div>
@@ -360,7 +367,7 @@ const ChildProfilePage: React.FC = () => {
                   id="height"
                   type="number"
                   placeholder="e.g. 175"
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
+                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] focus:outline-none"
                   {...register("height")}
                 />
               </div>
@@ -376,7 +383,7 @@ const ChildProfilePage: React.FC = () => {
                 <select
                   id="activity_level"
                   {...register("activity_level")}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none text-white bg-gray-800"
+                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] focus:outline-none text-white"
                 >
                   <option value="Active">{t("Active")}</option>
                   <option value="Moderate">{t("Moderate")}</option>
@@ -393,7 +400,7 @@ const ChildProfilePage: React.FC = () => {
                   id="muac"
                   type="number"
                   placeholder="e.g. 23"
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
+                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] focus:outline-none"
                   {...register("muac")}
                 />
               </div>
