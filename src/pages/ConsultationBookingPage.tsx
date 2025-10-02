@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Spinner } from "@telegram-apps/telegram-ui";
+import { Spinner } from "@telegram-apps/telegram-ui";
 import { RootState, AppDispatch } from "@/redux/store";
 import { fetchSpecialists } from "@/redux/slices/specialistSlice";
 import { Page } from "@/components/Page";
@@ -73,14 +73,11 @@ export default function ConsultationTab() {
           </button>
         </div>
 
-        <div
-          className="w-full flex flex-between rounded-lg"
-          style={{ background: "var(--tg-theme-bg-color)" }}
-        >
+        <div className="w-full flex flex-between rounded-lg">
           {categories.map((category) => (
             <button
               key={category}
-              className={`py-3 px-2 text-[13px] font-normal whitespace-nowrap mx-auto w-full ${
+              className={`py-3 px-2 text-[15px] font-normal whitespace-nowrap mx-auto w-full ${
                 activeCategory === category
                   ? "bg-[#0B8FAC] text-white" // filled style
                   : " border-gray-300 text-gray-400 text-base font-medium" // outline style
