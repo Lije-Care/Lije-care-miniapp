@@ -69,7 +69,7 @@ export const IndexPage: FC = () => {
   return (
     <Page back={true}>
       <div className=" flex justify-between bg-[#013222] p-4 ">
-        <p className=" text-base font-semibold ml-3 mt-2">
+        <p className=" text-base font-semibold ml-3 mt-2 text-white">
           {" "}
           Hi {parent.name} Welcome!
         </p>
