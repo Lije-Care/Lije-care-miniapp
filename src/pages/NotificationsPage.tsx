@@ -1,6 +1,5 @@
 // src/pages/NotificationsPage.tsx
-import { FC, useEffect } from "react";
-
+import { FC, useEffect, useState } from "react";
 import { Page } from "@/components/Page";
 import {
   FiBell,
@@ -13,35 +12,69 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchAllNotifications } from "@/redux/slices/notificationSlice";
 import { RootState, AppDispatch } from "@/redux/store";
 
+const MAX_MESSAGE_LENGTH = 120;
+
 const NotificationsPage: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-
-  // Safe selector with optional chaining
-  // Import RootState from your store definition
-
   const notificationsState = useSelector(
     (state: RootState) => state.notificartions
   );
   const { data = [], loading, error } = notificationsState || {};
   console.log({ data });
 
+  // Track which notifications are expanded
+  const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
+
   useEffect(() => {
     dispatch(fetchAllNotifications());
   }, [dispatch]);
 
   const renderIcon = (type: string) => {
-    switch (type) {
-      case "info":
+    const normalizedType = type?.toUpperCase();
+
+    switch (normalizedType) {
+      case "INFO":
         return <FiInfo className="text-blue-500 w-5 h-5" />;
-      case "success":
+      case "SUCCESS":
         return <FiCheckCircle className="text-green-500 w-5 h-5" />;
-      case "warning":
+      case "WARNING":
         return <FiAlertTriangle className="text-yellow-500 w-5 h-5" />;
-      case "error":
+      case "ERROR":
+        return <FiAlertTriangle className="text-red-500 w-5 h-5" />;
+      case "GROWTH_MILESTONE":
+        return <FiCheckCircle className="text-purple-500 w-5 h-5" />;
+      case "REMINDER":
+        return <FiBell className="text-orange-500 w-5 h-5" />;
+      case "ALERT":
         return <FiAlertTriangle className="text-red-500 w-5 h-5" />;
       default:
         return <FiBell className="text-gray-500 w-5 h-5" />;
     }
+  };
+
+  const getTypeColor = (type: string) => {
+    const normalizedType = type?.toUpperCase();
+    switch (normalizedType) {
+      case "GROWTH_MILESTONE":
+        return "bg-purple-100 text-purple-700";
+      case "REMINDER":
+        return "bg-orange-100 text-orange-700";
+      case "SUCCESS":
+        return "bg-green-100 text-green-700";
+      case "ERROR":
+        return "bg-red-100 text-red-700";
+      case "WARNING":
+        return "bg-yellow-100 text-yellow-700";
+      default:
+        return "bg-gray-100 text-gray-700";
+    }
+  };
+
+  const toggleExpand = (id: string) => {
+    setExpanded((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
   };
 
   return (
@@ -68,27 +101,63 @@ const NotificationsPage: FC = () => {
           </div>
         ) : (
           <ul className="space-y-3">
-            {data.map((notification) => (
-              <li
-                key={notification.id}
-                className="bg-white rounded-xl shadow-sm p-4 flex items-start gap-4 border"
-              >
-                <div className="flex-shrink-0">
-                  {renderIcon(notification.type)}
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-800 text-sm">
-                    {notification.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm mt-1 leading-snug">
-                    {notification.message}
-                  </p>
-                  <p className="text-xs text-gray-400 mt-2">
-                    {new Date(notification.createdAt).toLocaleString()}
-                  </p>
-                </div>
-              </li>
-            ))}
+            {data.map((notification) => {
+              const isExpanded = expanded[notification.id];
+              const message = notification.message || "";
+              const shouldTruncate = message.length > MAX_MESSAGE_LENGTH;
+              const displayMessage = isExpanded
+                ? message
+                : message.slice(0, MAX_MESSAGE_LENGTH);
+
+              return (
+                <li
+                  key={notification.id}
+                  className="bg-white rounded-xl shadow-sm p-4 flex items-start gap-4 border"
+                >
+                  <div className="flex-shrink-0">
+                    {renderIcon(notification.type)}
+                  </div>
+                  <div className="flex-1">
+                    {/* Title */}
+                    <h3 className="font-semibold text-gray-800 text-sm">
+                      {notification.title || "Notification"}
+                    </h3>
+
+                    {/* Type Badge */}
+                    {notification.type && (
+                      <span
+                        className={`inline-block text-[10px] px-2 py-1 rounded-full font-medium uppercase mt-1 ${getTypeColor(
+                          notification.type
+                        )}`}
+                      >
+                        {notification.type.replace(/_/g, " ")}
+                      </span>
+                    )}
+
+                    {/* Message */}
+                    <p className="text-gray-600 text-sm mt-2 leading-snug">
+                      {displayMessage}
+                      {shouldTruncate && !isExpanded && "..."}
+                    </p>
+
+                    {/* View More / Less */}
+                    {shouldTruncate && (
+                      <button
+                        onClick={() => toggleExpand(notification.id)}
+                        className="text-blue-500 text-xs font-medium mt-1 hover:underline focus:outline-none"
+                      >
+                        {isExpanded ? "View less" : "View more"}
+                      </button>
+                    )}
+
+                    {/* Timestamp */}
+                    <p className="text-xs text-gray-400 mt-2">
+                      {new Date(notification.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
