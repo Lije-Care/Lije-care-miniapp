@@ -5,7 +5,7 @@ import {
   Button,
   Spinner,
   Subheadline,
-  ButtonCell,
+  // ButtonCell,
 } from "@telegram-apps/telegram-ui";
 import { useEffect, useState, type FC } from "react";
 import { Page } from "@/components/Page.tsx";
