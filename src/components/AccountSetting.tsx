@@ -210,7 +210,7 @@ const AccountSettings = () => {
   };
 
   return (
-    <div className="p-4 w-full max-w-md mx-auto text-sm">
+    <div className="p-4 w-full max-w-md mx-auto text-sm bg-[#0B364F]">
       <h2 className="text-lg font-bold mb-4 text-center">
         {t("Account Settings")}
       </h2>
@@ -306,7 +306,7 @@ const AccountSettings = () => {
 
       {/* Change Password Modal */}
       <Modal open={showChange} onOpenChange={setShowChange}>
-        <div className="p-4">
+        <div className="p-4 bg-[#0B364F] text-white">
           <h3 className="text-md font-semibold mb-3 text-center">
             {t("Change Password")}
           </h3>

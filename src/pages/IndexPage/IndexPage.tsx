@@ -68,22 +68,23 @@ export const IndexPage: FC = () => {
 
   return (
     <Page back={true}>
-      <Section
-        className="flex justify-end px-4 py-2 relative"
-        style={{ background: "#013222", color: "white" }}
-      >
-        <ButtonCell
+      <div className=" flex justify-between bg-[#013222] p-4 ">
+        <p className=" text-base font-semibold ml-3 mt-2">
+          {" "}
+          Hi {parent.name} Welcome!
+        </p>
+        <button
           onClick={() => navigate("/notifications")}
-          className="relative p-2 rounded-lg"
+          className="relative p-2 rounded-lg text-white"
           style={{ background: "#013222", color: "white" }}
         >
           <FiBell size={24} />
-        </ButtonCell>
-      </Section>
+        </button>
+      </div>
 
       <Section className="overflow-y-auto pb-8">
         {/* 👨‍👩‍👧 Profile Cards */}
-        <div className="flex gap-1 px-4 py-3 justify-between bg-[#0B364F]">
+        <div className="flex gap-1 px-4 py-3 justify-between bg-[#013222]">
           {/* Parent Card */}
           <div
             onClick={() => navigate("/profile")}

@@ -135,13 +135,13 @@ const MealLibraryComponent = () => {
   const nutrientTotals = sumNutrients();
 
   return (
-    <div className="p-4 max-w-3xl mx-auto text-white space-y-6 bg-[#0B364F]">
+    <div className="p-4 max-w-3xl mx-auto text-white space-y-6 ">
       <h1 className="text-2xl font-bold text-emerald-400">
         🍽️ {t("Create Meal Plan")}
       </h1>
 
       <textarea
-        className="w-full p-2 bg-gray-800 text-white rounded"
+        className="w-full p-2 bg-[#0B364F] text-white rounded"
         rows={2}
         value={mealDescription}
         onChange={(e) => setMealDescription(e.target.value)}
@@ -149,36 +149,36 @@ const MealLibraryComponent = () => {
       />
 
       {selectedMeals.length > 0 && (
-        <div className="bg-gray-600 p-4 rounded">
+        <div className="bg-[#0d778f] p-4 rounded">
           <h2 className="text-lg font-bold text-emerald-300 mb-2">
             📊 Total Nutrients
           </h2>
           <ul className="text-sm space-y-1">
-            <li className="text-gray-300">
+            <li className="text-gray-100">
               Total Volume: {nutrientTotals.totalVolume} ml
             </li>
-            <li className="text-gray-300">
+            <li className="text-gray-100">
               Protein: {nutrientTotals.protein.toFixed(2)} g
             </li>
-            <li className="text-gray-300">
+            <li className="text-gray-100">
               Fat: {nutrientTotals.fat.toFixed(2)} g
             </li>
-            <li className="text-gray-300">
+            <li className="text-gray-100">
               Carbohydrates: {nutrientTotals.carbs.toFixed(2)} g
             </li>
-            <li className="text-gray-300">
+            <li className="text-gray-100">
               Calories: {nutrientTotals.calories.toFixed(2)} kcal
             </li>
-            <li className="text-gray-300">
+            <li className="text-gray-100">
               Iron: {nutrientTotals.iron.toFixed(2)} mg
             </li>
-            <li className="text-gray-300">
+            <li className="text-gray-100">
               Calcium: {nutrientTotals.calcium.toFixed(2)} mg
             </li>
-            <li className="text-gray-300">
+            <li className="text-gray-100">
               Vitamin A: {nutrientTotals.vitaminA.toFixed(2)} IU
             </li>
-            <li className="text-gray-300">
+            <li className="text-gray-100">
               Vitamin D: {nutrientTotals.vitaminD.toFixed(2)} IU
             </li>
           </ul>
@@ -196,8 +196,8 @@ const MealLibraryComponent = () => {
             key={meal.id}
             className={`p-4 rounded-xl border transition-all duration-200 cursor-pointer ${
               selected
-                ? "border-emerald-400 bg-emerald-800/10"
-                : "border-gray-700 bg-[#111827]"
+                ? "border-emerald-400 bg-[#0d778f]"
+                : "border-gray-700 bg-[#0B8FAC]"
             }`}
             onClick={() => toggleMealExpand(meal.id)}
           >
@@ -223,15 +223,15 @@ const MealLibraryComponent = () => {
                   {meal.name}
                 </h2>
 
-                <p className="text-xs text-gray-400 italic">
+                <p className="text-xs text-white italic">
                   Age: {meal.ageGroup} m+ · {meal.mealType} · {meal.mealTime}
                 </p>
                 <div className=" flex mt-2">
-                  <div className="text-green-600 ml-2 text-sm  font-serif">
+                  <div className=" text-black ml-2 text-sm  font-serif">
                     <Eye />
                   </div>
 
-                  <span className=" text-green-600 ml-1 text-sm  underline font-serif">
+                  <span className="  text-black ml-1 text-sm  underline font-serif">
                     View
                   </span>
                 </div>
@@ -239,40 +239,40 @@ const MealLibraryComponent = () => {
             </div>
 
             {expanded && (
-              <div className="mt-4 space-y-2 text-sm bg-gray-600 p-4 rounded-lg">
-                <p className="text-gray-300">
+              <div className="mt-4 space-y-2 text-sm bg-[#D9D9D94D] p-4 rounded-lg">
+                <p className="text-gray-100">
                   <strong>Description:</strong> {meal.description}
                 </p>
-                <p className="text-gray-300">
+                <p className="text-gray-100">
                   <strong>Meal Type:</strong> {meal.mealType}
                 </p>
-                <p className="text-gray-300">
+                <p className="text-gray-100">
                   <strong>Meal Time:</strong> {meal.mealTime}
                 </p>
-                <p className="text-gray-300">
+                <p className="text-gray-100">
                   <strong>Prepping Time:</strong> {meal.prepTime ?? "N/A"}
                 </p>
-                <p className="text-gray-300">
+                <p className="text-gray-100">
                   <strong>Yield Volume:</strong> {meal.totalVolume ?? "N/A"} ml
                 </p>
-                <p className="text-gray-300">
+                <p className="text-gray-100">
                   <strong>Allergen Description:</strong>{" "}
                   {meal.allergenDescription}
                 </p>
-                <p className="text-gray-300">
+                <p className="text-gray-100">
                   <strong>Intolerance Description:</strong>{" "}
                   {meal.intoleranceDescription}
                 </p>
-                <p className="text-gray-300">
+                <p className="text-gray-100">
                   <strong>Drug Interaction:</strong> {meal.drugInteraction}
                 </p>
-                <p className="text-gray-300">
+                <p className="text-gray-100">
                   <strong>Direction:</strong> {meal.direction}
                 </p>
-                <p className="text-gray-300">
+                <p className="text-gray-100">
                   <strong>How to Store:</strong> {meal.howToStore}
                 </p>
-                <p className="text-gray-300">
+                <p className="text-gray-100">
                   <strong>Ingredients:</strong>
                 </p>
                 <ul className="list-disc list-inside ml-4">
@@ -302,13 +302,13 @@ const MealLibraryComponent = () => {
                       </li>
                     ))
                   ) : (
-                    <li className="text-gray-400 italic">
+                    <li className="text-white italic">
                       No nutrients available
                     </li>
                   )}
                 </ul>
                 <div className="flex gap-2 items-center mt-2">
-                  <label className="text-sm text-gray-300">Multiplier:</label>
+                  <label className="text-sm text-gray-100">Multiplier:</label>
                   <input
                     type="number"
                     min={1}
@@ -332,7 +332,7 @@ const MealLibraryComponent = () => {
                 className={`text-xs px-4 py-1.5 rounded font-semibold transition-all ${
                   selected
                     ? "bg-red-500 hover:bg-red-600"
-                    : "bg-blue-500 hover:bg-blue-600"
+                    : "bg-teal-300 text-black hover:bg-blue-600"
                 }`}
               >
                 {selected ? "Remove" : "Add"}

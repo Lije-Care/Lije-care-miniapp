@@ -9,9 +9,6 @@ import { useTranslation } from "react-i18next";
 
 import { calculateBMIZ } from "@/excelData/calculateBMIZ";
 import { calculateMUACZ } from "@/excelData/calculateMUACZ";
- 
-
-
 
 interface ChildProfile {
   date_of_birth: any;
@@ -26,119 +23,249 @@ interface ChildProfile {
 const GrowthTracker = ({ childProfile }: { childProfile: any }) => {
   const { t } = useTranslation();
   const classifyZ = (z: number, type: string) => {
-  if (type === "BMI") {
-    if (z < -3) return { label: t("Severe underweight"), color: "text-red-500", note: t("Urgent nutritional intervention needed.") };
-    if (z < -2) return { label: t("Moderate underweight"), color: "text-orange-400", note: t("May require monitoring.") };
-    if (z < 1) return { label: t("Normal weight"), color: "text-emerald-400", note: t("Healthy BMI range.") };
-    if (z < 2) return { label: t("Risk of overweight"), color: "text-yellow-400", note: t("Lifestyle changes may be needed.") };
-    if (z < 3) return { label: t("Overweight"), color: "text-orange-500", note: t("Potential obesity risk.") };
-    return { label: t("Obese"), color: "text-red-600", note: t("Intervention needed.") };
-  }
+    if (type === "BMI") {
+      if (z < -3)
+        return {
+          label: t("Severe underweight"),
+          color: "text-red-500",
+          note: t("Urgent nutritional intervention needed."),
+        };
+      if (z < -2)
+        return {
+          label: t("Moderate underweight"),
+          color: "text-orange-400",
+          note: t("May require monitoring."),
+        };
+      if (z < 1)
+        return {
+          label: t("Normal weight"),
+          color: "text-emerald-400",
+          note: t("Healthy BMI range."),
+        };
+      if (z < 2)
+        return {
+          label: t("Risk of overweight"),
+          color: "text-yellow-400",
+          note: t("Lifestyle changes may be needed."),
+        };
+      if (z < 3)
+        return {
+          label: t("Overweight"),
+          color: "text-orange-500",
+          note: t("Potential obesity risk."),
+        };
+      return {
+        label: t("Obese"),
+        color: "text-red-600",
+        note: t("Intervention needed."),
+      };
+    }
 
-  if (type === "MUAC") {
-    if (z < -3) return { label: t("Severe Acute Malnutrition (SAM)"), color: "text-red-500", note: t("Urgent feeding and care needed.") };
-    if (z < -2) return { label: t("Moderate Acute Malnutrition (MAM)"), color: "text-orange-400", note: t("Supplementary feeding required.") };
-    if (z < 1) return { label: t("Normal Nutrition"), color: "text-emerald-400", note: t("Balanced nutrition encouraged.") };
-    if (z < 2) return { label: t("Risk of Overnutrition"), color: "text-yellow-400", note: t("Monitor diet/activity.") };
-    return { label: t("Possible Obesity"), color: "text-red-500", note: t("Reduce fat intake & assess lifestyle.") };
-  }
+    if (type === "MUAC") {
+      if (z < -3)
+        return {
+          label: t("Severe Acute Malnutrition (SAM)"),
+          color: "text-red-500",
+          note: t("Urgent feeding and care needed."),
+        };
+      if (z < -2)
+        return {
+          label: t("Moderate Acute Malnutrition (MAM)"),
+          color: "text-orange-400",
+          note: t("Supplementary feeding required."),
+        };
+      if (z < 1)
+        return {
+          label: t("Normal Nutrition"),
+          color: "text-emerald-400",
+          note: t("Balanced nutrition encouraged."),
+        };
+      if (z < 2)
+        return {
+          label: t("Risk of Overnutrition"),
+          color: "text-yellow-400",
+          note: t("Monitor diet/activity."),
+        };
+      return {
+        label: t("Possible Obesity"),
+        color: "text-red-500",
+        note: t("Reduce fat intake & assess lifestyle."),
+      };
+    }
 
-  if (type === "Height") {
-    if (z < -3) return { label: t("Severe malnutrition (Wasting)"), color: "text-red-500", note: t("Urgent care needed.") };
-    if (z < -2) return { label: t("Moderate malnutrition"), color: "text-orange-400", note: t("Nutrition support recommended.") };
-    if (z < -1) return { label: t("Mild underweight"), color: "text-yellow-400", note: t("Needs balanced nutrition.") };
-    if (z < 1) return { label: t("Normal"), color: "text-emerald-400", note: t("Healthy growth.") };
-    if (z < 2) return { label: t("Risk of Overweight"), color: "text-yellow-400", note: t("Watch weight trends.") };
-    if (z < 3) return { label: t("Overweight"), color: "text-orange-500", note: t("Increased health risks.") };
-    return { label: t("Obese"), color: "text-red-600", note: t("Immediate intervention advised.") };
-  }
+    if (type === "Height") {
+      if (z < -3)
+        return {
+          label: t("Severe malnutrition (Wasting)"),
+          color: "text-red-500",
+          note: t("Urgent care needed."),
+        };
+      if (z < -2)
+        return {
+          label: t("Moderate malnutrition"),
+          color: "text-orange-400",
+          note: t("Nutrition support recommended."),
+        };
+      if (z < -1)
+        return {
+          label: t("Mild underweight"),
+          color: "text-yellow-400",
+          note: t("Needs balanced nutrition."),
+        };
+      if (z < 1)
+        return {
+          label: t("Normal"),
+          color: "text-emerald-400",
+          note: t("Healthy growth."),
+        };
+      if (z < 2)
+        return {
+          label: t("Risk of Overweight"),
+          color: "text-yellow-400",
+          note: t("Watch weight trends."),
+        };
+      if (z < 3)
+        return {
+          label: t("Overweight"),
+          color: "text-orange-500",
+          note: t("Increased health risks."),
+        };
+      return {
+        label: t("Obese"),
+        color: "text-red-600",
+        note: t("Immediate intervention advised."),
+      };
+    }
 
-  return {
-    label: t("Unknown"),
-    color: "text-gray-500",
-    note: t("Unrecognized indicator type or missing data."),
+    return {
+      label: t("Unknown"),
+      color: "text-gray-500",
+      note: t("Unrecognized indicator type or missing data."),
+    };
   };
-};
   const [child, setChild] = useState<ChildProfile | null>(null);
   const [zScores, setZScores] = useState<any>(null);
   const [expanded, setExpanded] = useState(true);
-const gender = childProfile?.gender.toLowerCase() === "female" ? "girl" : "boy";
+  const gender =
+    childProfile?.gender.toLowerCase() === "female" ? "girl" : "boy";
 
   useEffect(() => {
     if (childProfile) {
       setChild(childProfile);
-      
-       const hazResult = calculateHAZ(
-  85,      // heightCm
-  29,      // ageInWeeks
-  7,       // ageInMonths
-  gender   // gender
-);
 
+      const hazResult = calculateHAZ(
+        85, // heightCm
+        29, // ageInWeeks
+        7, // ageInMonths
+        gender // gender
+      );
 
+      console.log("HAZ Z-Score:", hazResult.haz);
+      // console.log("HAZ Classification:", hazResult.classification);
 
-console.log("HAZ Z-Score:", hazResult.haz);
-console.log("HAZ Classification:", hazResult.classification);
+      const birthDate = new Date(childProfile.date_of_birth);
+      const today = new Date();
+      const ageInWeeks = differenceInWeeks(today, birthDate);
+      function differenceInMonthsApprox(end: Date, start: Date): number {
+        const msPerDay = 1000 * 60 * 60 * 24;
+        const diffInMs = end.getTime() - start.getTime();
+        const diffInDays = Math.floor(diffInMs / msPerDay);
+        const months = Math.floor(diffInDays / 30);
+        return months;
+      }
 
+      const ageInMonths = differenceInMonthsApprox(today, birthDate);
+      const measuredStanding = childProfile.height > 87;
+      const bmiResult = calculateBMIZ(
+        childProfile.weight,
+        childProfile.height,
+        ageInWeeks <= 13 ? ageInWeeks : ageInMonths,
+        ageInWeeks <= 13 ? "week" : "month",
+        gender,
+        measuredStanding
+      );
 
-    
-   const birthDate = new Date(childProfile.date_of_birth);
-const today = new Date();
-const ageInWeeks = differenceInWeeks(today, birthDate);
-function differenceInMonthsApprox(end: Date, start: Date): number {
-  const msPerDay = 1000 * 60 * 60 * 24;
-  const diffInMs = end.getTime() - start.getTime();
-  const diffInDays = Math.floor(diffInMs / msPerDay);
-  const months = Math.floor(diffInDays / 30);
-  return months;
-}
-
-
-const ageInMonths = differenceInMonthsApprox(today, birthDate);
-const measuredStanding = childProfile.height > 87;
-const bmiResult = calculateBMIZ(
-  childProfile.weight,
-  childProfile.height,
-  ageInWeeks <= 13 ? ageInWeeks : ageInMonths,
-  ageInWeeks <= 13 ? "week" : "month",
-  gender,
-  measuredStanding
-);
-
-console.log("ageInMonths", ageInMonths);
-console.log("BMI Z-Score:", bmiResult);
-console.log("Z-Score:",calculateHAZ(
-            childProfile.height,
-            ageInWeeks,
-            ageInMonths,
-            gender
-          ),)
-// 2. Normalize gender to "girl" or "boy"
+      // console.log("ageInMonths", ageInMonths);
+      // console.log("BMI Z-Score:", bmiResult);
+      // console.log(
+      //   "Z-Score:",
+      //   calculateHAZ(childProfile.height, ageInWeeks, ageInMonths, gender)
+      // );
+      // 2. Normalize gender to "girl" or "boy"
 
       const calculatedZScores = {
         BMI: bmiResult,
         MUAC: calculateMUACZ(childProfile.muac, ageInMonths, gender).zScore,
-        HAZ: calculateHAZ(
+        HAZ: calculateHAZ(childProfile.height, ageInWeeks, ageInMonths, gender),
+        WHZ: calculateWHZ(
+          childProfile.weight,
           childProfile.height,
-          ageInWeeks,
-          ageInMonths,
+          gender,
+          getWHZRange(childProfile.date_of_birth)
+        ),
+        WAZ: calculateWAZ(
+          childProfile.weight,
+          getAgeDetails(childProfile.date_of_birth).age,
+          getAgeDetails(childProfile.date_of_birth).type,
           gender
         ),
-        WHZ: calculateWHZ(childProfile.weight, childProfile.height, gender, getWHZRange(childProfile.date_of_birth)),
-        WAZ: calculateWAZ(childProfile.weight, getAgeDetails(childProfile.date_of_birth).age, getAgeDetails(childProfile.date_of_birth).type, gender),
       };
       setZScores(calculatedZScores);
     }
   }, [childProfile]);
 
-  if (!child || !zScores) return <div className="text-center text-gray-400 mt-10">{t("Loading...")}</div>;
+  if (!child || !zScores)
+    return (
+      <div className="text-center text-gray-400 mt-10">{t("Loading...")}</div>
+    );
 
   const indicators = [
-    { key: "HAZ", label: "Height for Age", value: zScores.HAZ.haz, result: { label: zScores.HAZ.classification, color: "text-blue-400", note: zScores.HAZ.classification } },
-    { key: "WHZ", label: "Weight for Height", value: zScores.WHZ.zScore, result: { label: zScores.WHZ.classification, color: "text-orange-400", note: zScores.WHZ.classification } },
-    { key: "WAZ", label: "Weight for Age", value: zScores.WAZ.zScore, result: { label: zScores.WAZ.classification, color: "text-yellow-400", note: zScores.WAZ.classification } },
-    { key: "BMI", label: "BMI for Age", value: zScores.BMI.zScore, result: { label: zScores.BMI.classification, color: "text-yellow-400", note: zScores.BMI.classification } },
-    { key: "MUAC", label: "MUAC for Age", value: zScores.MUAC, result: classifyZ(zScores.MUAC, "MUAC") },
+    {
+      key: "HAZ",
+      label: "Height for Age",
+      value: zScores.HAZ.haz,
+      result: {
+        label: zScores.HAZ.classification,
+        color: "text-blue-400",
+        note: zScores.HAZ.classification,
+      },
+    },
+    {
+      key: "WHZ",
+      label: "Weight for Height",
+      value: zScores.WHZ.zScore,
+      result: {
+        label: zScores.WHZ.classification,
+        color: "text-orange-400",
+        note: zScores.WHZ.classification,
+      },
+    },
+    {
+      key: "WAZ",
+      label: "Weight for Age",
+      value: zScores.WAZ.zScore,
+      result: {
+        label: zScores.WAZ.classification,
+        color: "text-yellow-400",
+        note: zScores.WAZ.classification,
+      },
+    },
+    {
+      key: "BMI",
+      label: "BMI for Age",
+      value: zScores.BMI.zScore,
+      result: {
+        label: zScores.BMI.classification,
+        color: "text-yellow-400",
+        note: zScores.BMI.classification,
+      },
+    },
+    {
+      key: "MUAC",
+      label: "MUAC for Age",
+      value: zScores.MUAC,
+      result: classifyZ(zScores.MUAC, "MUAC"),
+    },
   ];
 
   const visibleIndicators = expanded ? indicators : indicators.slice(0, 3);
@@ -147,15 +274,20 @@ console.log("Z-Score:",calculateHAZ(
     <div className="max-w-3xl mx-auto font-sans text-white space-y-4 p-4">
       <div className="grid md:grid-cols-3 gap-4">
         {visibleIndicators.map(({ key, label, value, result }) => (
-          <div key={key} className="rounded-xl bg-[#1E1E2F] border border-gray-700 p-4 shadow-sm">
+          <div
+            key={key}
+            className="rounded-xl bg-[#0B8FAC] border border-gray-700 p-4 shadow-sm"
+          >
             <h3 className="text-md font-semibold text-gray-300">{label}</h3>
             <div className="flex justify-between mt-2 text-sm">
-              <span className="text-gray-400">{t("Z-Score")}:</span>
-              <span className={`font-bold ${result.color}`}>{value.toFixed(2)}</span>
+              <span className="text-gray-200">{t("Z-Score")}:</span>
+              <span className={`font-bold ${result.color}`}>
+                {value.toFixed(2)}
+              </span>
             </div>
             <div className="mt-1 text-sm">
               <p className={`font-medium ${result.color}`}>{result.label}</p>
-              <p className="text-gray-400 text-xs">{result.note}</p>
+              <p className="text-gray-200 text-xs">{result.note}</p>
             </div>
           </div>
         ))}
@@ -176,7 +308,6 @@ console.log("Z-Score:",calculateHAZ(
 };
 
 export default GrowthTracker;
-
 
 /**
  * Calculate difference in days between two dates
@@ -200,7 +331,6 @@ const differenceInWeeksApprox = (end: Date, start: Date): number => {
   return Math.floor(differenceInDays(end, start) / 7);
 };
 
-
 export const getAgeValue = (
   dob: string | Date,
   ageType: "week" | "month"
@@ -212,18 +342,23 @@ export const getAgeValue = (
   return differenceInMonthsApprox(now, birthDate);
 };
 
-
-const getAgeDetails = (dob: string): { age: number; type: "week" | "month" } => {
+const getAgeDetails = (
+  dob: string
+): { age: number; type: "week" | "month" } => {
   const birthDate = new Date(dob);
   const now = new Date();
   const diffInDays = Math.floor((+now - +birthDate) / (1000 * 60 * 60 * 24));
   const ageInWeeks = Math.floor(diffInDays / 7);
-  return ageInWeeks <= 13 ? { age: ageInWeeks, type: "week" } : { age: Math.floor(diffInDays / 30), type: "month" };
+  return ageInWeeks <= 13
+    ? { age: ageInWeeks, type: "week" }
+    : { age: Math.floor(diffInDays / 30), type: "month" };
 };
 
 const getWHZRange = (dob: string): "0_2" | "2_5" => {
   const birthDate = new Date(dob);
   const now = new Date();
-  const ageInMonths = Math.floor((+now - +birthDate) / (1000 * 60 * 60 * 24 * 30.44));
+  const ageInMonths = Math.floor(
+    (+now - +birthDate) / (1000 * 60 * 60 * 24 * 30.44)
+  );
   return ageInMonths < 24 ? "0_2" : "2_5";
 };

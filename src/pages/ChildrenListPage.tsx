@@ -105,14 +105,15 @@ const ChildrenListPage: React.FC = () => {
 
   return (
     <Page back={true}>
-      <div className="p-4 min-h-screen">
-        <div className="flex justify-between items-center mb-6">
-          <Headline>{t("My Children")}</Headline>
+      <div className="min-h-screen">
+        <div className="flex justify-between items-center mb-6 bg-[#0B364F] p-4">
+          <Headline className=" text-white">{t("My Children")}</Headline>
+
           <button
+            className=" flex bg-[#0B8FAC] hover:bg-[#0ea4c6] px-4 py-2 rounded text-gray-100 w-32"
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 border border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white font-semibold px-4 py-2 rounded-md transition-all duration-200"
           >
-            <FaPlus className="text-base" />
+            <FaPlus className="text-base mt-1 px-1" />
             <span>{t("Add Child")}</span>
           </button>
         </div>
@@ -137,10 +138,10 @@ const ChildrenListPage: React.FC = () => {
             >
               <div className="absolute top-2  right-2">
                 <button
-                  className="text-red-500 hover:text-red-300 transition"
+                  className="text-red-500 hover:text-red-300 transition "
                   onClick={() => confirmDelete(child)}
                 >
-                  <FaTrash />
+                  <FaTrash className="w-5 h-5" />
                 </button>
               </div>
               <div className=" flex gap-1">

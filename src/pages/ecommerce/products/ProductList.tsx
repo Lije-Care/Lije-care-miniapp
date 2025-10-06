@@ -121,7 +121,7 @@ const ProductList = () => {
             <select
               id="category"
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="block w-full p-2  mb-6 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              className="block w-full p-2  mb-6 text-sm text-white border border-gray-300 rounded-lg bg-[#0B364F] "
             >
               <option value="all">{t("All")}</option>
               <option value="food">{t("Baby Food & Supplement")}</option>
@@ -143,7 +143,7 @@ const ProductList = () => {
           <div className="relative px-2">
             <div className="absolute inset-y-0 start-0 flex items-center ps-1 pointer-events-none ml-5 px-2">
               <svg
-                className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                className="w-4 h-4 text-white dark:text-gray-400"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -163,13 +163,13 @@ const ProductList = () => {
               id="default-search"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className=" w-full p-2   ps-8 ml-2 text-sm text-black border border-gray-500 rounded-lg bg-[#D9D9D94D] "
+              className=" w-full p-2   ps-8 ml-2 text-sm text-white border border-gray-500 rounded-lg bg-[#0B364F]"
               placeholder="Search product..."
             />
 
             <button
               type="submit"
-              className=" mt-4 text-white absolute end-0.5 bottom-0.5 bg-[#0B364F] hover:bg-[#124766]  font-medium rounded-lg text-sm px-4   pt-1.5 pb-2 "
+              className=" mt-4 text-white absolute end-0.5 bottom-0.5 bg-[#0B8FAC] hover:bg-[#124766]  font-medium rounded-lg text-sm px-4   pt-1.5 pb-2 "
             >
               Search
             </button>
