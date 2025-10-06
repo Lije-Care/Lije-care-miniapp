@@ -79,7 +79,7 @@ export default function ProfileScreen() {
         {/* Profile Options */}
         <div
           style={{ height: "100vh" }}
-          className="bg-gray-500 rounded-t-3xl p-4 flex flex-col gap-4"
+          className="bg-[#0B8FAC] rounded-t-3xl p-4 flex flex-col gap-4"
         >
           <ProfileOption
             onClick={() => setIsParentOpen(true)}

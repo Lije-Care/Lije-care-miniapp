@@ -266,7 +266,7 @@ const ChildProfilePage: React.FC = () => {
 
   return (
     <Page back={true}>
-      <div className="max-w-4xl mx-auto p-4 bg-[#0B364F]">
+      <div className="max-w-4xl mx-auto p-4 ">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-emerald-400">
             {t("Child Profile")}
@@ -290,14 +290,14 @@ const ChildProfilePage: React.FC = () => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="bg-[#0B364F] p-2"
+              className="bg-[#0B364F] p-3 rounded-lg"
             >
               <Text className="text-lg font-semibold text-gray-300">
                 {t("Basic Information")}
               </Text>
 
               {/* Name */}
-              <div className="mt-4 ">
+              <div className="mt-4  ">
                 <label
                   htmlFor="name"
                   className="block mb-1 text-[#FFFFFF] font-[600]"
@@ -416,24 +416,23 @@ const ChildProfilePage: React.FC = () => {
                   {...register("muac")}
                 />
               </div>
+              <div className="flex justify-end mt-4 p-4">
+                <Button type="submit" stretched disabled={submitting}>
+                  {submitting ? <Spinner size="s" /> : t("Save Changes")}
+                </Button>
+              </div>
             </motion.div>
-
-            <div className="flex justify-end mt-4">
-              <Button type="submit" stretched disabled={submitting}>
-                {submitting ? <Spinner size="s" /> : t("Save Changes")}
-              </Button>
-            </div>
           </form>
         )}
 
         {!isEditing && (
           <div>
             <GrowthTracker childProfile={child} />
-            <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl mt-4 p-5 space-y-2 mb-5">
+            <div className=" border border-gray-700 rounded-xl mt-4 p-5 space-y-2 mb-5 bg-[#0B8FAC]">
               <h3 className="text-lg font-semibold text-center text-gray-300 mb-2">
                 👶 General Profile
               </h3>
-              <div className="text-sm text-gray-400 space-y-1">
+              <div className="text-sm text-white space-y-1 ">
                 {child?.name && (
                   <div className="flex justify-between">
                     <span className="font-semibold">Name:</span>
@@ -501,11 +500,11 @@ const ChildProfilePage: React.FC = () => {
               </div>
             </div>
             {result && (
-              <div className="bg-[#1E1E2F] border border-gray-700 rounded-xl mt-4 p-5 space-y-2 mb-5">
+              <div className="border border-gray-700 rounded-xl mt-4 p-5 space-y-2 mb-5 bg-[#0B8FAC]">
                 <h3 className="text-lg font-semibold text-center text-gray-300 mb-2">
                   📊 Daily Nutrient Requirements
                 </h3>
-                <div className="text-sm text-gray-400 space-y-1">
+                <div className="text-sm text-white space-y-1">
                   <div className="flex justify-between">
                     <span className="font-semibold">Calories:</span>
                     <span>{result.calories} kcal/day</span>

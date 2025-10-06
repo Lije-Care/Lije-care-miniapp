@@ -54,16 +54,18 @@ const ParentProfile = () => {
   };
 
   return (
-    <div className="flex justify-center items-center p-4">
+    <div className="flex justify-center items-center p-4 bg-[#0B364F]">
       <div className="shadow-lg rounded-lg p-6 w-full max-w-md relative">
         <button
           onClick={() => setIsEditing(!isEditing)}
-          className="absolute top-4 right-4 text-gray-600 hover:text-gray-900"
+          className="absolute top-4 right-4 text-[#0B8FAC] hover:text-gray-900"
         >
           <FaEdit size={20} />
         </button>
 
-        <Headline style={{ textAlign: "center" }}>{t("Parent Profile")}</Headline>
+        <Headline style={{ textAlign: "center" }}>
+          {t("Parent Profile")}
+        </Headline>
 
         {isEditing ? (
           <form onSubmit={handleSubmit} className="space-y-4 mt-4">
@@ -79,7 +81,7 @@ const ParentProfile = () => {
               <div key={name} className="flex flex-col">
                 <label
                   htmlFor={name}
-                  className="text-sm font-medium text-gray-700 mb-1"
+                  className="text-sm font-medium text-white mb-1"
                 >
                   {label}
                 </label>
@@ -109,7 +111,7 @@ const ParentProfile = () => {
             </div>
           </form>
         ) : (
-          <div className="grid grid-cols-2 gap-y-3 text-gray-700 mt-4">
+          <div className="grid grid-cols-2 gap-y-3 text-white mt-4">
             <span className="font-medium">{t("Parent Name")}:</span>
             <span>
               {parent?.firstName} {parent?.lastName}
