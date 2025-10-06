@@ -194,10 +194,8 @@ const MealLibraryComponent = () => {
         return (
           <div
             key={meal.id}
-            className={`p-4 rounded-xl border transition-all duration-200 cursor-pointer ${
-              selected
-                ? "border-emerald-400 bg-[#0d778f]"
-                : "border-gray-700 bg-[#0B8FAC]"
+            className={`p-4 rounded-xl border transition-all duration-200 cursor-pointer border-gray-700 shadow-sm ${
+              selected ? " bg-[#0d778f]" : " bg-[#0B8FAC]"
             }`}
             onClick={() => toggleMealExpand(meal.id)}
           >
