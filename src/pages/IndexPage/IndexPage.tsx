@@ -5,7 +5,6 @@ import {
   Button,
   Spinner,
   Subheadline,
-  // ButtonCell,
 } from "@telegram-apps/telegram-ui";
 import { useEffect, useState, type FC } from "react";
 import { Page } from "@/components/Page.tsx";
@@ -22,6 +21,7 @@ import GrowthTrackerHome from "../Profile/GrowthTrackerHome";
 import { fetchParent } from "@/redux/slices/itemSlice";
 import { fetchChildrenByParentId } from "@/redux/slices/childSlice";
 import { fetchSpecialists } from "@/redux/slices/specialistSlice";
+import { fetchAllNotifications } from "@/redux/slices/notificationSlice"; // ✅ NEW
 import { FiBell } from "react-icons/fi";
 import PromotionsList from "../Profile/PromotionsList";
 import { useTranslation } from "react-i18next";
@@ -37,7 +37,13 @@ export const IndexPage: FC = () => {
   );
   const { data: children } = useSelector((state: RootState) => state.children);
   const parentState = useSelector((state: RootState) => state.parent);
-  // console.log({ parentState });
+
+  // ✅ Notifications state
+  const notificationsState = useSelector(
+    (state: RootState) => state.notificartions
+  );
+  const { data: notifications = [] } = notificationsState || {};
+  const notificationCount = notifications.length;
 
   const parent = {
     name: parentState?.userDetails?.firstName ?? t("S.Admin"),
@@ -56,6 +62,7 @@ export const IndexPage: FC = () => {
     dispatch(fetchParent(val?.id));
     dispatch(fetchChildrenByParentId(val?.id));
     dispatch(fetchSpecialists({ page: 1, limit: 10 }));
+    dispatch(fetchAllNotifications()); // ✅ Fetch notifications
   }, [dispatch]);
 
   if (loading) {
@@ -68,18 +75,25 @@ export const IndexPage: FC = () => {
 
   return (
     <Page back={true}>
-      <div className=" flex justify-between bg-[#013222] p-4 ">
-        <p className=" text-base font-semibold ml-3 mt-2 text-white">
-          {" "}
-          Hi {parent.name} Welcome!
+      {/* Header with greeting and bell */}
+      <div className="flex justify-between bg-[#013222] p-4 items-center">
+        <p className="text-base font-semibold ml-3 text-white">
+          Hi {parent.name}, Welcome!
         </p>
-        <button
-          onClick={() => navigate("/notifications")}
-          className="relative p-2 rounded-lg text-white"
-          style={{ background: "#013222", color: "white" }}
-        >
-          <FiBell size={24} />
-        </button>
+        <div className="relative">
+          <button
+            onClick={() => navigate("/notifications")}
+            className="relative text-white focus:outline-none"
+          >
+            <FiBell size={26} />
+            {/* 🔴 Notification badge */}
+            {notificationCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
+                {notificationCount > 9 ? "9+" : notificationCount}
+              </span>
+            )}
+          </button>
+        </div>
       </div>
 
       <Section className="overflow-y-auto pb-8">
@@ -163,10 +177,6 @@ export const IndexPage: FC = () => {
             </div>
           </div>
         )}
-
-        {/* <div className="text-center font-bold text-gray-600">
-          {t("Anthropometric")}
-        </div> */}
 
         <Section className="mt-4">
           <GrowthTrackerHome childProfile={child} />
