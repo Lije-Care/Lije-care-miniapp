@@ -180,13 +180,13 @@ export const CartPage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
           <p>
             or
-            <a
-              href="/ecommerce"
+            <button
+              onClick={handleShopNow}
               className="font-medium text-indigo-600 hover:text-indigo-500"
             >
               Continue Shopping
               <span aria-hidden="true"> &rarr;</span>
-            </a>
+            </button>
           </p>
         </div>
       </div>
