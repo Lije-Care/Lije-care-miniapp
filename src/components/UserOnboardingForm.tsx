@@ -88,130 +88,132 @@ const UserOnboardingForm = () => {
 
   return (
     <Page back={true}>
-      <div className="max-w-md mx-auto mt-10 rounded-2xl shadow-xl p-6 border border-gray-200">
-        <h2 className="text-2xl font-semibold mb-6 text-center">
-          👋 {t("title")}
-        </h2>
+      <div className="p-2">
+        <div className="max-w-md mx-auto mt-10 rounded-2xl shadow-xl p-2 border border-gray-700">
+          <h2 className="text-2xl font-semibold mb-6 text-center">
+            👋 {t("title")}
+          </h2>
 
-        {/* Language Selector */}
-        <div className="flex justify-end mb-4">
-          <select
-            value={lang}
-            onChange={(e) => setLang(e.target.value as "en" | "am")}
-            className="py-2 px-4 bg-gray-300 border-gray-200 rounded-lg text-sm text-black"
-          >
-            <option value="en">English</option>
-            <option value="am">አማርኛ</option>
-          </select>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {submitError && (
-            <div className="text-red-500 text-sm text-center">
-              {submitError}
-            </div>
-          )}
-
-          {/* Name */}
-          <div>
-            <label htmlFor="firstName" className="block font-medium mb-1">
-              {t("name")}
-            </label>
-            <input
-              id="firstName"
-              name="firstName"
-              type="text"
-              placeholder={t("namePlaceholder")}
-              className={`w-full px-4 py-2 rounded-lg border ${
-                errors.firstName ? "border-red-500" : "border-gray-300"
-              }`}
-              value={formData.firstName}
-              onChange={handleChange}
-            />
-            {errors.firstName && (
-              <p className="text-sm text-red-500 mt-1">{errors.firstName}</p>
-            )}
-          </div>
-
-          {/* Phone */}
-          <div>
-            <label htmlFor="phone" className="block font-medium mb-1">
-              {t("phone")}
-            </label>
-            <input
-              id="phone"
-              name="phone"
-              type="tel"
-              placeholder={t("phonePlaceholder")}
-              className={`w-full px-4 py-2 rounded-lg border ${
-                errors.phone ? "border-red-500" : "border-gray-300"
-              }`}
-              value={formData.phone}
-              onChange={handleChange}
-            />
-            {errors.phone && (
-              <p className="text-sm text-red-500 mt-1">{errors.phone}</p>
-            )}
-          </div>
-
-          {/* Password */}
-          <div>
-            <label htmlFor="password" className="block font-medium mb-1">
-              {t("password")}
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              placeholder={t("passwordPlaceholder")}
-              className={`w-full px-4 py-2 rounded-lg border ${
-                errors.password ? "border-red-500" : "border-gray-300"
-              }`}
-              value={formData.password}
-              onChange={handleChange}
-            />
-            {errors.password && (
-              <p className="text-sm text-red-500 mt-1">{errors.password}</p>
-            )}
-          </div>
-
-          {/* Hidden Telegram ID */}
-          {formData.telegramId && (
-            <div className="text-xs text-gray-400 text-center">
-              Telegram ID: {formData.telegramId}
-            </div>
-          )}
-
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
-          >
-            {loading ? t("signingUp") : t("signup")}
-          </button>
-          <div className="flex justify-end">
-            <Text
-              onClick={() => navigate("/signin")}
-              className="forgot-password text-3xl font-bold"
-              style={{
-                marginTop: "10px",
-                cursor: "pointer",
-                padding: 6,
-                fontSize: 20,
-              }}
+          {/* Language Selector */}
+          <div className="flex justify-end mb-4">
+            <select
+              value={lang}
+              onChange={(e) => setLang(e.target.value as "en" | "am")}
+              className="py-2 px-4 bg-gray-300 border-gray-200 rounded-lg text-sm text-black"
             >
-              {t("signin")}
-            </Text>
+              <option value="en">English</option>
+              <option value="am">አማርኛ</option>
+            </select>
           </div>
-        </form>
-      </div>
-      <div
-        className="p-4 mt-2 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400"
-        role="alert"
-      >
-        <span className="font-semibold">Remember!,</span> When registering,
-        remember to click "/start" in the Bot.
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {submitError && (
+              <div className="text-red-500 text-sm text-center">
+                {submitError}
+              </div>
+            )}
+
+            {/* Name */}
+            <div>
+              <label htmlFor="firstName" className="block font-medium mb-1">
+                {t("name")}
+              </label>
+              <input
+                id="firstName"
+                name="firstName"
+                type="text"
+                placeholder={t("namePlaceholder")}
+                className={`w-full px-4 py-2 rounded-lg border ${
+                  errors.firstName ? "border-red-500" : "border-gray-300"
+                }`}
+                value={formData.firstName}
+                onChange={handleChange}
+              />
+              {errors.firstName && (
+                <p className="text-sm text-red-500 mt-1">{errors.firstName}</p>
+              )}
+            </div>
+
+            {/* Phone */}
+            <div>
+              <label htmlFor="phone" className="block font-medium mb-1">
+                {t("phone")}
+              </label>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                placeholder={t("phonePlaceholder")}
+                className={`w-full px-4 py-2 rounded-lg border ${
+                  errors.phone ? "border-red-500" : "border-gray-300"
+                }`}
+                value={formData.phone}
+                onChange={handleChange}
+              />
+              {errors.phone && (
+                <p className="text-sm text-red-500 mt-1">{errors.phone}</p>
+              )}
+            </div>
+
+            {/* Password */}
+            <div>
+              <label htmlFor="password" className="block font-medium mb-1">
+                {t("password")}
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                placeholder={t("passwordPlaceholder")}
+                className={`w-full px-4 py-2 rounded-lg border ${
+                  errors.password ? "border-red-500" : "border-gray-300"
+                }`}
+                value={formData.password}
+                onChange={handleChange}
+              />
+              {errors.password && (
+                <p className="text-sm text-red-500 mt-1">{errors.password}</p>
+              )}
+            </div>
+
+            {/* Hidden Telegram ID */}
+            {formData.telegramId && (
+              <div className="text-xs text-gray-400 text-center">
+                Telegram ID: {formData.telegramId}
+              </div>
+            )}
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+            >
+              {loading ? t("signingUp") : t("signup")}
+            </button>
+            <div className="flex justify-end">
+              <Text
+                onClick={() => navigate("/signin")}
+                className="forgot-password text-3xl font-bold"
+                style={{
+                  marginTop: "10px",
+                  cursor: "pointer",
+                  padding: 6,
+                  fontSize: 20,
+                }}
+              >
+                {t("signin")}
+              </Text>
+            </div>
+          </form>
+        </div>
+        <div
+          className="p-4 mt-2 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400"
+          role="alert"
+        >
+          <span className="font-semibold">Remember!,</span> When registering,
+          remember to click "/start" in the Bot.
+        </div>
       </div>
     </Page>
   );
