@@ -166,7 +166,11 @@ const AddChildForm: React.FC<AddChildFormProps> = ({ onClose }) => {
                   className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full bg-[#D9D9D94D] "
                 >
                   {field.options?.map((option) => (
-                    <option key={option.value} value={option.value}>
+                    <option
+                      className="bg-[#0B364F]"
+                      key={option.value}
+                      value={option.value}
+                    >
                       {option.label}
                     </option>
                   ))}

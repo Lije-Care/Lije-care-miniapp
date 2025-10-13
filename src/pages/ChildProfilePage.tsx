@@ -330,6 +330,7 @@ const ChildProfilePage: React.FC = () => {
               </div>
 
               {/* Gender */}
+              {/* Gender */}
               <div className="mt-4">
                 <label
                   htmlFor="gender"
@@ -337,13 +338,18 @@ const ChildProfilePage: React.FC = () => {
                 >
                   {t("Gender")}
                 </label>
+
                 <select
                   id="gender"
                   {...register("gender")}
-                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D]  focus:outline-none text-white"
+                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] focus:outline-none text-white custom-select"
                 >
-                  <option value="Male">{t("Male")}</option>
-                  <option value="Female">{t("Female")}</option>
+                  <option value="Male" className="bg-[#0B364F] text-white">
+                    {t("Male")}
+                  </option>
+                  <option value="Female" className=" bg-[#0B364F] text-white">
+                    {t("Female")}
+                  </option>
                 </select>
               </div>
 
@@ -394,9 +400,15 @@ const ChildProfilePage: React.FC = () => {
                   {...register("activity_level")}
                   className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] focus:outline-none text-white"
                 >
-                  <option value="Active">{t("Active")}</option>
-                  <option value="Moderate">{t("Moderate")}</option>
-                  <option value="Sedentary">{t("Sedentary")}</option>
+                  <option value="Active" className="bg-[#0B364F]">
+                    {t("Active")}
+                  </option>
+                  <option value="Moderate" className="bg-[#0B364F]">
+                    {t("Moderate")}
+                  </option>
+                  <option value="Sedentary" className="bg-[#0B364F]">
+                    {t("Sedentary")}
+                  </option>
                 </select>
               </div>
 
@@ -416,6 +428,55 @@ const ChildProfilePage: React.FC = () => {
                   {...register("muac")}
                 />
               </div>
+
+              <div className="mt-4">
+                <label
+                  htmlFor="allergies"
+                  className="block font-medium mb-1 text-[#FFFFFF]"
+                >
+                  {t("Allergies")}
+                </label>
+                <input
+                  id="allergies"
+                  type="text"
+                  placeholder="allergies"
+                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] text-[#FFFFFF] focus:outline-none"
+                  {...register("allergies")}
+                />
+              </div>
+
+              <div className="mt-4">
+                <label
+                  htmlFor="medications"
+                  className="block font-medium mb-1 text-[#FFFFFF]"
+                >
+                  {t("Medication")}
+                </label>
+                <input
+                  id="medications"
+                  type="text"
+                  placeholder="medications"
+                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] text-[#FFFFFF] focus:outline-none"
+                  {...register("medications")}
+                />
+              </div>
+
+              <div className="mt-4">
+                <label
+                  htmlFor="dietary_restrictions"
+                  className="block font-medium mb-1 text-[#FFFFFF]"
+                >
+                  {t("Dietary Restrictions")}
+                </label>
+                <input
+                  id="dietary_restrictions"
+                  type="text"
+                  placeholder="dietary_restrictions"
+                  className="w-full px-4 py-2 rounded-lg border bg-[#D9D9D94D] text-[#FFFFFF] focus:outline-none"
+                  {...register("dietary_restrictions")}
+                />
+              </div>
+
               <div className="flex justify-end mt-4 p-4">
                 <Button type="submit" stretched disabled={submitting}>
                   {submitting ? <Spinner size="s" /> : t("Save Changes")}
