@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import api from '@/api/axios';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import api from "@/api/axios";
 import {
   Title,
   Text,
@@ -8,9 +8,9 @@ import {
   Placeholder,
   Spinner,
   Caption,
-} from '@telegram-apps/telegram-ui';
+} from "@telegram-apps/telegram-ui";
 
-const fallbackImg = 'https://via.placeholder.com/400x250?text=Meal+Image';
+const fallbackImg = "https://via.placeholder.com/400x250?text=Meal+Image";
 
 const MealDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -25,7 +25,7 @@ const MealDetails: React.FC = () => {
         const res = await api.get(`/meal-plans/find-one/${id}`);
         setData(res.data);
       } catch (err: any) {
-        setError(err?.response?.data?.message || 'Something went wrong');
+        setError(err?.response?.data?.message || "Something went wrong");
       } finally {
         setLoading(false);
       }
@@ -53,7 +53,7 @@ const MealDetails: React.FC = () => {
   }
 
   const meals = data?.meals || [];
-  console.log("meals", meals)
+  console.log("meals", meals);
   if (!meals.length) {
     return (
       <Text className="text-center mt-8">
@@ -64,7 +64,9 @@ const MealDetails: React.FC = () => {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6 text-white space-y-8">
-      <Title className="text-2xl font-bold text-emerald-400">🍽️ Meal Plan Overview</Title>
+      <Title className="text-2xl font-bold text-emerald-400">
+        🍽️ Meal Plan Overview
+      </Title>
 
       {meals.map((meal: any) => {
         const isOpen = openMealId === meal.id;
@@ -72,7 +74,7 @@ const MealDetails: React.FC = () => {
         return (
           <div
             key={meal.id}
-            className="bg-[#1f1f2b] border border-gray-700 rounded-xl p-4 shadow-md transition-all duration-300"
+            className="bg-[#0B8FAC] border border-gray-700 rounded-xl p-4 shadow-md transition-all duration-300"
           >
             {/* Collapsed Header */}
             <div
@@ -80,11 +82,7 @@ const MealDetails: React.FC = () => {
               onClick={() => setOpenMealId(isOpen ? null : meal.id)}
             >
               <img
-                src={
-                  meal.imageUrl
-                    ? `${meal.imageUrl}`
-                    : fallbackImg
-                }
+                src={meal.imageUrl ? `${meal.imageUrl}` : fallbackImg}
                 alt={meal.name}
                 onError={(e) => {
                   e.currentTarget.src = fallbackImg;
@@ -93,14 +91,21 @@ const MealDetails: React.FC = () => {
               />
               <div className="flex-1">
                 <Title className="text-lg">{meal.name}</Title>
-                <Text className="text-xs text-gray-400">
-                  {meal.ageGroup}m+ · {meal.mealType} · {meal.mealTime}
+                <Text className="text-xs text-white gap-2">
+                  Age: <span className=" ml-2">{meal.ageGroup}m+,</span> <br />
+                  Meal Type: <span className="ml-2"> {meal.mealType} </span>
+                  <br />
+                  Meal Time:<span className="ml-2"> {meal.mealTime}</span>
                 </Text>
                 {meal.description && (
-                  <Text className="text-sm text-gray-300 mt-1 line-clamp-2">{meal.description}</Text>
+                  <Text className="text-sm text-white mt-1 line-clamp-2">
+                    {meal.description}
+                  </Text>
                 )}
               </div>
-              <span className="text-sm text-emerald-400">{isOpen ? '▲' : '▼'}</span>
+              <span className="text-sm text-emerald-400">
+                {isOpen ? "▲" : "▼"}
+              </span>
             </div>
 
             {/* Expanded Content */}
@@ -109,50 +114,70 @@ const MealDetails: React.FC = () => {
                 <Divider />
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div><strong>Age Group:</strong> {meal.ageGroup}m+</div>
-                  <div><strong>Prep Time:</strong> {meal.prepTime || 'N/A'}</div>
-                  <div><strong>Cost:</strong> {meal.cost || 'N/A'}</div>
-                  <div><strong>Volume:</strong> {meal.totalVolume} ml</div>
+                  <div>
+                    <strong>Age Group:</strong> {meal.ageGroup}m+
+                  </div>
+                  <div>
+                    <strong>Prep Time:</strong> {meal.prepTime || "N/A"}
+                  </div>
+                  <div>
+                    <strong>Cost:</strong> {meal.cost || "N/A"}
+                  </div>
+                  <div>
+                    <strong>Volume:</strong> {meal.totalVolume} ml
+                  </div>
                 </div>
 
                 {/* Nutrients */}
-                {Array.isArray(meal.totalNutrients) && meal.totalNutrients.length > 0 && (
-                  <div>
-                    <Title className="text-md mt-4">🔬 Nutrients</Title>
-                    <ul className="list-disc list-inside ml-4 mt-1">
-                      {meal.totalNutrients.map((n: any) => (
-                        <li key={n.id}>{n.name} ({n.amount} {n.unit})</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                {Array.isArray(meal.totalNutrients) &&
+                  meal.totalNutrients.length > 0 && (
+                    <div>
+                      <Title className="text-md mt-4">🔬 Nutrients</Title>
+                      <ul className="list-disc list-inside ml-4 mt-1">
+                        {meal.totalNutrients.map((n: any) => (
+                          <li key={n.id}>
+                            {n.name} ({n.amount} {n.unit})
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
                 {/* Ingredients */}
-                {Array.isArray(meal.mealIngredients) && meal.mealIngredients.length > 0 && (
-                  <div>
-                    <Title className="text-md mt-4">🥬 Ingredients</Title>
-                    <ul className="list-disc list-inside ml-4 mt-1">
-                      {meal.mealIngredients.map((mi: any) => (
-                        <li key={mi.id}>
-                          {mi.quantity} {mi.ingredient?.portionUnit?.abbreviation || ''} of {mi.ingredient?.name}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                {Array.isArray(meal.mealIngredients) &&
+                  meal.mealIngredients.length > 0 && (
+                    <div>
+                      <Title className="text-md mt-4">🥬 Ingredients</Title>
+                      <ul className="list-disc list-inside ml-4 mt-1">
+                        {meal.mealIngredients.map((mi: any) => (
+                          <li key={mi.id}>
+                            {mi.quantity}{" "}
+                            {mi.ingredient?.portionUnit?.abbreviation || ""} of{" "}
+                            {mi.ingredient?.name}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
                 {/* Sections */}
                 {meal.direction && (
                   <Section title="📋 Direction" content={meal.direction} />
                 )}
                 {meal.modificationNote && (
-                  <Section title="🛠️ Modification Note" content={meal.modificationNote} />
+                  <Section
+                    title="🛠️ Modification Note"
+                    content={meal.modificationNote}
+                  />
                 )}
                 {meal.howToStore && (
                   <Section title="📦 How to Store" content={meal.howToStore} />
                 )}
                 {meal.drugInteraction && (
-                  <Section title="💊 Drug Interaction" content={meal.drugInteraction} />
+                  <Section
+                    title="💊 Drug Interaction"
+                    content={meal.drugInteraction}
+                  />
                 )}
 
                 {/* Sensitivities */}
@@ -166,9 +191,7 @@ const MealDetails: React.FC = () => {
                       {meal.intolerance && (
                         <li>Intolerance: {meal.intoleranceDescription}</li>
                       )}
-                      {meal.choking && (
-                        <li>Choking Hazard</li>
-                      )}
+                      {meal.choking && <li>Choking Hazard</li>}
                     </ul>
                   </div>
                 )}
@@ -199,7 +222,9 @@ const MealDetails: React.FC = () => {
 const Section = ({ title, content }: { title: string; content: string }) => (
   <div>
     <Title className="text-md mt-4">{title}</Title>
-    <Text className="whitespace-pre-wrap text-sm text-gray-300 mt-1">{content}</Text>
+    <Text className="whitespace-pre-wrap text-sm text-gray-300 mt-1">
+      {content}
+    </Text>
   </div>
 );
 

@@ -27,6 +27,9 @@ import NotificationsPage from "@/pages/NotificationsPage";
 import ChildMealPlanSummery from "@/pages/meal/ChildMealPlanSummery";
 import PaymentForm from "./PaymentForm";
 import PaymentStatus from "./PaymentStatus";
+import BookingCheckout from "./booking/BookingCheckout";
+import PackageList from "./booking/PackageList";
+import BookingSuccess from "./booking/BookingSuccess";
 
 const Layout = ({ children }: { children: any }) => (
   <div>
@@ -100,14 +103,6 @@ export function App() {
                 </ProtectedRoute>
               }
             />
-            {/* Payment routes */}
-            <Route path="/payment-one" element={<PaymentForm />} />
-            <Route path="/payment-status-one" element={<PaymentStatus />} />
-
-            <Route path="/articles" element={<ArticlesPage />} />
-            <Route path="/articles/:id" element={<ArticleDetail />} />
-
-            <Route path="/notifications" element={<NotificationsPage />} />
 
             <Route
               path="/my-appointments"
@@ -180,6 +175,74 @@ export function App() {
               element={
                 <ProtectedRoute>
                   <DoctorDetailPage />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Payment routes */}
+            <Route
+              path="/payment-one"
+              element={
+                <ProtectedRoute>
+                  <PaymentForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/payment-status-one"
+              element={
+                <ProtectedRoute>
+                  <PaymentStatus />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/articles"
+              element={
+                <ProtectedRoute>
+                  <ArticlesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/articles/:id"
+              element={
+                <ProtectedRoute>
+                  <ArticleDetail />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/notifications"
+              element={
+                <ProtectedRoute>
+                  <NotificationsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/package/list"
+              element={
+                <ProtectedRoute>
+                  <PackageList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/booking/checkout"
+              element={
+                <ProtectedRoute>
+                  <BookingCheckout />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/booking/success"
+              element={
+                <ProtectedRoute>
+                  <BookingSuccess />
                 </ProtectedRoute>
               }
             />

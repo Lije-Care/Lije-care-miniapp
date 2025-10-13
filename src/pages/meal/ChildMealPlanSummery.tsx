@@ -127,7 +127,7 @@ const ChildMealPlanSummery = () => {
 
         {/* start tab  */}
 
-        <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200">
+        <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 ">
           {allMealTimes.map((time) => (
             <li key={time} className="me-2">
               <button
@@ -149,24 +149,24 @@ const ChildMealPlanSummery = () => {
           <Placeholder />
         ) : mealPlans.length > 0 ? (
           mealPlans.map((mealPlan) => (
-            <Card
+            <div
               key={mealPlan.id}
-              className="p-4 shadow-sm bg-white rounded-xl w-full border border-gray-200 hover:shadow-md cursor-pointer transition-all"
+              className="p-4 shadow-sm bg-[#0B8FAC] rounded-xl w-full border border-gray-200 hover:shadow-md cursor-pointer transition-all"
               onClick={() => navigate(`/detail/${mealPlan.id}`)}
             >
-              <div className="absolute top-2 right-2 mt-2 mr-3">
+              <div className="absolute right-2 mr-6 ">
                 <button
                   className="text-red-500 hover:text-red-300 transition"
                   onClick={(e) => {
-                    e.stopPropagation(); // Prevent card click
+                    e.stopPropagation(); // Prevent div click
                     confirmDelete(mealPlan);
                   }}
                 >
-                  <FaTrash />
+                  <FaTrash className="w-6 h-6" />
                 </button>
               </div>
               {/* Description + Metadata */}
-              <div className="space-y-1">
+              <div className="space-y-1 ">
                 <p className="text-sm line-clamp-2 font-medium pr-6">
                   {mealPlan.meal_description || "No description available."}
                 </p>
@@ -217,8 +217,8 @@ const ChildMealPlanSummery = () => {
                     ).map(([mealTime, meals]) => (
                       <div key={mealTime}>
                         {/* Header for each mealTime */}
-                        <h5 className="text-sm font-bold text-emerald-600 mb-1">
-                          meal time: {mealTime}
+                        <h5 className="text-sm font-bold text-teal-300 mb-1">
+                          Meal time: {mealTime}
                         </h5>
 
                         {/* Meals under this category */}
@@ -228,7 +228,7 @@ const ChildMealPlanSummery = () => {
                               key={meal.id}
                               className="flex justify-between items-center text-sm"
                             >
-                              <span>meal name: {meal.name || "Untitled"}</span>
+                              <span>Meal name: {meal.name || "Untitled"}</span>
                               <Badge type="dot">
                                 {meal.meal_type || "Unknown"}
                               </Badge>
@@ -243,10 +243,10 @@ const ChildMealPlanSummery = () => {
                 )}
               </div>
 
-              <span className=" absolute bottom-2 right-2 text-green-600 ml-2 underline">
+              <span className=" absolute -mt-6 mr-8 right-2 text-teal-300 rounded-sm px-2 py-1  underline">
                 View detail
               </span>
-            </Card>
+            </div>
           ))
         ) : (
           !error && (
