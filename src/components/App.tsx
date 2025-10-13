@@ -1,6 +1,12 @@
 import { useLaunchParams, miniApp, useSignal } from "@telegram-apps/sdk-react";
 import { AppRoot } from "@telegram-apps/telegram-ui";
-import { Navigate, Route, Routes, HashRouter } from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  Routes,
+  HashRouter,
+  useLocation,
+} from "react-router-dom";
 
 import { routes } from "@/navigation/routes.tsx";
 import BottomNav from "./Templates/BottomNav";
@@ -31,28 +37,28 @@ import BookingCheckout from "./booking/BookingCheckout";
 import PackageList from "./booking/PackageList";
 import BookingSuccess from "./booking/BookingSuccess";
 
-const Layout = ({ children }: { children: any }) => (
-  <div>
-    {/* <header
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-       
-        background: "var(--tg-theme-bg-color, white)",
-        textAlign: "left",
-        lineHeight: "50px",
-        fontWeight: "bold",
-      }}
-    >
-    
-      
-    </header> */}
-    <div style={{ marginTop: "0px", paddingBottom: "60px" }}>{children}</div>
-    <BottomNav />
-  </div>
-);
+const Layout = ({ children }: { children: any }) => {
+  const location = useLocation(); // Hook to get current path
+
+  // Define paths where navbar should be hidden
+  const hideNavbarPaths = ["/signin", "/onboarding"];
+
+  const shouldHideNavbar = hideNavbarPaths.includes(location.pathname);
+
+  return (
+    <div>
+      <div
+        style={{
+          marginTop: "0px",
+          paddingBottom: shouldHideNavbar ? "0px" : "60px",
+        }}
+      >
+        {children}
+      </div>
+      {!shouldHideNavbar && <BottomNav />}
+    </div>
+  );
+};
 
 export function App() {
   const lp = useLaunchParams();
