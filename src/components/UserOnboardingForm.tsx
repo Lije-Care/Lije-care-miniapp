@@ -47,14 +47,21 @@ const UserOnboardingForm = () => {
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
+
     if (!formData.firstName.trim())
       newErrors.firstName = lang === "en" ? "Name is required" : "ስም ያስፈልጋል";
-    if (!/^\+2519\d{8}$/.test(formData.phone))
+
+    // ✅ Accept +2519... OR +2517... and exactly 12 digits total
+    if (!/^\+251(9|7)\d{8}$/.test(formData.phone))
       newErrors.phone =
-        lang === "en" ? "Use format +2519XXXXXXXX" : "በመልክ +2519XXXXXXXX ያስገቡ";
+        lang === "en"
+          ? "Use format +2519XXXXXXXX or +2517XXXXXXXX"
+          : "በመልክ +2519XXXXXXXX ወይም +2517XXXXXXXX ያስገቡ";
+
     if (formData.password.length < 6)
       newErrors.password =
         lang === "en" ? "Minimum 6 characters required" : "ቢያንስ 6 ቁምፊ ያስፈልጋል";
+
     return newErrors;
   };
 
