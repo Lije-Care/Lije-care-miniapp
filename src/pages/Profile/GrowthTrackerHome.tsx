@@ -162,7 +162,7 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
       );
 
       console.log("HAZ Z-Score:", hazResult.haz);
-      console.log("HAZ Classification:", hazResult.classification);
+      // console.log("HAZ Classification:", hazResult.classification);
 
       const birthDate = new Date(childProfile.date_of_birth);
       const today = new Date();
@@ -186,12 +186,12 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
         measuredStanding
       );
 
-      console.log("ageInMonths", ageInMonths);
-      console.log("BMI Z-Score:", bmiResult);
-      console.log(
-        "Z-Score:",
-        calculateHAZ(childProfile.height, ageInWeeks, ageInMonths, gender)
-      );
+      // console.log("ageInMonths", ageInMonths);
+      // console.log("BMI Z-Score:", bmiResult);
+      // console.log(
+      //   "Z-Score:",
+      //   calculateHAZ(childProfile.height, ageInWeeks, ageInMonths, gender)
+      // );
       // 2. Normalize gender to "girl" or "boy"
 
       const calculatedZScores = {

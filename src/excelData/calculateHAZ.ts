@@ -48,20 +48,22 @@ export const calculateHAZ = (
   } else {
     return { haz: 0, classification: "Age out of supported range" };
   }
-  
+
   const ageKey = ageInWeeks <= 13 ? ageInWeeks : ageInMonths;
 
   const row = data.reduce((prev, curr) => {
-    return Math.abs(curr.age - ageKey) < Math.abs(prev.age - ageKey) ? curr : prev;
+    return Math.abs(curr.age - ageKey) < Math.abs(prev.age - ageKey)
+      ? curr
+      : prev;
   });
-  
-console.log("Data fetched for HAZ calculation:", row);
-  
+
+  // console.log("Data fetched for HAZ calculation:", row);
+
   const median = parseFloat(row.median as string);
   const plus1SD = parseFloat(row.plus1SD as string);
   const SD = plus1SD - median;
-  console.log();
-  console.log("Row found for HAZ calculation:", row);
+  // console.log();
+  // console.log("Row found for HAZ calculation:", row);
   if (isNaN(median) || isNaN(plus1SD) || Math.abs(SD) < 0.0001) {
     return { haz: 0, classification: "Invalid reference values" };
   }

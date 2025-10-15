@@ -14,34 +14,35 @@ export const calculateBMIZ = (
   // Adjust height if needed
   if (ageType === "week" && ageValue <= 13 && measuredStanding) {
     // heightM += 0.007;
-  } else if (ageType === "month" && ageValue >= 4 && ageValue <= 60 && !measuredStanding) {
+  } else if (
+    ageType === "month" &&
+    ageValue >= 4 &&
+    ageValue <= 60 &&
+    !measuredStanding
+  ) {
     // heightM -= 0.007;
   }
 
-  
   const bmi = weightKg / (heightM * heightM);
-  console.log("here is the Bmi value",bmi)
+  // console.log("here is the Bmi value",bmi)
   const roundedBMI = Number(bmi.toFixed(2));
-  
+
   gender.toLowerCase() === "female" ? "girl" : "boy";
-
-
 
   const data = getBMIForAgeData(gender, ageValue, ageType);
 
-  const row = data.find(entry =>
+  const row = data.find((entry) =>
     ageType === "week"
       ? Number(entry.Weeks) === ageValue
       : Number(entry.Months) === ageValue
   );
-
 
   if (!row || !row["SD"] || !row["1 SD"]) {
     console.warn("No matching reference for:", { gender, ageValue, ageType });
     return {
       bmi: roundedBMI,
       zScore: 0,
-      classification: "No matching BMI-for-age reference found."
+      classification: "No matching BMI-for-age reference found.",
     };
   }
 
@@ -53,7 +54,7 @@ export const calculateBMIZ = (
     return {
       bmi: roundedBMI,
       zScore: 0,
-      classification: "Invalid SD or median values."
+      classification: "Invalid SD or median values.",
     };
   }
 
@@ -64,10 +65,14 @@ export const calculateBMIZ = (
 };
 
 const classifyBMIZ = (z: number): string => {
-  if (z < -3) return "Severe underweight – Urgent nutritional intervention needed.";
-  if (z >= -3 && z < -2) return "Moderate underweight – Child may require monitoring.";
+  if (z < -3)
+    return "Severe underweight – Urgent nutritional intervention needed.";
+  if (z >= -3 && z < -2)
+    return "Moderate underweight – Child may require monitoring.";
   if (z >= -2 && z < 1) return "Normal weight – Healthy BMI range.";
-  if (z >= 1 && z < 2) return "Risk of overweight – Lifestyle changes may be needed.";
-  if (z >= 2 && z < 3) return "Overweight – Higher than normal BMI; potential obesity risk.";
+  if (z >= 1 && z < 2)
+    return "Risk of overweight – Lifestyle changes may be needed.";
+  if (z >= 2 && z < 3)
+    return "Overweight – Higher than normal BMI; potential obesity risk.";
   return "Obese – High risk of obesity-related health issues.";
 };
