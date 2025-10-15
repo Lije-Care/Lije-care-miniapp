@@ -42,13 +42,14 @@ export const SignInPage = () => {
     if (tgUserId) setTelegramId(tgUserId.toString());
   }, []);
 
-  const validatePhone = (value: string) => /^\+2519\d{8}$/.test(value);
+  // ✅ Accept both Ethio Telecom (+2519...) and Safaricom (+2517...) numbers
+  const validatePhone = (value: string) => /^\+251(9|7)\d{8}$/.test(value);
 
   const signin = async () => {
     setError("");
 
     if (!validatePhone(phone)) {
-      setError("Phone must start with +2519 and be 12 digits.");
+      setError("Phone must start with +2519|7 and be 12 digits.");
       return;
     }
 
@@ -84,7 +85,7 @@ export const SignInPage = () => {
 
   const handleForgotPassword = async () => {
     if (!validatePhone(forgotPhone)) {
-      toast.error("Enter a valid phone number starting with +2519...");
+      toast.error("Enter a valid phone number starting with +2519 or +2517...");
       return;
     }
 
