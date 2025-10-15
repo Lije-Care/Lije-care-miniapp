@@ -1,6 +1,5 @@
 import { getWeightForAgeData } from "./getWeightForAgeData";
 
-
 export const calculateWAZ = (
   weightKg: number,
   ageValue: number,
@@ -8,16 +7,16 @@ export const calculateWAZ = (
   gender: "boy" | "girl"
 ): { zScore: number; classification: string } => {
   const data = getWeightForAgeData(gender, ageValue, ageType);
-  console.log("Data fetched for WAZ calculation:", data); 
-  console.log(gender, ageValue, ageType)
+  // console.log("Data fetched for WAZ calculation:", data);
+  // console.log(gender, ageValue, ageType)
   // Select matching entry
-  const row = data.find(entry => {
+  const row = data.find((entry) => {
     return ageType === "week"
       ? parseInt(entry.Weeks ?? "") === ageValue
       : parseInt(entry.Months ?? "") === ageValue;
   });
 
-  console.log("Row found for WAZ calculation:", row);
+  // console.log("Row found for WAZ calculation:", row);
 
   if (!row || !row["SD"] || !row["1 SD"]) {
     return { zScore: 0, classification: "No matching growth reference found." };
@@ -26,7 +25,7 @@ export const calculateWAZ = (
   const median = parseFloat(row["SD"]);
   const plus1SD = parseFloat(row["1 SD"]);
   const SD = plus1SD - median;
-  console.log("Median:", median, "SD:", SD);
+  // console.log("Median:", median, "SD:", SD);
   if (isNaN(SD) || SD === 0) {
     return { zScore: 0, classification: "Invalid SD or median values." };
   }

@@ -54,7 +54,7 @@ export const fetchParent = createAsyncThunk(
         `users/find-one/${parent.id}`
       );
       const userDetails = findOneByIdResponse.data;
-      console.log({ userDetails });
+      // console.log({ userDetails });
 
       // Return both results
       return {
