@@ -51,16 +51,27 @@ const UserOnboardingForm = () => {
     if (!formData.firstName.trim())
       newErrors.firstName = lang === "en" ? "Name is required" : "ስም ያስፈልጋል";
 
-    // ✅ Accept +2519... OR +2517... and exactly 12 digits total
+    // ✅ Accept +2519... OR +2517... (Ethio Telecom & Safaricom)
     if (!/^\+251(9|7)\d{8}$/.test(formData.phone))
       newErrors.phone =
         lang === "en"
           ? "Use format +2519XXXXXXXX or +2517XXXXXXXX"
           : "በመልክ +2519XXXXXXXX ወይም +2517XXXXXXXX ያስገቡ";
 
-    if (formData.password.length < 6)
+    // ✅ Password validation: at least 6 characters + strong pattern
+    if (formData.password.length < 6) {
       newErrors.password =
-        lang === "en" ? "Minimum 6 characters required" : "ቢያንስ 6 ቁምፊ ያስፈልጋል";
+        lang === "en"
+          ? "Password must be at least 6 characters long."
+          : "የይለፍ ቃል ቢያንስ 6 ቁምፊ ያስፈልጋል።";
+    } else if (
+      !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/.test(formData.password)
+    ) {
+      newErrors.password =
+        lang === "en"
+          ? "Use a stronger password (include uppercase, lowercase, number, and special character)."
+          : "አስቸጋሪ የይለፍ ቃል ይጠቀሙ። (ቢያንስ አንድ ትልቅ፣ አንድ ትንሽ ፊደል፣ ቁጥር፣ እና ልዩ ቁምፊ ይዟል።)";
+    }
 
     return newErrors;
   };
