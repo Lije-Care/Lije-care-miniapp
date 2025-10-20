@@ -286,6 +286,7 @@ export const SignInPage = () => {
               style={{ marginTop: "40px" }}
               onClick={signin}
               color="primary"
+              disabled={loading}
               loading={loading}
             >
               Sign In
