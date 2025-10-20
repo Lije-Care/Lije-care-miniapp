@@ -25,10 +25,15 @@ export const SignInPage = () => {
 
   const [forgotPhone, setForgotPhone] = useState(""); // ✅ Separate phone field
   const [telegramId, setTelegramId] = useState("");
-  console.log({ telegramId });
+  // console.log({ telegramId });
   const [resetToken, setResetToken] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
+  const [successMessage, setSuccessMessage] = useState("");
+  // console.log({ successMessage });
+  const [errorMessage, setErrorMessage] = useState("");
+  const [otpMessage, setOtpMessage] = useState("");
+  const [passwordLengthErrorMessage, setPasswordLengthErrorMessage] =
+    useState("");
   const [resetData, setResetData] = useState({
     otp: "",
     password: "",
@@ -64,7 +69,7 @@ export const SignInPage = () => {
       const response = await api.post("/auth/signin", { phone, password });
 
       const { access_token, refresh_token, data } = response.data;
-      console.log({ data });
+      // console.log({ data });
 
       if (data.role !== "PARENT") {
         setError("Only parent are allowed to sign in.");
@@ -104,13 +109,18 @@ export const SignInPage = () => {
       });
 
       if (res.status === 200 || res.status === 201) {
+        setSuccessMessage("Success!, OTP sent to your Telegram bot.");
         toast.success("OTP sent to your Telegram bot.");
         setResetToken(res.data?.token || "");
         setShowForgotModal(false);
         setShowResetModal(true);
         setForgotPhoneError("");
+        if (resetData.otp != res.data.otp) {
+          setOtpMessage("Please enter valid OPT!");
+        }
       }
     } catch (error: any) {
+      setErrorMessage("Error! Something went wrong.");
       toast.error(error?.response?.data?.message || "Failed to send OTP.");
     }
   };
@@ -123,16 +133,36 @@ export const SignInPage = () => {
   const handleResetPassword = async () => {
     const { otp, password, confirmPassword } = resetData;
 
+    // Reset previous messages
+    setPasswordLengthErrorMessage("");
+    setOtpMessage("");
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    // 1️⃣ Check OTP
+    // const expectedOtpFromServer = localStorage.getItem("expectedOtp") || "";
+    if (!otp) {
+      setOtpMessage("Please enter the OTP.");
+      return;
+    }
+    if (otp !== resetData.otp) {
+      setOtpMessage("Incorrect OTP. Please try again.");
+      return;
+    }
+
+    // 2️⃣ Check password length
     if (password.length < 6) {
-      toast.error("Password must be at least 6 characters.");
+      setPasswordLengthErrorMessage("Password must be at least 6 characters.");
       return;
     }
 
+    // 3️⃣ Check password match
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match.");
+      setPasswordLengthErrorMessage("Passwords do not match.");
       return;
     }
 
+    // ✅ All validations passed
     try {
       const res = await api.post("/auth/reset-password", {
         token: resetToken,
@@ -140,11 +170,14 @@ export const SignInPage = () => {
         password,
       });
 
+      setSuccessMessage(res.data?.message || "Password reset successfully.");
       toast.success(res.data?.message || "Password reset successfully.");
+
       setResetData({ otp: "", password: "", confirmPassword: "" });
       setResetToken("");
       setShowResetModal(false);
     } catch (error: any) {
+      setErrorMessage(error?.response?.data?.message || "Reset failed.");
       toast.error(error?.response?.data?.message || "Reset failed.");
     }
   };
@@ -331,7 +364,7 @@ export const SignInPage = () => {
               <p className="text-red-500 text-sm mt-1">{forgotPhoneError}</p>
             )}
           </div>
-
+          <p className="text-red-500"> {errorMessage}</p>
           <Button
             onClick={handleForgotPassword}
             stretched
@@ -345,6 +378,7 @@ export const SignInPage = () => {
       {/* Reset Password Modal */}
       <Modal open={showResetModal} onOpenChange={setShowResetModal}>
         <div className="p-4">
+          <p className="text-green-500 py-2 ml-3">{successMessage}</p>
           <Headline style={{ marginBottom: "12px" }}>
             🔐 Reset Password
           </Headline>
@@ -354,8 +388,11 @@ export const SignInPage = () => {
             placeholder="Enter OTP"
             value={resetData.otp}
             onChange={handleResetChange}
-            className="mb-2"
           />
+          {otpMessage && (
+            <p className="text-red-500 text-sm  ml-5 -mt-1">{otpMessage}</p>
+          )}
+
           <Input
             name="password"
             type="password"
@@ -372,6 +409,16 @@ export const SignInPage = () => {
             onChange={handleResetChange}
             className="mb-2"
           />
+          {passwordLengthErrorMessage && (
+            <p className="text-red-500 text-sm mb-2">
+              {passwordLengthErrorMessage}
+            </p>
+          )}
+
+          {errorMessage && (
+            <p className="text-red-500 text-sm mb-2">{errorMessage}</p>
+          )}
+
           <Button onClick={handleResetPassword} stretched>
             Confirm Reset
           </Button>
