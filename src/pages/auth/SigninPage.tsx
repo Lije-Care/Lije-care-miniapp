@@ -21,6 +21,7 @@ export const SignInPage = () => {
 
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
+  const [forgotPhoneError, setForgotPhoneError] = useState("");
 
   const [forgotPhone, setForgotPhone] = useState(""); // ✅ Separate phone field
   const [telegramId, setTelegramId] = useState("");
@@ -84,8 +85,15 @@ export const SignInPage = () => {
   };
 
   const handleForgotPassword = async () => {
+    if (!forgotPhone) {
+      setForgotPhoneError("Please enter your phone number");
+      return;
+    }
+
     if (!validatePhone(forgotPhone)) {
-      toast.error("Enter a valid phone number starting with +2519 or +2517...");
+      setForgotPhoneError(
+        "Enter a valid phone number starting with +2519 or +2517"
+      );
       return;
     }
 
@@ -100,6 +108,7 @@ export const SignInPage = () => {
         setResetToken(res.data?.token || "");
         setShowForgotModal(false);
         setShowResetModal(true);
+        setForgotPhoneError("");
       }
     } catch (error: any) {
       toast.error(error?.response?.data?.message || "Failed to send OTP.");
@@ -286,6 +295,7 @@ export const SignInPage = () => {
       </Section>
 
       {/* Forgot Password Modal */}
+      {/* Forgot Password Modal */}
       <Modal open={showForgotModal} onOpenChange={setShowForgotModal}>
         <div className="p-4">
           <Headline style={{ marginBottom: "12px" }}>
@@ -304,11 +314,22 @@ export const SignInPage = () => {
             .
           </div>
 
-          <Input
-            placeholder="+251912345678"
-            value={forgotPhone}
-            onChange={(e) => setForgotPhone(e.target.value)}
-          />
+          <div className="mb-1">
+            <input
+              placeholder="+251912345678"
+              value={forgotPhone}
+              className={`w-full px-4 py-2 rounded-lg border focus:outline-none ${
+                forgotPhoneError ? "border-red-500" : "border-gray-300"
+              }`}
+              onChange={(e) => {
+                setForgotPhone(e.target.value);
+                setForgotPhoneError(""); // clear error on change
+              }}
+            />
+            {forgotPhoneError && (
+              <p className="text-red-500 text-sm mt-1">{forgotPhoneError}</p>
+            )}
+          </div>
 
           <Button
             onClick={handleForgotPassword}
