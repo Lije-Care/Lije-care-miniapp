@@ -82,7 +82,7 @@ const ProductList = () => {
     };
 
     return (
-      <div className="p-2 shadow-md w-40 mt-3">
+      <div className="py-2  pl-2 pr-1 shadow-md w-40 mt-3">
         <a href={`/#/product-detail/${product.id}`}>
           <img
             src={product.img}
