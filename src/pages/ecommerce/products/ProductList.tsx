@@ -82,7 +82,7 @@ const ProductList = () => {
     };
 
     return (
-      <div className="py-2  pl-2 shadow-md w-40 mt-3">
+      <div className="py-2  pl-2 pr-5 w-full shadow-md mt-3">
         <a href={`/#/product-detail/${product.id}`}>
           <img
             src={product.img}
@@ -191,7 +191,7 @@ const ProductList = () => {
         {/* Product Grid */}
         {!loading && !error && (
           <>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2">
               {filteredProducts.length > 0 ? (
                 filteredProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
