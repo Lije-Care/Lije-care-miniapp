@@ -82,12 +82,12 @@ const ProductList = () => {
     };
 
     return (
-      <div className="p-2 rounded-lg shadow-md w-40">
+      <div className="p-2 shadow-md w-40 mt-3">
         <a href={`/#/product-detail/${product.id}`}>
           <img
             src={product.img}
             alt={product.name}
-            className="w-full h-34 object-cover"
+            className="w-full h-34 object-cover rounded-lg"
           />
           <div className="flex item-center justify-between text-sm font-semibold mt-2 mx-2">
             <p>{product.name}</p>
@@ -110,18 +110,18 @@ const ProductList = () => {
         <Header />
 
         {/* Category Filter */}
-        <div className="mt-2 p-2 ">
+        <div className="mt-2 p-2  ">
           <form className="flex w-full">
             <label
               htmlFor="category"
-              className="mt-2 w-[180px] block mb-2 text-sm font-medium text-gray-400 dark:text-gray-400"
+              className="mt-2 w-[170px] block mb-2 text-sm font-medium text-gray-400 dark:text-gray-400"
             >
               {t("Select Category")}
             </label>
             <select
               id="category"
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="block w-full p-2  mb-6 text-sm text-white border border-gray-300 rounded-lg bg-[#0B364F] "
+              className="block w-full p-2 mr-5  mb-6 text-sm text-white border border-gray-300 rounded-lg bg-[#0B364F] "
             >
               <option value="all">{t("All")}</option>
               <option value="food">{t("Baby Food & Supplement")}</option>
@@ -140,7 +140,7 @@ const ProductList = () => {
           >
             Search
           </label>
-          <div className="relative px-2">
+          <div className="relative px-2  mr-5">
             <div className="absolute inset-y-0 start-0 flex items-center ps-1 pointer-events-none ml-5 px-2">
               <svg
                 className="w-4 h-4 text-white dark:text-gray-400"
@@ -191,7 +191,7 @@ const ProductList = () => {
         {/* Product Grid */}
         {!loading && !error && (
           <>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-2">
               {filteredProducts.length > 0 ? (
                 filteredProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
