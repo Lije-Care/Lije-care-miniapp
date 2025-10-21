@@ -54,11 +54,11 @@ const ProductDetailPage = () => {
 
   const ProductCard = ({ product }: { product: any }) => {
     return (
-      <div className="p-2 rounded-lg shadow-md w-full">
+      <div className="p-2  shadow-md w-full h-full">
         <img
           src={product.img}
           alt={product.name}
-          className="w-full h-34 object-cover"
+          className="w-full h-full rounded-lg object-fill pr-4"
         />
         <div className="flex items-center justify-between mx-6">
           <p className="text-xl font-semibold mt-2">{product.name}</p>
