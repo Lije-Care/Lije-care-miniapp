@@ -64,7 +64,7 @@ export default function ConsultationTab() {
   return (
     <Page>
       <div className=" w-full mx-auto  ">
-        <div className=" flex justify-end bg-[#0B364F] pt-2">
+        <div className=" flex justify-end bg-[#013222] pt-2">
           <div className=" px-2">
             <button
               className="bg-[#0B8FAC] hover:bg-[#0ea4c6] px-4 py-2 rounded text-gray-100 "
@@ -75,8 +75,8 @@ export default function ConsultationTab() {
           </div>
         </div>
 
-        <div className=" bg-[#0B364F] px-2 py-4">
-          <div className="w-full flex flex-between rounded-lg bg-[#0B364F]">
+        <div className=" bg-[#013222] px-2 py-4">
+          <div className="w-full flex flex-between rounded-lg bg-[#013222]">
             {categories.map((category) => (
               <button
                 key={category}
