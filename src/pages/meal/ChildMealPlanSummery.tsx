@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import api from "@/api/axios";
-import { Badge, Button, Placeholder } from "@telegram-apps/telegram-ui";
+import { Badge, Placeholder } from "@telegram-apps/telegram-ui";
 import { useNavigate, useParams } from "react-router-dom";
 import { Page } from "@/components/Page";
 import { useTranslation } from "react-i18next";
@@ -8,10 +8,9 @@ import { FaTrash } from "react-icons/fa";
 
 type Meal = {
   id: string;
-  title: string;
-  meal_type: string;
-  mealTime: string;
   name: string;
+  mealType: string;
+  mealTimes: string[];
 };
 
 type MealPlan = {
@@ -19,6 +18,7 @@ type MealPlan = {
   meal_description: string;
   calories: number;
   createdAt: string;
+  meal_date: string;
   expert: {
     firstName: string;
     lastName: string;
@@ -32,20 +32,23 @@ type MealPlan = {
   meals?: Meal[];
 };
 
-const ChildMealPlanSummery = () => {
+const ChildMealPlanSummary = () => {
   const { t } = useTranslation();
   const [mealPlans, setMealPlans] = useState<MealPlan[] | null>(null);
-  // console.log(" mealPlans", mealPlans[0]?.meals[0]?.mealTime);
   const [error, setError] = useState<string | null>(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [selectedMealPlan, setSelectedMealPlan] = useState<MealPlan | null>(
     null
   );
-  console.log({ selectedMealPlan });
   const [deleting, setDeleting] = useState(false);
+  const [activeDate, setActiveDate] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>("");
   const { id } = useParams<{ id: string }>();
   const childId = id;
   const navigate = useNavigate();
+
+  const getDateKey = (dateStr: string) =>
+    new Date(dateStr).toISOString().split("T")[0];
 
   const fetchMealDetails = async (mealPlanId: string) => {
     try {
@@ -59,9 +62,8 @@ const ChildMealPlanSummery = () => {
 
   useEffect(() => {
     if (!childId) return;
-
     api
-      .get(`/meal-Plans/by-child/${childId}`)
+      .get(`/meal-plans/by-child/${childId}`)
       .then(async (response) => {
         const basicPlans = response.data?.data ?? [];
         const detailedPlans = await Promise.all(
@@ -70,7 +72,19 @@ const ChildMealPlanSummery = () => {
             return detail || plan;
           })
         );
-        setMealPlans(detailedPlans);
+        // normalize mealTimes to array
+        const normalizedPlans = detailedPlans.map((plan) => ({
+          ...plan,
+          meals: plan.meals?.map((meal: any) => ({
+            ...meal,
+            mealTimes: Array.isArray(meal.mealTimes)
+              ? meal.mealTimes
+              : meal.mealTimes
+              ? [meal.mealTimes]
+              : [],
+          })),
+        }));
+        setMealPlans(normalizedPlans);
       })
       .catch((err) => {
         console.error("Error fetching meal plans:", err);
@@ -78,9 +92,64 @@ const ChildMealPlanSummery = () => {
       });
   }, [childId]);
 
+  useEffect(() => {
+    if (mealPlans && mealPlans.length > 0 && activeDate && !activeTab) {
+      const allMealTimess = Array.from(
+        new Set(
+          mealPlans.flatMap(
+            (plan) => plan.meals?.flatMap((meal: any) => meal.mealTimes) || []
+          )
+        )
+      );
+      if (allMealTimess.length > 0) setActiveTab(allMealTimess[0]);
+    }
+  }, [mealPlans, activeDate, activeTab]);
+
+  const uniqueDates = useMemo(() => {
+    if (!mealPlans) return [];
+    return Array.from(
+      new Set(mealPlans.map((p) => getDateKey(p.meal_date)))
+    ).sort((b, a) => new Date(b).getTime() - new Date(a).getTime());
+  }, [mealPlans]);
+
+  const dateSummaries = useMemo(() => {
+    if (!mealPlans) return {};
+    const summaries: Record<string, { count: number; totalCalories: number }> =
+      {};
+    mealPlans.forEach((plan) => {
+      const key = getDateKey(plan.meal_date);
+      if (!summaries[key]) {
+        summaries[key] = { count: 0, totalCalories: 0 };
+      }
+      summaries[key].count++;
+      summaries[key].totalCalories += plan.calories;
+    });
+    return summaries;
+  }, [mealPlans]);
+
+  const filteredPlans = useMemo(() => {
+    if (!activeDate || !mealPlans) return [];
+    return mealPlans
+      .filter((p) => getDateKey(p.meal_date) === activeDate)
+      .sort(
+        (a, b) =>
+          new Date(b.meal_date).getTime() - new Date(a.meal_date).getTime()
+      );
+  }, [mealPlans, activeDate]);
+
+  // collect all unique meal times for tabs
+  const allMealTimess = useMemo(() => {
+    return Array.from(
+      new Set(
+        mealPlans?.flatMap(
+          (plan) => plan.meals?.flatMap((meal) => meal.mealTimes) || []
+        ) || []
+      )
+    );
+  }, [mealPlans]);
+
   const handleDeleteMealPlan = async () => {
     if (!selectedMealPlan) return;
-
     setDeleting(true);
     try {
       await api.delete(`/meal-plans/${selectedMealPlan.id}`);
@@ -102,169 +171,189 @@ const ChildMealPlanSummery = () => {
     setShowConfirmDelete(true);
   };
 
-  // add this state at the top inside your component
-  const [activeTab, setActiveTab] = useState<string>("Lunch"); // default tab
+  const DateCard = ({ dateKey }: { dateKey: string }) => {
+    const summary = dateSummaries[dateKey];
+    const formattedDate = new Date(dateKey).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    return (
+      <div
+        key={dateKey}
+        className="p-4 shadow-sm bg-[#0B8FAC] rounded-xl w-full border border-gray-200 hover:shadow-md cursor-pointer transition-all"
+        onClick={() => setActiveDate(dateKey)}
+      >
+        <h3 className="text-lg font-bold text-emerald-300">{formattedDate}</h3>
+        <p className="text-sm text-gray-300">
+          Plans: {summary?.count || 0} | Total: {summary?.totalCalories || 0}{" "}
+          kcal
+        </p>
+      </div>
+    );
+  };
 
-  // extract all unique meal times from all mealPlans (to generate tabs dynamically)
-  const allMealTimes = Array.from(
-    new Set(
-      mealPlans?.flatMap(
-        (plan) => plan.meals?.map((meal) => meal.mealTime) || []
-      )
-    )
-  );
+  const PlanCard = ({ mealPlan }: { mealPlan: MealPlan }) => {
+    const selected = selectedMealPlan?.id === mealPlan.id;
+    console.log({ selected });
+    return (
+      <div
+        key={mealPlan.id}
+        className="p-4 shadow-sm bg-[#0B8FAC] rounded-xl w-full border border-gray-200 hover:shadow-md cursor-pointer transition-all relative"
+        onClick={() => navigate(`/detail/${mealPlan.id}`)}
+      >
+        {/* Delete button */}
+        <div className="absolute right-2 top-2">
+          <button
+            className="text-red-500 hover:text-red-300 transition"
+            onClick={(e) => {
+              e.stopPropagation();
+              confirmDelete(mealPlan);
+            }}
+          >
+            <FaTrash className="w-6 h-6" />
+          </button>
+        </div>
+        {/* Description + Metadata */}
+        <div className="space-y-1 pr-8">
+          <p className="text-sm line-clamp-2 font-medium">
+            {mealPlan.meal_description || "No description available."}
+          </p>
+          <p className="text-xs">
+            🔥 {mealPlan.calories} kcal · 🕒{" "}
+            {new Date(mealPlan.meal_date).toLocaleDateString()}
+          </p>
+        </div>
+        {/* Child Info */}
+        <div className="my-2 border-t border-gray-200" />
+        <div className="text-sm py-1 text-gray-300">
+          <span>{t("👶 Child")}: </span>
+          {mealPlan.child?.name || t("Unnamed")} <br />
+          <span>{t("Allergies")}: </span>
+          {mealPlan.child?.allergies || t("None")} <br />
+          <span>{t("Restrictions")}: </span>
+          {mealPlan.child?.dietary_restrictions || t("None")}
+        </div>
+        {/* Meals filtered by active tab */}
+        <div className="my-2 border-t border-gray-200" />
+        <div>
+          <h4 className="text-sm font-semibold mb-1">🍽️ Meals</h4>
+          {Array.isArray(mealPlan.meals) &&
+          mealPlan.meals.filter(
+            (m) => Array.isArray(m.mealTimes) && m.mealTimes.includes(activeTab)
+          ).length > 0 ? (
+            <div className="space-y-1">
+              {mealPlan.meals
+                .filter(
+                  (meal) =>
+                    Array.isArray(meal.mealTimes) &&
+                    meal.mealTimes.includes(activeTab)
+                )
+                .map((meal) => (
+                  <div
+                    key={meal.id}
+                    className="flex justify-between items-center text-sm"
+                  >
+                    <span>Meal name: {meal.name || "Untitled"}</span>
+                    <Badge type="dot">{meal.mealType || "Unknown"}</Badge>
+                  </div>
+                ))}
+            </div>
+          ) : (
+            <p className="text-xs">No meals for this meal time.</p>
+          )}
+        </div>
+        <span className="block mt-2 text-teal-300 rounded-sm px-2 py-1 underline text-sm">
+          View detail
+        </span>
+      </div>
+    );
+  };
 
   return (
     <Page back={true}>
-      <div className="p-4 space-y-4">
-        <h2 className="text-xl font-bold text-center text-emerald-500">
+      <div className="">
+        <h2 className=" pt-2 pb-10 bg-[#013222] text-xl font-bold text-center text-emerald-500">
           {t("📋 Your Meal Plans")}
         </h2>
 
         {error && (
           <div className="text-red-500 text-center text-sm">{error}</div>
         )}
-
-        {/* start tab  */}
-
-        <ul className="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 ">
-          {allMealTimes.map((time) => (
-            <li key={time} className="me-2">
-              <button
-                onClick={() => setActiveTab(time)}
-                className={`inline-block p-4 rounded-t-lg ${
-                  activeTab === time
-                    ? "text-blue-600 bg-gray-100 dark:bg-gray-800 dark:text-blue-500"
-                    : "hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300"
-                }`}
-              >
-                {time}
-              </button>
-            </li>
-          ))}
-        </ul>
-        {/* end tabs */}
-
         {mealPlans === null ? (
           <Placeholder />
-        ) : mealPlans.length > 0 ? (
-          mealPlans.map((mealPlan) => (
-            <div
-              key={mealPlan.id}
-              className="p-4 shadow-sm bg-[#0B8FAC] rounded-xl w-full border border-gray-200 hover:shadow-md cursor-pointer transition-all"
-              onClick={() => navigate(`/detail/${mealPlan.id}`)}
-            >
-              <div className="absolute right-2 mr-6 ">
-                <button
-                  className="text-red-500 hover:text-red-300 transition"
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent div click
-                    confirmDelete(mealPlan);
-                  }}
-                >
-                  <FaTrash className="w-6 h-6" />
-                </button>
+        ) : !activeDate ? (
+          <div className="space-y-4 mt-4 mx-3">
+            {uniqueDates.length > 0 ? (
+              uniqueDates.map((date) => <DateCard key={date} dateKey={date} />)
+            ) : (
+              <div className="text-center text-gray-500">
+                {t("No meal plans found. You can create one below!")}
               </div>
-              {/* Description + Metadata */}
-              <div className="space-y-1 ">
-                <p className="text-sm line-clamp-2 font-medium pr-6">
-                  {mealPlan.meal_description || "No description available."}
-                </p>
-                <p className="text-xs">
-                  🔥 {mealPlan.calories} kcal · 🕒{" "}
-                  {new Date(mealPlan.createdAt).toLocaleDateString()}
-                </p>
-              </div>
-
-              {/* Divider */}
-              <div className="my-2 border-t border-gray-200" />
-
-              {/* Child Info */}
-              <div className="text-sm py-1 text-gray-300">
-                <span className="text-sm mt-1 text-gray-300">
-                  {t("👶 Child")}:
-                </span>{" "}
-                {mealPlan.child?.name || t("Unnamed")} <br />
-                <span className="text-sm mt-1 text-gray-300">
-                  {t("Allergies")}:
-                </span>{" "}
-                {mealPlan.child?.allergies || t("None")} <br />
-                <span className="text-sm mt-1 text-gray-300">
-                  {t("Restrictions")}:
-                </span>{" "}
-                {mealPlan.child?.dietary_restrictions || t("None")}
-              </div>
-
-              {/* Divider */}
-              <div className="my-2 border-t border-gray-200" />
-
-              {/* Meals Preview */}
-              {/* Meals Preview */}
-              <div>
-                <h4 className="text-sm font-semibold mb-1">🍽️ Meals</h4>
-                {Array.isArray(mealPlan.meals) && mealPlan.meals.length > 0 ? (
-                  <div className="space-y-3">
-                    {Object.entries(
-                      mealPlan.meals.reduce(
-                        (acc: Record<string, Meal[]>, meal) => {
-                          const key = meal.mealTime || "Unknown";
-                          if (!acc[key]) acc[key] = [];
-                          acc[key].push(meal);
-                          return acc;
-                        },
-                        {}
-                      )
-                    ).map(([mealTime, meals]) => (
-                      <div key={mealTime}>
-                        {/* Header for each mealTime */}
-                        <h5 className="text-sm font-bold text-teal-300 mb-1">
-                          Meal time: {mealTime}
-                        </h5>
-
-                        {/* Meals under this category */}
-                        <div className="space-y-1">
-                          {meals.map((meal) => (
-                            <div
-                              key={meal.id}
-                              className="flex justify-between items-center text-sm"
-                            >
-                              <span>Meal name: {meal.name || "Untitled"}</span>
-                              <Badge type="dot">
-                                {meal.meal_type || "Unknown"}
-                              </Badge>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-xs">No meals listed.</p>
-                )}
-              </div>
-
-              <span className=" absolute -mt-6 mr-8 right-2 text-teal-300 rounded-sm px-2 py-1  underline">
-                View detail
-              </span>
-            </div>
-          ))
+            )}
+          </div>
         ) : (
-          !error && (
-            <div className="text-center text-gray-500">
-              {t("No meal plans found. You can create one below!")}
+          <div className="">
+            <div className=" flex justify-between pl-4 mb-2 bg-[#013222] -mt-8 mr-2">
+              <button
+                onClick={() => {
+                  setActiveDate(null);
+                  setActiveTab("");
+                }}
+                className="text-emerald-400 hover:text-emerald-300 text-sm font-medium pb-2"
+              >
+                ← Back to Dates
+              </button>
+              <h3 className="text-sm font-base font-serif text-emerald-300 ">
+                Plans for{" "}
+                {new Date(activeDate).toLocaleDateString("en-US", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </h3>
             </div>
-          )
+            {/* Meal Time Tabs - only show after date selection */}
+            {allMealTimess.length > 0 && (
+              <ul className="bg-[#013222] px-2 -mt-1 flex flex-wrap text-sm font-medium text-center border-b border-gray-200 mb-4">
+                {allMealTimess.map((time) => (
+                  <li key={time} className="mr-2">
+                    <button
+                      onClick={() => setActiveTab(time)}
+                      className={`py-1 px-2 text-[15px] font-normal whitespace-nowrap mx-auto w-full rounded-sm ${
+                        activeTab === time
+                          ? "bg-[#0B8FAC] text-white" // filled style
+                          : " text-gray-200 text-xl font-extrabold" // outline style
+                      } rounded-lg`}
+                    >
+                      {time}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {filteredPlans.length > 0 ? (
+              <div className="space-y-4">
+                {filteredPlans.map((plan) => (
+                  <PlanCard key={plan.id} mealPlan={plan} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center text-gray-500">
+                No meal plans for this date.
+              </div>
+            )}
+          </div>
         )}
-
-        <div className="text-center">
-          <Button
-            className="mt-4 w-full bg-emerald-600 text-white"
+        <div className="text-center mt-6 mx-16">
+          <button
+            className="bg-[#0B8FAC] hover:bg-[#0ea4c6] px-4 py-2 rounded text-gray-100"
             onClick={() => navigate(`/meal/${childId}`)}
           >
             ➕ {t("Create a Meal Plan")}
-          </Button>
+          </button>
         </div>
-
         {/* Confirm Delete Modal */}
         {showConfirmDelete && (
           <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 px-4">
@@ -303,4 +392,4 @@ const ChildMealPlanSummery = () => {
   );
 };
 
-export default ChildMealPlanSummery;
+export default ChildMealPlanSummary;
