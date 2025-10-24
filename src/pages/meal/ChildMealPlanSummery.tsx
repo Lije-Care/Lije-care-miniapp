@@ -273,7 +273,7 @@ const ChildMealPlanSummary = () => {
   return (
     <Page back={true}>
       <div className="">
-        <h2 className=" pt-2 pb-10 bg-[#013222] text-xl font-bold text-center text-emerald-500">
+        <h2 className=" pt-4 pb-10 bg-[#013222] text-xl font-bold text-center text-emerald-500">
           {t("📋 Your Meal Plans")}
         </h2>
 
@@ -294,7 +294,7 @@ const ChildMealPlanSummary = () => {
           </div>
         ) : (
           <div className="">
-            <div className=" flex justify-between pl-4 mb-2 bg-[#013222] -mt-8 mr-2">
+            <div className=" flex justify-between pl-4 mb-2 pb-2 bg-[#013222] -mt-6 mr-2">
               <button
                 onClick={() => {
                   setActiveDate(null);
@@ -321,7 +321,7 @@ const ChildMealPlanSummary = () => {
                   <li key={time} className="mr-2">
                     <button
                       onClick={() => setActiveTab(time)}
-                      className={`py-1 px-2 text-[15px] font-normal whitespace-nowrap mx-auto w-full rounded-sm ${
+                      className={`py-2 px-2 text-[18px] font-normal whitespace-nowrap mx-auto w-full rounded-sm ${
                         activeTab === time
                           ? "bg-[#0B8FAC] text-white" // filled style
                           : " text-gray-200 text-xl font-extrabold" // outline style

@@ -162,9 +162,17 @@ const MealLibraryComponent = () => {
           </h2>
         </div>
         <div className="p-6 max-w-md  bg-[#0B364F] rounded-lg text-white space-y-12 mx-2 pb-12 pt-12">
+          <label
+            htmlFor="datetime-local"
+            className="py-2 text-emerald-400 font-serif"
+          >
+            {" "}
+            Select meal date
+          </label>
           <input
             type="datetime-local"
             className="w-full p-2 rounded bg-[#0d778f] text-white"
+            placeholder="Select meal date"
             value={selectedDateTime}
             onChange={(e) => setSelectedDateTime(e.target.value)}
           />
@@ -199,7 +207,7 @@ const MealLibraryComponent = () => {
             <li key={time} className="">
               <button
                 onClick={() => setActiveTab(time)}
-                className={`py-1 px-2 text-[15px] font-normal whitespace-nowrap mx-auto w-full rounded-sm ${
+                className={`py-1 px-2 text-[18px] font-normal whitespace-nowrap mx-auto w-full rounded-sm ${
                   activeTab === time
                     ? "bg-[#0B8FAC] text-white" // filled style
                     : " text-gray-200 text-xl font-extrabold" // outline style
@@ -424,7 +432,7 @@ const MealLibraryComponent = () => {
       <button
         onClick={handleConfirmMealPlan}
         disabled={submitting || selectedMeals.length === 0}
-        className={`fixed bottom-10 left-4 z-50 w-[320px] mx-3 py-1  rounded-lg text-white text-lg font-semibold transition-all shadow-lg ${
+        className={`fixed bottom-16 left-4 z-50 w-[320px] mx-3 py-3  rounded-lg text-white text-lg font-semibold transition-all shadow-lg ${
           submitting || selectedMeals.length === 0
             ? "bg-gray-400 cursor-not-allowed"
             : "bg-emerald-600 hover:bg-emerald-700"
