@@ -151,6 +151,7 @@ const MealLibraryComponent = () => {
   };
 
   const nutrientTotals = sumNutrients();
+  console.log({ nutrientTotals });
 
   // --- Render Date-Time Picker First ---
   if (!dateSelected) {
