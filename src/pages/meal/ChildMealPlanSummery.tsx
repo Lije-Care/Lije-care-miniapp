@@ -47,6 +47,7 @@ const ChildMealPlanSummary = () => {
   const childId = id;
   const navigate = useNavigate();
 
+  console.log({ mealPlans });
   const getDateKey = (dateStr: string) =>
     new Date(dateStr).toISOString().split("T")[0];
 
@@ -179,16 +180,22 @@ const ChildMealPlanSummary = () => {
       day: "numeric",
     });
     return (
-      <div
-        key={dateKey}
-        className="p-4 shadow-sm bg-[#0B8FAC] rounded-xl w-full border border-gray-200 hover:shadow-md cursor-pointer transition-all"
-        onClick={() => setActiveDate(dateKey)}
-      >
-        <h3 className="text-lg font-bold text-emerald-300">{formattedDate}</h3>
-        <p className="text-sm text-gray-300">
-          Plans: {summary?.count || 0} | Total: {summary?.totalCalories || 0}{" "}
-          kcal
-        </p>
+      <div className=" flex justify-between p-4 shadow-sm bg-[#0B8FAC] rounded-xl w-full border border-gray-200 hover:shadow-md cursor-pointer transition-all">
+        <div key={dateKey} className="" onClick={() => setActiveDate(dateKey)}>
+          <h3 className="text-lg font-bold text-emerald-300">
+            {formattedDate}
+          </h3>
+          <p className="text-sm text-gray-300">
+            Plans: {summary?.count || 0} | Total: {summary?.totalCalories || 0}{" "}
+            kcal
+          </p>
+        </div>
+        <button
+          onClick={() => setActiveDate(dateKey)}
+          className=" font-serif text-base"
+        >
+          View Detail
+        </button>
       </div>
     );
   };
@@ -354,6 +361,7 @@ const ChildMealPlanSummary = () => {
             ➕ {t("Create a Meal Plan")}
           </button>
         </div>
+
         {/* Confirm Delete Modal */}
         {showConfirmDelete && (
           <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 px-4">

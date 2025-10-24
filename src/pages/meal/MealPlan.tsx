@@ -227,7 +227,7 @@ const MealLibraryComponent = () => {
           onChange={(e) => setMealDescription(e.target.value)}
           placeholder={t("Describe the meal plan...")}
         />
-        {selectedMeals.length > 0 && (
+        {/* {selectedMeals.length > 0 && (
           <div className="bg-[#0d778f] p-4 rounded">
             <h2 className="text-lg font-bold text-emerald-300 mb-2">
               📊 {t("Total Nutrients")}
@@ -262,7 +262,7 @@ const MealLibraryComponent = () => {
               </li>
             </ul>
           </div>
-        )}
+        )} */}
         {loading ? (
           <p className="text-center text-gray-300">Loading meals...</p>
         ) : error ? (
