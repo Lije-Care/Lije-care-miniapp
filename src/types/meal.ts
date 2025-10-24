@@ -1,12 +1,11 @@
-
-export type MealTime = 'BREAKFAST' | 'SNACK' | 'LUNCH' | 'DINNER';
-export type MealType = 'SOLID' | 'DRINK' | 'SEMI_SOLID';
+export type MealTime = "BREAKFAST" | "SNACK" | "LUNCH" | "DINNER";
+export type MealType = "SOLID" | "DRINK" | "SEMI_SOLID";
 
 export type Meal = {
   id: string;
   name: string;
   description?: string;
-  mealTime: MealTime;
+  mealTimes: string[];
   mealType: MealType;
   ageGroup: string;
 
@@ -55,7 +54,7 @@ export type Nutrient = {
   name: string;
   unit: string;
   amount?: number; // in Meal context
-  type: 'MACRONUTRIENT' | 'MICRONUTRIENT' | 'VITAMIN' | 'MINERAL';
+  type: "MACRONUTRIENT" | "MICRONUTRIENT" | "VITAMIN" | "MINERAL";
 };
 
 export type CookingMethod = {
