@@ -178,7 +178,7 @@ export const IndexPage: FC = () => {
           </div>
         )}
 
-        <div className="pt-4 bg-gray-800">
+        <div className="pt-4 bg-gray-900">
           <GrowthTrackerHome childProfile={child} />
           <div className="mt-4">
             <ArticleSliderWidget articles={articles} />
