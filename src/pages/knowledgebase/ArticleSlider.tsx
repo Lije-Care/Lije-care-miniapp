@@ -11,7 +11,7 @@ const ArticlesPage = () => {
   return (
     <Page back={true}>
       <div className=" min-h-screen p-6 space-y-6 max-w-5xl mx-auto bg-gray-800 ">
-        <h1 className="text-2xl font-bold text-center">
+        <h1 className="text-2xl font-bold text-center text-white">
           📚 {t("All Articles")}
         </h1>
         {articles.length === 0 ? (
