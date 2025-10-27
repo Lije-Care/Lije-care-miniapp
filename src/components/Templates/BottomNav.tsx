@@ -45,7 +45,7 @@ const BottomNav = () => {
         left: 0,
         height: "7%",
         width: "100%",
-        background: "var(--tg-theme-secondary-bg-color, white)",
+        background: "#013222",
       }}
     >
       {tabs.map(({ path, label }) => (
