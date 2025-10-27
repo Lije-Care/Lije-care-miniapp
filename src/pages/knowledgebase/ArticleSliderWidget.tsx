@@ -6,7 +6,7 @@ const ArticleSliderWidget = ({ articles }: any) => {
 
   return (
     <div className="p-4 space-y-4">
-      <h2 className="text-xl font-bold">👩‍⚕️ Featured Articles</h2>
+      <h2 className="text-xl font-bold text-white">👩‍⚕️ Featured Articles</h2>
 
       <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
         {articles?.slice(0, 5).map((article: any) => (

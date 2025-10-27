@@ -44,12 +44,14 @@ export const PromotionsList = () => {
 
   return (
     <Page back={true}>
-      <Section style={{ padding: "20px" }}>
-        <Headline style={{ marginBottom: "20px" }}>📢 {t("Promotions")}</Headline>
+      <div style={{ padding: "20px" }} className=" bg-gray-800">
+        <Headline style={{ marginBottom: "20px" }}>
+          📢 {t("Promotions")}
+        </Headline>
 
         {loading && (
           <div className="text-center">
-            <Spinner size="s"/>
+            <Spinner size="s" />
             <Text>{t("Loading promotions...")}</Text>
           </div>
         )}
@@ -63,13 +65,14 @@ export const PromotionsList = () => {
         )}
 
         {!loading && !error && promotions.length > 0 && (
-          <div className="flex overflow-x-auto space-x-4 pb-2 snap-x snap-mandatory">
+          <div className="flex overflow-x-auto space-x-4 pb-2 snap-x snap-mandatory bg-gray-800">
             {promotions.map((promo) => (
               <div
                 key={promo.id}
-                className="snap-start flex-shrink-0 w-72 sm:w-80"
+                className="snap-start flex-shrink-0 w-72 sm:w-80 bg-gray-800"
               >
-                <Card
+                <div
+                  className=" bg-gray-600 rounded-lg"
                   style={{
                     padding: "16px",
                     display: "flex",
@@ -91,10 +94,8 @@ export const PromotionsList = () => {
                     />
                   )}
                   <div style={{ display: "flex", flexDirection: "column" }}>
-                    <Subheadline style={{ marginBottom: "4px" }}>
-                      {promo.title}
-                    </Subheadline>
-                    <Text
+                    <span style={{ marginBottom: "4px" }}>{promo.title}</span>
+                    <p
                       style={{
                         whiteSpace: "pre-line",
                         wordBreak: "break-word",
@@ -102,14 +103,14 @@ export const PromotionsList = () => {
                       }}
                     >
                       {promo.description}
-                    </Text>
+                    </p>
                   </div>
-                </Card>
+                </div>
               </div>
             ))}
           </div>
         )}
-      </Section>
+      </div>
     </Page>
   );
 };
