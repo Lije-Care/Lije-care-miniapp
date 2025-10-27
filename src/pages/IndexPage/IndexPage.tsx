@@ -178,7 +178,7 @@ export const IndexPage: FC = () => {
           </div>
         )}
 
-        <Section className="mt-4">
+        <div className="pt-4 bg-gray-900">
           <GrowthTrackerHome childProfile={child} />
           <div className="mt-4">
             <ArticleSliderWidget articles={articles} />
@@ -187,7 +187,7 @@ export const IndexPage: FC = () => {
           <div className="mt-4">
             <DoctorsList />
           </div>
-        </Section>
+        </div>
       </Section>
     </Page>
   );
