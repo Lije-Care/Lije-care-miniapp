@@ -20,7 +20,7 @@ const ArticleCard = ({ article, showButton = true }: any) => {
   };
 
   return (
-    <div className="rounded-xl overflow-hidden shadow-sm hover:shadow-md transition duration-200 h-full flex flex-col w-full">
+    <div className="rounded-xl overflow-hidden shadow-sm hover:shadow-md transition duration-200 h-full flex flex-col w-full bg-gray-800">
       <div className="relative w-full h-40">
         <img
           src={article.image}
