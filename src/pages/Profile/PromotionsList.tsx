@@ -1,11 +1,4 @@
-import {
-  Headline,
-  Section,
-  Subheadline,
-  Text,
-  Card,
-  Spinner,
-} from "@telegram-apps/telegram-ui";
+import { Headline, Text, Spinner } from "@telegram-apps/telegram-ui";
 import { useEffect, useState } from "react";
 import api from "@/api/axios";
 import { Page } from "@/components/Page";
