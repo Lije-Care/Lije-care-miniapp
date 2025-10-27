@@ -63,7 +63,7 @@ export default function ConsultationTab() {
 
   return (
     <Page>
-      <div className=" w-full mx-auto  ">
+      <div className=" min-h-screen w-full mx-auto bg-gray-800  ">
         <div className=" flex justify-end bg-[#013222] pt-2">
           <div className=" px-2">
             <button

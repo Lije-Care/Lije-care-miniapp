@@ -20,6 +20,7 @@ const NotificationsPage: FC = () => {
     (state: RootState) => state.notificartions
   );
   const { data = [], loading, error } = notificationsState || {};
+
   console.log({ data });
 
   // Track which notifications are expanded
@@ -31,7 +32,6 @@ const NotificationsPage: FC = () => {
 
   const renderIcon = (type: string) => {
     const normalizedType = type?.toUpperCase();
-
     switch (normalizedType) {
       case "INFO":
         return <FiInfo className="text-blue-500 w-5 h-5" />;
@@ -79,19 +79,19 @@ const NotificationsPage: FC = () => {
 
   return (
     <Page back={true}>
-      <div className="px-4 py-6">
+      <div className="min-h-screen px-4 py-6 bg-gray-800">
         {loading ? (
-          <div className="flex justify-center items-center h-60">
+          <div className="flex justify-center items-center min-h-[60vh]">
             <FiLoader className="w-8 h-8 text-gray-400 animate-spin" />
           </div>
         ) : error ? (
-          <div className="text-center text-red-500 mt-10">
+          <div className="text-center text-red-500 mt-10 min-h-[60vh] flex flex-col justify-center">
             <FiAlertTriangle className="mx-auto mb-2 w-8 h-8" />
             <p className="text-sm font-medium">Failed to load notifications</p>
             <p className="text-xs text-gray-500 mt-1">{String(error)}</p>
           </div>
         ) : data.length === 0 ? (
-          <div className="flex flex-col justify-center items-center h-60 text-center text-gray-500">
+          <div className="flex flex-col justify-center items-center min-h-[60vh] text-center text-gray-500">
             <img
               src="https://cdn-icons-png.flaticon.com/512/7486/7486800.png"
               alt="No notifications"
@@ -108,7 +108,6 @@ const NotificationsPage: FC = () => {
               const displayMessage = isExpanded
                 ? message
                 : message.slice(0, MAX_MESSAGE_LENGTH);
-
               return (
                 <li
                   key={notification.id}
@@ -122,7 +121,6 @@ const NotificationsPage: FC = () => {
                     <h3 className="font-semibold text-gray-800 text-sm">
                       {notification.title || "Notification"}
                     </h3>
-
                     {/* Type Badge */}
                     {notification.type && (
                       <span
@@ -133,13 +131,11 @@ const NotificationsPage: FC = () => {
                         {notification.type.replace(/_/g, " ")}
                       </span>
                     )}
-
                     {/* Message */}
                     <p className="text-gray-600 text-sm mt-2 leading-snug">
                       {displayMessage}
                       {shouldTruncate && !isExpanded && "..."}
                     </p>
-
                     {/* View More / Less */}
                     {shouldTruncate && (
                       <button
@@ -149,7 +145,6 @@ const NotificationsPage: FC = () => {
                         {isExpanded ? "View less" : "View more"}
                       </button>
                     )}
-
                     {/* Timestamp */}
                     <p className="text-xs text-gray-400 mt-2">
                       {new Date(notification.createdAt).toLocaleString()}
