@@ -156,13 +156,13 @@ const MealLibraryComponent = () => {
   // --- Render Date-Time Picker First ---
   if (!dateSelected) {
     return (
-      <>
+      <div className="min-h-screen bg-gray-800 ">
         <div className=" bg-[#013222] px-6 pt-6 pb-12 flex justify-center items-center">
           <h2 className="text-2xl font-bold text-emerald-400">
             {t("Select Meal Date & Time")}
           </h2>
         </div>
-        <div className="p-6 max-w-md  bg-[#0B364F] rounded-lg text-white space-y-12 mx-2 pb-12 pt-12">
+        <div className="p-6 max-w-md  bg-[#0B364F] rounded-lg text-white space-y-12 mx-2 pb-12 pt-12 mt-12">
           <label
             htmlFor="datetime-local"
             className="py-2 text-emerald-400 font-serif"
@@ -189,13 +189,13 @@ const MealLibraryComponent = () => {
             {t("Continue")}
           </button>
         </div>
-      </>
+      </div>
     );
   }
 
   // --- Main Meal Library UI ---
   return (
-    <>
+    <div className="min-h-screen bg-red-800">
       <div className="bg-[#013222] p-4">
         <h1 className="text-2xl font-bold text-emerald-400">
           🍽️ {t("Create Meal Plan")}
@@ -441,7 +441,7 @@ const MealLibraryComponent = () => {
       >
         {submitting ? t("Submitting...") : `✅ ${t("Confirm Meal Plan")}`}
       </button>
-    </>
+    </div>
   );
 };
 

@@ -54,7 +54,7 @@ const ProductDetailPage = () => {
 
   const ProductCard = ({ product }: { product: any }) => {
     return (
-      <div className="p-2  shadow-md w-full h-full">
+      <div className="p-2 min-h-screen  shadow-md w-full h-full bg-gray-800">
         <img
           src={product.img}
           alt={product.name}

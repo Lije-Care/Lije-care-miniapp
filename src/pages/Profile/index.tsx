@@ -28,10 +28,7 @@ export default function ProfileScreen() {
 
   return (
     <Page back={true}>
-      <div
-        style={{ height: "80vh" }}
-        className="w-full g-gray-900 text-white flex flex-col"
-      >
+      <div className=" w-full bg-gray-800 text-white flex flex-col ">
         {/* Profile Header */}
         <div className="flex flex-col items-center p-6">
           <FaUser className="text-6xl" />

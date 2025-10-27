@@ -94,7 +94,7 @@ export default function ConsultationTab() {
           </div>
         </div>
 
-        <p className="font-extrabold text-gray-400 truncate">
+        <p className="font-extrabold text-gray-200 truncate py-2">
           👩‍⚕️ {t("Choose a Specialist")}
         </p>
 

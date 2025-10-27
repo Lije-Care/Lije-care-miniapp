@@ -106,7 +106,7 @@ const ProductList = () => {
 
   return (
     <Page back={true}>
-      <div>
+      <div className="min-h-screen bg-gray-800">
         <Header />
 
         {/* Category Filter */}
@@ -178,7 +178,7 @@ const ProductList = () => {
 
         {/* Loading State */}
         {loading && (
-          <div className="text-center py-6 text-gray-500">
+          <div className="text-center py-6 text-gray-300">
             {t("Loading products...")}
           </div>
         )}
@@ -197,7 +197,7 @@ const ProductList = () => {
                   <ProductCard key={product.id} product={product} />
                 ))
               ) : (
-                <p className="text-center col-span-2 text-gray-500">
+                <p className="text-center col-span-2 text-gray-300">
                   {t("No products found in this category.")}
                 </p>
               )}
@@ -208,7 +208,7 @@ const ProductList = () => {
               <button
                 onClick={() => setPage((prev) => prev - 1)}
                 disabled={page === 1 || loading}
-                className="flex items-center justify-center px-3 h-8 me-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg 
+                className="flex items-center justify-center px-3 h-8 me-3 text-sm font-medium text-gray-300 bg-white border border-gray-300 rounded-lg 
                hover:bg-gray-100 hover:text-gray-700 
                dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 
                dark:hover:bg-gray-700 dark:hover:text-white 
@@ -239,7 +239,7 @@ const ProductList = () => {
               <button
                 onClick={() => setPage((prev) => prev + 1)}
                 disabled={page === totalPages || loading}
-                className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg 
+                className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-300 bg-white border border-gray-300 rounded-lg 
                hover:bg-gray-100 hover:text-gray-700 
                dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 
                dark:hover:bg-gray-700 dark:hover:text-white 

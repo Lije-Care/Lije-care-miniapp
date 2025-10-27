@@ -8,7 +8,7 @@ const ArticleDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { articles } = useSelector((state: RootState) => state.articles);
-  const article = articles.find(item => item.id === id || "");
+  const article = articles.find((item) => item.id === id || "");
 
   const renderStars = (rating: number) => {
     const stars = [];
@@ -31,43 +31,45 @@ const ArticleDetail = () => {
 
   return (
     <Page back={true}>
-    <div className="p-4 max-w-3xl mx-auto space-y-4">
-      <button
-        className="text-sm text-blue-600 hover:underline"
-        onClick={() => navigate(-1)}
-      >
-        ← Back
-      </button>
+      <div className="p-4 max-w-3xl mx-auto space-y-4 bg-gray-800 min-h-screen">
+        <button
+          className="text-sm text-blue-600 hover:underline"
+          onClick={() => navigate(-1)}
+        >
+          ← Back
+        </button>
 
-      <img
-        src={article.image}
-        alt={article.title}
-        className="w-full h-60 object-cover rounded-xl"
-      />
+        <img
+          src={article.image}
+          alt={article.title}
+          className="w-full h-60 object-cover rounded-xl"
+        />
 
-      <div className="space-y-1">
-        <h1 className="text-2xl font-bold leading-tight">{article.title}</h1>
-        <p className="text-sm text-gray-600">By {article.author}</p>
-        {article.rating !== undefined && renderStars(article.rating)}
-      </div>
-
-      {article.tags?.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {article.tags.map(tag => (
-            <span
-              key={tag}
-              className="px-2 py-1 text-xs  border-gray-300  "
-            >
-              #{tag}
-            </span>
-          ))}
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold leading-tight text-white">
+            {article.title}
+          </h1>
+          <p className="text-sm text-gray-300">By {article.author}</p>
+          {article.rating !== undefined && renderStars(article.rating)}
         </div>
-      )}
 
-      <div className="pt-4 space-y-2 text-base leading-relaxed">
-        {article.content}
+        {article.tags?.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {article.tags.map((tag) => (
+              <span
+                key={tag}
+                className="px-2 py-1 text-xs  border-gray-300 text-white  "
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <div className="pt-4 space-y-2 text-base leading-relaxed text-white">
+          {article.content}
+        </div>
       </div>
-    </div>
     </Page>
   );
 };
