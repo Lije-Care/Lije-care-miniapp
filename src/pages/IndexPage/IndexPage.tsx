@@ -96,7 +96,7 @@ export const IndexPage: FC = () => {
         </div>
       </div>
 
-      <Section className="overflow-y-auto pb-8">
+      <Section className="overflow-y-auto">
         {/* 👨‍👩‍👧 Profile Cards */}
         <div className="flex gap-1 px-4 py-3 justify-between bg-[#013222]">
           {/* Parent Card */}

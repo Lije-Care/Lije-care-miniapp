@@ -31,12 +31,12 @@ const ArticleCard = ({ article, showButton = true }: any) => {
 
       <div className="p-3 flex flex-col justify-between flex-1">
         <div>
-          <h3 className="text-base font-semibold line-clamp-2">
+          <h3 className=" text-white text-base font-semibold line-clamp-2">
             {article.title}
           </h3>
-          <p className="text-xs text-gray-500 mt-1">by {article.author}</p>
+          <p className="text-xs text-gray-200 mt-1">by {article.author}</p>
           {article.rating && renderStars(article.rating)}
-          <p className="text-sm text-gray-600 mt-2 line-clamp-3">
+          <p className="text-sm text-gray-300 mt-2 line-clamp-3">
             {article.description}
           </p>
         </div>

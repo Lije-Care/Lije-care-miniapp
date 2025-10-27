@@ -45,7 +45,7 @@ export const PromotionsList = () => {
         {loading && (
           <div className="text-center">
             <Spinner size="s" />
-            <Text>{t("Loading promotions...")}</Text>
+            <Text className="text-white">{t("Loading promotions...")}</Text>
           </div>
         )}
 
@@ -54,7 +54,7 @@ export const PromotionsList = () => {
         )}
 
         {!loading && !error && promotions.length === 0 && (
-          <Text>{t("No promotions found.")}</Text>
+          <Text className=" text-white">{t("No promotions found.")}</Text>
         )}
 
         {!loading && !error && promotions.length > 0 && (
