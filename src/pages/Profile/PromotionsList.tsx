@@ -38,7 +38,7 @@ export const PromotionsList = () => {
   return (
     <Page back={true}>
       <div style={{ padding: "20px" }} className=" bg-gray-800">
-        <Headline style={{ marginBottom: "20px" }}>
+        <Headline className=" text-white" style={{ marginBottom: "20px" }}>
           📢 {t("Promotions")}
         </Headline>
 
@@ -50,7 +50,12 @@ export const PromotionsList = () => {
         )}
 
         {error && (
-          <Text style={{ color: "red", marginBottom: "10px" }}>{error}</Text>
+          <Text
+            className=" text-white"
+            style={{ color: "red", marginBottom: "10px" }}
+          >
+            {error}
+          </Text>
         )}
 
         {!loading && !error && promotions.length === 0 && (
@@ -87,8 +92,14 @@ export const PromotionsList = () => {
                     />
                   )}
                   <div style={{ display: "flex", flexDirection: "column" }}>
-                    <span style={{ marginBottom: "4px" }}>{promo.title}</span>
+                    <span
+                      className=" text-white"
+                      style={{ marginBottom: "4px" }}
+                    >
+                      {promo.title}
+                    </span>
                     <p
+                      className=" text-white"
                       style={{
                         whiteSpace: "pre-line",
                         wordBreak: "break-word",

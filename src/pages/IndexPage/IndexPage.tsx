@@ -11,7 +11,6 @@ import { Page } from "@/components/Page.tsx";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import parentImage from "@/assets/images/parent.png";
-import DoctorsList from "@/components/Templates/DoctorsList";
 import ArticleSliderWidget from "../knowledgebase/ArticleSliderWidget";
 import { fetchArticles } from "@/redux/slices/articlesSlice";
 import { AppDispatch, RootState } from "@/redux/store";
@@ -178,15 +177,15 @@ export const IndexPage: FC = () => {
           </div>
         )}
 
-        <div className="pt-4 bg-gray-800">
+        <div className="pt-4 bg-gray-800  mb-0 pb-0">
           <GrowthTrackerHome childProfile={child} />
           <div className="mt-4">
             <ArticleSliderWidget articles={articles} />
           </div>
           <PromotionsList />
-          <div className="mt-4">
+          {/* <div className="mt-4">
             <DoctorsList />
-          </div>
+          </div> */}
         </div>
       </Section>
     </Page>
