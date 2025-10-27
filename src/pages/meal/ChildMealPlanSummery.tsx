@@ -279,7 +279,7 @@ const ChildMealPlanSummary = () => {
 
   return (
     <Page back={true}>
-      <div className="">
+      <div className=" min-h-screen bg-gray-800">
         <h2 className=" pt-4 pb-10 bg-[#013222] text-xl font-bold text-center text-emerald-500">
           {t("📋 Your Meal Plans")}
         </h2>

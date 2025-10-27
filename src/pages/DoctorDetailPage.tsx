@@ -114,7 +114,7 @@ export default function DoctorDetailPage() {
 
   return (
     <Page back={true}>
-      <div className="p-6 space-y-4 text-white">
+      <div className="p-6 space-y-4 text-white bg-red-500">
         <h2 className="text-xl font-bold text-emerald-400">
           {t("Doctor Info")}
         </h2>
