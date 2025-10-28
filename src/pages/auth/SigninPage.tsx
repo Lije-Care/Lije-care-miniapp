@@ -2,7 +2,6 @@ import {
   Button,
   Headline,
   Input,
-  Section,
   Text,
   Modal,
 } from "@telegram-apps/telegram-ui";
