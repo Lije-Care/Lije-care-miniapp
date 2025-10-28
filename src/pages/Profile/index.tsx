@@ -28,7 +28,7 @@ export default function ProfileScreen() {
 
   return (
     <Page back={true}>
-      <div className=" w-full bg-gray-800 text-white flex flex-col ">
+      <div className="w-full bg-gray-800 text-white flex flex-col ">
         {/* Profile Header */}
         <div className="flex flex-col items-center p-6">
           <FaUser className="text-6xl" />
@@ -75,7 +75,7 @@ export default function ProfileScreen() {
 
         {/* Profile Options */}
         <div
-          style={{ height: "100vh" }}
+          style={{ height: "72vh" }}
           className="bg-[#0B8FAC] rounded-t-3xl p-4 flex flex-col gap-4"
         >
           <ProfileOption
