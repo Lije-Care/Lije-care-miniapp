@@ -106,9 +106,9 @@ const UserOnboardingForm = () => {
 
   return (
     <Page back={true}>
-      <div className="p-2">
+      <div className="p-2 bg-gray-800 min-h-screen">
         <div className="max-w-md mx-auto mt-10 rounded-2xl shadow-xl p-2 border border-gray-700">
-          <h2 className="text-2xl font-semibold mb-6 text-center">
+          <h2 className="text-2xl font-semibold mb-6 text-center text-white">
             👋 {t("title")}
           </h2>
 
@@ -133,7 +133,10 @@ const UserOnboardingForm = () => {
 
             {/* Name */}
             <div>
-              <label htmlFor="firstName" className="block font-medium mb-1">
+              <label
+                htmlFor="firstName"
+                className=" text-white block font-medium mb-1"
+              >
                 {t("name")}
               </label>
               <input
@@ -141,7 +144,7 @@ const UserOnboardingForm = () => {
                 name="firstName"
                 type="text"
                 placeholder={t("namePlaceholder")}
-                className={`w-full px-4 py-2 rounded-lg border ${
+                className={`w-full px-4 py-2 rounded-lg border  text-white ${
                   errors.firstName ? "border-red-500" : "border-gray-300"
                 }`}
                 value={formData.firstName}
@@ -154,7 +157,10 @@ const UserOnboardingForm = () => {
 
             {/* Phone */}
             <div>
-              <label htmlFor="phone" className="block font-medium mb-1">
+              <label
+                htmlFor="phone"
+                className=" text-white block font-medium mb-1"
+              >
                 {t("phone")}
               </label>
               <input
@@ -162,7 +168,7 @@ const UserOnboardingForm = () => {
                 name="phone"
                 type="tel"
                 placeholder={t("phonePlaceholder")}
-                className={`w-full px-4 py-2 rounded-lg border ${
+                className={`w-full px-4 py-2 rounded-lg border text-white ${
                   errors.phone ? "border-red-500" : "border-gray-300"
                 }`}
                 value={formData.phone}
@@ -175,7 +181,10 @@ const UserOnboardingForm = () => {
 
             {/* Password */}
             <div>
-              <label htmlFor="password" className="block font-medium mb-1">
+              <label
+                htmlFor="password"
+                className=" text-white block font-medium mb-1"
+              >
                 {t("password")}
               </label>
               <input
@@ -183,7 +192,7 @@ const UserOnboardingForm = () => {
                 name="password"
                 type="password"
                 placeholder={t("passwordPlaceholder")}
-                className={`w-full px-4 py-2 rounded-lg border ${
+                className={`w-full px-4 py-2 rounded-lg border text-white ${
                   errors.password ? "border-red-500" : "border-gray-300"
                 }`}
                 value={formData.password}

@@ -184,16 +184,17 @@ export const SignInPage = () => {
 
   return (
     <Page back={true}>
-      <Section
+      <div
+        className=" bg-gray-800"
         style={{
           padding: "10px",
-          borderRadius: "20px",
+
           height: "100vh",
           margin: "auto",
         }}
       >
         <div style={{ padding: "15px", borderRadius: "20px" }}>
-          <Headline className="flex justify-center items-center font-bold text-xl my-5 mx-2.5 py-4">
+          <Headline className=" text-white flex justify-center items-center font-bold text-xl my-5 mx-2.5 py-4">
             Sign In
           </Headline>
 
@@ -205,10 +206,13 @@ export const SignInPage = () => {
             please go to the Bot, click /start, and then sign up again.
           </div>
 
-          <Section>
+          <div className=" bg-gray-800">
             {/* Phone */}
-            <div className="mt-10">
-              <label htmlFor="phone" className="block font-medium mb-1">
+            <div className="mt-10 bg-gray-800">
+              <label
+                htmlFor="phone"
+                className="text-white block font-medium mb-1"
+              >
                 Phone Number
               </label>
               <input
@@ -216,7 +220,7 @@ export const SignInPage = () => {
                 name="phone"
                 type="tel"
                 placeholder="+2519XXXXXXXX"
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none"
+                className="w-full px-4 text-white py-2 rounded-lg border border-gray-300 focus:outline-none"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
               />
@@ -224,7 +228,10 @@ export const SignInPage = () => {
 
             {/* Password Field with Eye Icon */}
             <div className="mt-4 relative">
-              <label htmlFor="password" className="block font-medium mb-1">
+              <label
+                htmlFor="password"
+                className="text-white block font-medium mb-1"
+              >
                 Password
               </label>
 
@@ -233,7 +240,7 @@ export const SignInPage = () => {
                 name="password"
                 type={showPassword ? "text" : "password"} // 👁 toggle visibility
                 placeholder="******"
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none pr-10"
+                className="w-full px-4 text-white py-2 rounded-lg border border-gray-300 focus:outline-none pr-10"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -324,9 +331,9 @@ export const SignInPage = () => {
             >
               Sign In
             </Button>
-          </Section>
+          </div>
         </div>
-      </Section>
+      </div>
 
       {/* Forgot Password Modal */}
       {/* Forgot Password Modal */}
