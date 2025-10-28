@@ -15,6 +15,7 @@ const MealLibraryComponent = () => {
   const [selectedMeals, setSelectedMeals] = useState<
     { meal: Meal; multiplier: number }[]
   >([]);
+
   const [mealDescription, setMealDescription] = useState(
     t("A healthy and balanced meal plan for the child.")
   );
@@ -123,6 +124,13 @@ const MealLibraryComponent = () => {
     });
     return result;
   };
+  // Get current date/time formatted for datetime-local input
+  const getMinDateTime = () => {
+    const now = new Date();
+    now.setSeconds(0, 0); // remove seconds & milliseconds for compatibility
+    const localISOTime = now.toISOString().slice(0, 16); // e.g., "2025-10-28T14:30"
+    return localISOTime;
+  };
 
   const handleConfirmMealPlan = async () => {
     if (!children.length) return navigate("/children");
@@ -156,27 +164,31 @@ const MealLibraryComponent = () => {
   // --- Render Date-Time Picker First ---
   if (!dateSelected) {
     return (
-      <div className="min-h-screen bg-gray-800 ">
-        <div className=" bg-[#013222] px-6 pt-6 pb-12 flex justify-center items-center">
+      <div className="min-h-screen bg-gray-800">
+        <div className="bg-[#013222] px-6 pt-6 pb-12 flex justify-center items-center">
           <h2 className="text-2xl font-bold text-emerald-400">
             {t("Select Meal Date & Time")}
           </h2>
         </div>
-        <div className="p-6 max-w-md  bg-[#0B364F] rounded-lg text-white space-y-12 mx-2 pb-12 pt-12 mt-12">
+
+        <div className="p-6 max-w-md bg-[#0B364F] rounded-lg text-white space-y-12 mx-2 pb-12 pt-12 mt-12">
           <label
             htmlFor="datetime-local"
             className="py-2 text-emerald-400 font-serif"
           >
-            {" "}
-            Select meal date
+            {t("Select meal date")}
           </label>
+
           <input
             type="datetime-local"
+            id="datetime-local"
             className="w-full p-2 rounded bg-[#0d778f] text-white"
             placeholder="Select meal date"
             value={selectedDateTime}
             onChange={(e) => setSelectedDateTime(e.target.value)}
+            min={getMinDateTime()} // ✅ disables past dates & times
           />
+
           <button
             disabled={!selectedDateTime}
             onClick={() => setDateSelected(true)}
@@ -195,7 +207,7 @@ const MealLibraryComponent = () => {
 
   // --- Main Meal Library UI ---
   return (
-    <div className="min-h-screen bg-red-800">
+    <div className="min-h-screen bg-gray-800">
       <div className="bg-[#013222] p-4">
         <h1 className="text-2xl font-bold text-emerald-400">
           🍽️ {t("Create Meal Plan")}
