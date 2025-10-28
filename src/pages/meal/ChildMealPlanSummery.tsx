@@ -301,7 +301,7 @@ const ChildMealPlanSummary = () => {
           </div>
         ) : (
           <div className="">
-            <div className=" flex justify-between pl-4 mb-2 pb-2 bg-[#013222] -mt-6 mr-2">
+            <div className=" flex justify-between pl-4 mb-2 pb-2 bg-[#013222] -mt-6 pr-2">
               <button
                 onClick={() => {
                   setActiveDate(null);
@@ -323,7 +323,7 @@ const ChildMealPlanSummary = () => {
             </div>
             {/* Meal Time Tabs - only show after date selection */}
             {allMealTimess.length > 0 && (
-              <ul className="bg-[#013222] px-2 -mt-1 flex flex-wrap text-sm font-medium text-center border-b border-gray-200 mb-4">
+              <ul className="bg-[#013222] px-2 -mt-2 flex flex-wrap text-sm font-medium text-center border-b border-gray-200 mb-4">
                 {allMealTimess.map((time) => (
                   <li key={time} className="mr-2">
                     <button
