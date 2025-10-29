@@ -53,7 +53,7 @@ const MealDetails: React.FC = () => {
   }
 
   const meals = data?.meals || [];
-  console.log("meals", meals);
+  // console.log("meals", meals);
   if (!meals.length) {
     return (
       <Text className="text-center mt-8">
