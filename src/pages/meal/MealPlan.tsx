@@ -10,10 +10,11 @@ import { Eye } from "lucide-react";
 
 const MealLibraryComponent = () => {
   const { t } = useTranslation();
-  const [meals, setMeals] = useState<Meal[]>([]);
+  const [meals, setMeals] = useState<any[]>([]);
+  console.log({ meals });
   const [expandedMealId, setExpandedMealId] = useState<string | null>(null);
   const [selectedMeals, setSelectedMeals] = useState<
-    { meal: Meal; multiplier: number }[]
+    { meal: any; multiplier: number }[]
   >([]);
 
   const [mealDescription, setMealDescription] = useState(
@@ -34,7 +35,7 @@ const MealLibraryComponent = () => {
   useEffect(() => {
     const fetchMeals = async () => {
       try {
-        const res = await api.get("meal/find-all?skip=0&limit=100");
+        const res = await api.get("meal/find-all?skip=0&limit=1000");
         const responseData = Array.isArray(res.data)
           ? res.data
           : res.data?.data;
@@ -92,38 +93,23 @@ const MealLibraryComponent = () => {
     : meals;
 
   const sumNutrients = () => {
-    const result = {
-      totalVolume: 0,
-      protein: 0,
-      fat: 0,
-      carbs: 0,
-      calories: 0,
-      iron: 0,
-      calcium: 0,
-      vitaminA: 0,
-      vitaminD: 0,
-    };
+    const totals: Record<string, { amount: number; unit?: string }> = {};
+    let totalVolume = 0;
+
     selectedMeals.forEach(({ meal, multiplier }) => {
-      result.totalVolume += (meal.totalVolume || 0) * multiplier;
-      meal.totalNutrients?.forEach((nutrient) => {
-        const name = nutrient.name.toLowerCase();
-        const amount = nutrient.amount || 0;
-        if (name.includes("protein")) result.protein += amount * multiplier;
-        else if (name.includes("fat")) result.fat += amount * multiplier;
-        else if (name.includes("carb")) result.carbs += amount * multiplier;
-        else if (name.includes("calorie"))
-          result.calories += amount * multiplier;
-        else if (name.includes("iron")) result.iron += amount * multiplier;
-        else if (name.includes("calcium"))
-          result.calcium += amount * multiplier;
-        else if (name.includes("vitamin a"))
-          result.vitaminA += amount * multiplier;
-        else if (name.includes("vitamin d"))
-          result.vitaminD += amount * multiplier;
-      });
+      const mealYieldVolume = calculateYieldVolume(meal);
+      totalVolume += mealYieldVolume * multiplier;
+
+      const mealNutrients = calculateMealNutrients(meal);
+      for (const [name, { amount, unit }] of Object.entries(mealNutrients)) {
+        if (!totals[name]) totals[name] = { amount: 0, unit };
+        totals[name].amount += amount * multiplier;
+      }
     });
-    return result;
+
+    return { totalVolume, nutrients: totals };
   };
+
   // Get current date/time formatted for datetime-local input
   const getMinDateTime = () => {
     const now = new Date();
@@ -132,13 +118,59 @@ const MealLibraryComponent = () => {
     return localISOTime;
   };
 
+  const calculateYieldVolume = (meal: any) => {
+    return (
+      meal?.mealIngredients?.reduce((acc: number, item: any) => {
+        const ing = item.ingredient;
+        const type = ing?.portionUnit?.type?.toLowerCase();
+        const quantity = item.quantity ?? 0;
+        const conversion = ing?.portionUnit?.conversionToBase ?? 1;
+        let volume = 0;
+        if (type === "mass") {
+          const mass = quantity * conversion;
+          if (ing?.density && ing.density > 0) {
+            volume = mass / ing.density;
+          }
+        } else if (type === "volume") {
+          volume = quantity * conversion;
+        }
+        return acc + volume;
+      }, 0) ?? 0
+    );
+  };
+
+  const calculateMealNutrients = (meal: any) => {
+    const nutrientsByType: Record<string, { amount: number; unit?: string }> =
+      {};
+
+    meal?.mealIngredients?.forEach((item: any) => {
+      const ing = item.ingredient;
+      const conversionToBase = ing?.portionUnit?.conversionToBase ?? 1;
+      const portionSize = ing?.portionSize ?? 1;
+      const quantity = item.quantity ?? 1;
+
+      ing?.nutrientAmounts?.forEach((na: any) => {
+        const nutrientType = (na?.nutrient?.name || "other").toLowerCase();
+        const unit = na?.nutrient?.unit || "";
+        const adjustedAmount =
+          na.amount * (quantity / portionSize) * conversionToBase;
+
+        if (!nutrientsByType[nutrientType])
+          nutrientsByType[nutrientType] = { amount: 0, unit };
+        nutrientsByType[nutrientType].amount += adjustedAmount;
+      });
+    });
+
+    return nutrientsByType;
+  };
+
   const handleConfirmMealPlan = async () => {
     if (!children.length) return navigate("/children");
     const payload = {
       expertId: specialists[0]?.id + "",
       childId: paramId,
       meal_description: mealDescription,
-      calories: sumNutrients().calories,
+      calories: sumNutrients().nutrients,
       meal_date: new Date(selectedDateTime), // send selected date-time
       meals: selectedMeals.map(({ meal, multiplier }) => ({
         id: meal.id,
@@ -159,7 +191,8 @@ const MealLibraryComponent = () => {
   };
 
   const nutrientTotals = sumNutrients();
-  console.log({ nutrientTotals });
+
+  // console.log({ nutrientTotals });
 
   // --- Render Date-Time Picker First ---
   if (!dateSelected) {
@@ -240,42 +273,33 @@ const MealLibraryComponent = () => {
           onChange={(e) => setMealDescription(e.target.value)}
           placeholder={t("Describe the meal plan...")}
         />
-        {/* {selectedMeals.length > 0 && (
+        {selectedMeals.length > 0 && (
           <div className="bg-[#0d778f] p-4 rounded">
             <h2 className="text-lg font-bold text-emerald-300 mb-2">
               📊 {t("Total Nutrients")}
             </h2>
             <ul className="text-sm space-y-1">
               <li className="text-gray-100">
-                Total Volume: {nutrientTotals.totalVolume} ml
+                <strong>Total Volume:</strong>{" "}
+                {nutrientTotals.totalVolume.toFixed(2)} ml
               </li>
-              <li className="text-gray-100">
-                Protein: {nutrientTotals.protein.toFixed(2)} g
-              </li>
-              <li className="text-gray-100">
-                Fat: {nutrientTotals.fat.toFixed(2)} g
-              </li>
-              <li className="text-gray-100">
-                Carbs: {nutrientTotals.carbs.toFixed(2)} g
-              </li>
-              <li className="text-gray-100">
-                Calories: {nutrientTotals.calories.toFixed(2)} kcal
-              </li>
-              <li className="text-gray-100">
-                Iron: {nutrientTotals.iron.toFixed(2)} mg
-              </li>
-              <li className="text-gray-100">
-                Calcium: {nutrientTotals.calcium.toFixed(2)} mg
-              </li>
-              <li className="text-gray-100">
-                Vitamin A: {nutrientTotals.vitaminA.toFixed(2)} IU
-              </li>
-              <li className="text-gray-100">
-                Vitamin D: {nutrientTotals.vitaminD.toFixed(2)} IU
-              </li>
+              {Object.entries(nutrientTotals.nutrients).length > 0 ? (
+                Object.entries(nutrientTotals.nutrients).map(
+                  ([name, { amount }]) => (
+                    <li key={name} className="text-gray-100">
+                      {name}:{" "}
+                      <span className="text-emerald-300">
+                        {amount.toFixed(2)}
+                      </span>
+                    </li>
+                  )
+                )
+              ) : (
+                <li className="text-gray-400 italic">No nutrients available</li>
+              )}
             </ul>
           </div>
-        )} */}
+        )}
         {loading ? (
           <p className="text-center text-gray-300">Loading meals...</p>
         ) : error ? (
@@ -288,6 +312,10 @@ const MealLibraryComponent = () => {
           filteredMeals.map((meal) => {
             const selected = selectedMeals.find((m) => m.meal.id === meal.id);
             const expanded = expandedMealId === meal.id;
+
+            // ✅ compute yield volume for this specific meal
+            const yieldVolume = calculateYieldVolume(meal);
+
             const mealTimesDisplay = Array.isArray(meal.mealTimes)
               ? meal.mealTimes.join(", ")
               : meal.mealTimes || "N/A";
@@ -346,8 +374,8 @@ const MealLibraryComponent = () => {
                       <strong>Prepping Time:</strong> {meal.prepTime ?? "N/A"}
                     </p>
                     <p className="text-gray-100">
-                      <strong>Yield Volume:</strong> {meal.totalVolume ?? "N/A"}{" "}
-                      ml
+                      <strong>Yield Volume:</strong>{" "}
+                      {yieldVolume.toFixed(2) ?? "N/A"} ml
                     </p>
                     <p className="text-gray-100">
                       <strong>Allergen Description:</strong>{" "}
@@ -371,7 +399,7 @@ const MealLibraryComponent = () => {
                     </p>
                     <ul className="list-disc list-inside ml-4">
                       {meal?.mealIngredients?.length ? (
-                        meal.mealIngredients.map((mi) => (
+                        meal.mealIngredients.map((mi: any) => (
                           <li key={mi.id}>
                             {mi.quantity}{" "}
                             {mi.ingredient?.portionUnit?.abbreviation ?? ""} of{" "}
@@ -388,19 +416,26 @@ const MealLibraryComponent = () => {
                       <strong>Nutrients:</strong>
                     </p>
                     <ul className="list-disc list-inside ml-4">
-                      {meal?.totalNutrients?.length ? (
-                        meal.totalNutrients.map((n) => (
-                          <li key={n.id}>
-                            {n.name ?? "Unknown Nutrient"} ({n.amount ?? 0}{" "}
-                            {n.unit ?? ""})
+                      {(() => {
+                        const nutrientsByType = calculateMealNutrients(meal);
+                        const entries = Object.entries(nutrientsByType);
+                        return entries.length ? (
+                          entries.map(([name, { amount }]) => (
+                            <li key={name}>
+                              {name} –{" "}
+                              <span className="text-emerald-300">
+                                {amount.toFixed(2)}
+                              </span>
+                            </li>
+                          ))
+                        ) : (
+                          <li className="text-gray-400 italic">
+                            No nutrients available
                           </li>
-                        ))
-                      ) : (
-                        <li className="text-gray-400 italic">
-                          No nutrients available
-                        </li>
-                      )}
+                        );
+                      })()}
                     </ul>
+
                     <div className="flex gap-2 items-center mt-2">
                       <label className="text-sm text-gray-100">
                         Multiplier:

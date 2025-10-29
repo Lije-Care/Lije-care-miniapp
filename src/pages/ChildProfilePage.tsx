@@ -237,6 +237,21 @@ const ChildProfilePage: React.FC = () => {
     }
   }, [result]);
 
+  // Load nutrient result from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem(`nutrient_${childId}`);
+    if (stored) {
+      setResult(JSON.parse(stored));
+    }
+  }, [childId]);
+
+  // Save nutrient result whenever it changes
+  useEffect(() => {
+    if (result) {
+      localStorage.setItem(`nutrient_${childId}`, JSON.stringify(result));
+    }
+  }, [result, childId]);
+
   const onSubmit = async (data: any) => {
     setSubmitting(true);
     const updatedData = {
