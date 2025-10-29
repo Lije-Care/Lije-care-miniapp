@@ -63,7 +63,7 @@ const ParentProfile = () => {
           <FaEdit size={20} />
         </button>
 
-        <Headline style={{ textAlign: "center" }}>
+        <Headline style={{ textAlign: "center", color: "white" }}>
           {t("Parent Profile")}
         </Headline>
 
@@ -81,7 +81,7 @@ const ParentProfile = () => {
               <div key={name} className="flex flex-col">
                 <label
                   htmlFor={name}
-                  className="text-sm font-medium text-white mb-1"
+                  className="text-sm font-medium text-gray-300 mb-1"
                 >
                   {label}
                 </label>
@@ -91,7 +91,7 @@ const ParentProfile = () => {
                   type="text"
                   value={(formData as any)[name]}
                   onChange={handleChange}
-                  className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full"
+                  className="border border-gray-300 text-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full"
                   placeholder={`${t("Enter")} ${label.toLowerCase()}`}
                 />
               </div>
