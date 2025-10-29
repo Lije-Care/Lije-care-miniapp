@@ -64,12 +64,12 @@ const MealDetails: React.FC = () => {
 
   return (
     <>
-      <div className=" ">
+      <div className=" bg-gray-800 ">
         <Title className=" mx-auto p-6 text-2xl font-bold text-emerald-400 bg-[#013222] ">
           🍽️ Meal Plan Overview
         </Title>
       </div>
-      <div className="max-w-3xl mx-auto px-4 py-6 -mt-3 text-white space-y-8">
+      <div className=" min-h-screen max-w-3xl mx-auto px-4 py-6 -mt-3 text-white space-y-8 bg-gray-800">
         {meals.map((meal: any) => {
           const isOpen = openMealId === meal.id;
 
