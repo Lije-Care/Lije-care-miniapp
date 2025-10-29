@@ -444,13 +444,13 @@ const MealLibraryComponent = () => {
                         type="number"
                         min={1}
                         disabled={!selected}
-                        className="w-16 text-gray-400 px-2 py-1 rounded disabled:bg-gray-600 disabled:cursor-not-allowed"
+                        className="w-16 text-black px-2 py-1 bg-gray-300 rounded disabled:bg-gray-600 disabled:cursor-not-allowed"
                         value={selected?.multiplier ?? 1}
                         onClick={(e) => e.stopPropagation()}
                         onChange={(e) =>
                           handleMultiplierChange(
                             meal.id,
-                            parseInt(e.target.value) || 1
+                            parseInt(e.target.value)
                           )
                         }
                       />
