@@ -204,16 +204,15 @@ const ProductList = () => {
             </div>
             {/* pagination control */}
             {/* Pagination Controls */}
-            <div className="flex items-center justify-center py-6 px-4 ">
+            <div className="flex items-center justify-center py-6 px-4 text-gray-300">
               <button
                 onClick={() => setPage((prev) => prev - 1)}
                 disabled={page === 1 || loading}
-                className="flex items-center justify-center px-3 h-8 me-3 text-sm font-medium text-gray-300 bg-white border border-gray-300 rounded-lg 
-               hover:bg-gray-100 hover:text-gray-700 
-               dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 
-               dark:hover:bg-gray-700 dark:hover:text-white 
-               disabled:opacity-50 disabled:cursor-not-allowed"
-              >
+                className="flex items-center justify-center px-3 h-8 me-3 text-sm font-medium 
+text-gray-200 border border-gray-400 rounded-lg 
+hover:bg-gray-300 hover:text-gray-800 
+disabled:opacity-50 disabled:cursor-not-allowed bg-gray-800"
+>
                 <svg
                   className="w-3.5 h-3.5 me-2 rtl:rotate-180"
                   aria-hidden="true"
@@ -239,11 +238,10 @@ const ProductList = () => {
               <button
                 onClick={() => setPage((prev) => prev + 1)}
                 disabled={page === totalPages || loading}
-                className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-300 bg-white border border-gray-300 rounded-lg 
-               hover:bg-gray-100 hover:text-gray-700 
-               dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 
-               dark:hover:bg-gray-700 dark:hover:text-white 
-               disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center justify-center px-3 h-8 me-3 text-sm font-medium 
+text-gray-200 border border-gray-400 rounded-lg 
+hover:bg-gray-300 hover:text-gray-800 
+disabled:opacity-50 disabled:cursor-not-allowed bg-gray-800"
               >
                 {t("Next")}
                 <svg
