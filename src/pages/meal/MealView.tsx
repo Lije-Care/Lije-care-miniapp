@@ -209,6 +209,7 @@ const MealDetails: React.FC = () => {
                   {/* Video */}
                   {meal.videoUrl && (
                     <div>
+                      {/* video url */}
                       <Title className="text-md">🎥 Video</Title>
                       <a
                         href={meal.videoUrl}
