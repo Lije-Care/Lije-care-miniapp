@@ -172,6 +172,7 @@ const ChildMealPlanSummary = () => {
     setShowConfirmDelete(true);
   };
 
+  // date card
   const DateCard = ({ dateKey }: { dateKey: string }) => {
     const summary = dateSummaries[dateKey];
     const formattedDate = new Date(dateKey).toLocaleDateString("en-US", {

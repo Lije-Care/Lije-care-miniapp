@@ -28,6 +28,6 @@ jobs:
           export NVM_DIR=~/.nvm
           source ~/.nvm/nvm.sh
           git pull
-          npm install
+          npm install --legacy-peer-deps
           npm run build
           EOF
