@@ -152,24 +152,24 @@ const CheckoutPage = () => {
   return (
     <div>
       <div className="bg-[#013222] p-4">
-        <h1 className="text-white text-3xl font-bold mb-1">{t("Products")}</h1>
+        <h1 className="text-white text-3xl font-bold ">{t("Products")}</h1>
       </div>
-      <section className="bg-gray-200 py-1 antialiased dark:bg-gray-800 md:py-16">
+      <section className=" antialiased md:py-16 bg-gray-800">
         <form
           onSubmit={handleSubmit}
-          className="mx-auto max-w-screen-xl px-4 2xl:px-0"
+          className="mx-auto max-w-screen-xl px-4 2xl:px-0 bg-gray-800"
         >
-          <div className="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12 xl:gap-16">
+          <div className="pt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12 xl:gap-16">
             <div className="min-w-0 flex-1 space-y-8">
               <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <h2 className="text-xl font-semibold text-gray-100 ">
                   {t("Delivery Details")}
                 </h2>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label
                       htmlFor="customerName"
-                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                      className="mb-2 block text-sm font-medium text-gray-100 "
                     >
                       {t("Your name")}*
                     </label>
@@ -178,7 +178,7 @@ const CheckoutPage = () => {
                       id="customerName"
                       value={formData.customerName}
                       onChange={handleInputChange}
-                      className="block w-full rounded-lg border border-black bg-white p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-black dark:bg-white dark:text-gray-900 dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                      className="block w-full rounded-lg border border-black bg-white p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
                       placeholder="Bonnie Green"
                       required
                     />
@@ -186,7 +186,7 @@ const CheckoutPage = () => {
                   <div>
                     <label
                       htmlFor="customerEmail"
-                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                      className="mb-2 block text-sm font-medium text-gray-100 "
                     >
                       {t("Your email")}*
                     </label>
@@ -195,7 +195,7 @@ const CheckoutPage = () => {
                       id="customerEmail"
                       value={formData.customerEmail}
                       onChange={handleInputChange}
-                      className="block w-full rounded-lg border border-black bg-white p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-black dark:bg-white dark:text-gray-900 dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                      className="block w-full rounded-lg border border-black bg-white p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
                       placeholder="test@lijecare.com"
                       required
                     />
@@ -203,7 +203,7 @@ const CheckoutPage = () => {
                   <div>
                     <label
                       htmlFor="customerPhone"
-                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                      className="mb-2 block text-sm font-medium text-gray-100 "
                     >
                       {t("Your Phone")}*
                     </label>
@@ -212,7 +212,7 @@ const CheckoutPage = () => {
                       id="customerPhone"
                       value={formData.customerPhone}
                       onChange={handleInputChange}
-                      className="block w-full rounded-lg border border-black bg-white p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-black dark:bg-white dark:text-gray-900 dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                      className="block w-full rounded-lg border border-black bg-white p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 "
                       placeholder="+251961197371"
                       required
                     />
@@ -220,7 +220,7 @@ const CheckoutPage = () => {
                   <div>
                     <label
                       htmlFor="city"
-                      className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                      className="mb-2 block text-sm font-medium text-gray-100 "
                     >
                       {t("City")}*
                     </label>
@@ -229,7 +229,7 @@ const CheckoutPage = () => {
                       id="city"
                       value={formData.city}
                       onChange={handleInputChange}
-                      className="block w-full rounded-lg border border-black bg-white p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 dark:border-black dark:bg-white dark:text-gray-900 dark:placeholder:text-gray-400 dark:focus:border-primary-500 dark:focus:ring-primary-500"
+                      className="block w-full rounded-lg border border-black bg-white p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500"
                       placeholder="Addis Ababa"
                       required
                     />
@@ -237,11 +237,11 @@ const CheckoutPage = () => {
                 </div>
               </div>
               <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <h3 className="text-xl font-semibold text-gray-100 ">
                   {t("Payment")}
                 </h3>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                  <div className="rounded-lg border border-gray-300 bg-white p-4 ps-4 dark:border-gray-600 dark:bg-white">
+                  <div className="rounded-lg border border-gray-300 bg-white p-4 ps-4  ">
                     <div className="flex items-start">
                       <div className="flex h-5 items-center">
                         <input
@@ -252,26 +252,26 @@ const CheckoutPage = () => {
                           value="CARD"
                           checked={formData.paymentMethod === "CARD"}
                           onChange={handleRadioChange}
-                          className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 dark:border-gray-600 dark:bg-white dark:ring-offset-gray-200 dark:focus:ring-primary-600"
+                          className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600   "
                         />
                       </div>
                       <div className="ms-4 text-sm">
                         <label
                           htmlFor="credit-card"
-                          className="font-medium leading-none text-gray-900 dark:text-gray-900"
+                          className="font-medium leading-none text-gray-900 "
                         >
                           {t("Chapa")}
                         </label>
                         <p
                           id="credit-card-text"
-                          className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-500"
+                          className="mt-1 text-xs font-normal text-gray-500 "
                         >
                           {t("Pay with your Chapa account (+ETB 5 fee)")}
                         </p>
                       </div>
                     </div>
                   </div>
-                  <div className="rounded-lg border border-gray-300 bg-white p-4 ps-4 dark:border-gray-600 dark:bg-white">
+                  <div className="rounded-lg border border-gray-300 bg-white p-4 ps-4  ">
                     <div className="flex items-start">
                       <div className="flex h-5 items-center">
                         <input
@@ -282,19 +282,19 @@ const CheckoutPage = () => {
                           value="CASH"
                           checked={formData.paymentMethod === "CASH"}
                           onChange={handleRadioChange}
-                          className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 dark:border-gray-600 dark:bg-white dark:ring-offset-gray-200 dark:focus:ring-primary-600"
+                          className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600   "
                         />
                       </div>
                       <div className="ms-4 text-sm">
                         <label
                           htmlFor="pay-on-delivery"
-                          className="font-medium leading-none text-gray-900 dark:text-gray-900"
+                          className="font-medium leading-none text-gray-900 "
                         >
                           {t("CASH")}
                         </label>
                         <p
                           id="pay-on-delivery-text"
-                          className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-500"
+                          className="mt-1 text-xs font-normal text-gray-500 "
                         >
                           {t("No payment processing fee")}
                         </p>
@@ -304,11 +304,11 @@ const CheckoutPage = () => {
                 </div>
               </div>
               <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <h3 className="text-xl font-semibold text-gray-100 ">
                   {t("Delivery Methods")}
                 </h3>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                  <div className="rounded-lg border border-gray-300 bg-white p-4 ps-4 dark:border-gray-600 dark:bg-white">
+                  <div className="rounded-lg border border-gray-300 bg-white p-4 ps-4  ">
                     <div className="flex items-start">
                       <div className="flex h-5 items-center">
                         <input
@@ -319,26 +319,26 @@ const CheckoutPage = () => {
                           value="DELIVERY"
                           checked={formData.deliveryMethod === "DELIVERY"}
                           onChange={handleRadioChange}
-                          className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 dark:border-gray-600 dark:bg-white dark:ring-offset-gray-200 dark:focus:ring-primary-600"
+                          className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600   "
                         />
                       </div>
                       <div className="ms-4 text-sm">
                         <label
                           htmlFor="DELIVERY"
-                          className="font-medium leading-none text-gray-900 dark:text-gray-900"
+                          className="font-medium leading-none text-gray-900 "
                         >
                           {t("ETB 50 - Fast Delivery")}
                         </label>
                         <p
                           id="delivery-text"
-                          className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-500"
+                          className="mt-1 text-xs font-normal text-gray-500 "
                         >
                           {t("Get it by Tomorrow")}
                         </p>
                       </div>
                     </div>
                   </div>
-                  <div className="rounded-lg border border-gray-300 bg-white p-4 ps-4 dark:border-gray-600 dark:bg-white">
+                  <div className="rounded-lg border border-gray-300 bg-white p-4 ps-4  ">
                     <div className="flex items-start">
                       <div className="flex h-5 items-center">
                         <input
@@ -349,19 +349,19 @@ const CheckoutPage = () => {
                           value="PICKUP"
                           checked={formData.deliveryMethod === "PICKUP"}
                           onChange={handleRadioChange}
-                          className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600 dark:border-gray-600 dark:bg-white dark:ring-offset-gray-200 dark:focus:ring-primary-600"
+                          className="h-4 w-4 border-gray-300 bg-white text-primary-600 focus:ring-2 focus:ring-primary-600   "
                         />
                       </div>
                       <div className="ms-4 text-sm">
                         <label
                           htmlFor="fedex"
-                          className="font-medium leading-none text-gray-900 dark:text-gray-900"
+                          className="font-medium leading-none text-gray-900 "
                         >
                           {t("Free Delivery")}
                         </label>
                         <p
                           id="fedex-text"
-                          className="mt-1 text-xs font-normal text-gray-500 dark:text-gray-500"
+                          className="mt-1 text-xs font-normal text-gray-500 "
                         >
                           {t("Get it by")} {formattedPickupDate}
                         </p>
@@ -373,50 +373,50 @@ const CheckoutPage = () => {
             </div>
             <div className="mt-6 w-full space-y-6 sm:mt-8 lg:mt-0 lg:max-w-xs xl:max-w-md">
               <div className="flow-root">
-                <div className="-my-3 divide-y divide-gray-300 dark:divide-gray-600">
+                <div className="-my-3 divide-y divide-gray-300 ">
                   <dl className="flex items-center justify-between gap-4 py-3">
-                    <dt className="text-base font-normal text-gray-600 dark:text-gray-400">
+                    <dt className="text-base font-normal text-gray-200 ">
                       {t("Subtotal")}
                     </dt>
-                    <dd className="text-base font-medium text-gray-900 dark:text-white">
+                    <dd className="text-base font-medium text-gray-100 ">
                       ETB {subtotal.toFixed(2)}
                     </dd>
                   </dl>
                   <dl className="flex items-center justify-between gap-4 py-3">
-                    <dt className="text-base font-normal text-gray-600 dark:text-gray-400">
+                    <dt className="text-base font-normal text-gray-200 ">
                       {t("Tax")}
                     </dt>
-                    <dd className="text-base font-medium text-gray-900 dark:text-white">
+                    <dd className="text-base font-medium text-gray-100 ">
                       ETB {tax.toFixed(2)}
                     </dd>
                   </dl>
                   <dl className="flex items-center justify-between gap-4 py-3">
-                    <dt className="text-base font-normal text-gray-600 dark:text-gray-400">
+                    <dt className="text-base font-normal text-gray-200 ">
                       {t("Delivery Fee")}
                     </dt>
-                    <dd className="text-base font-medium text-gray-900 dark:text-white">
+                    <dd className="text-base font-medium text-gray-100 ">
                       ETB {deliveryFee.toFixed(2)}
                     </dd>
                   </dl>
                   <dl className="flex items-center justify-between gap-4 py-3">
-                    <dt className="text-base font-normal text-gray-600 dark:text-gray-400">
+                    <dt className="text-base font-normal text-gray-200 ">
                       {t("Payment Fee")}
                     </dt>
-                    <dd className="text-base font-medium text-gray-900 dark:text-white">
+                    <dd className="text-base font-medium text-gray-100 ">
                       ETB {paymentFee.toFixed(2)}
                     </dd>
                   </dl>
                   <dl className="flex items-center justify-between gap-4 py-3">
-                    <dt className="text-base font-bold text-gray-900 dark:text-white">
+                    <dt className="text-base font-bold text-gray-100 ">
                       {t("Total")}
                     </dt>
-                    <dd className="text-base font-bold text-gray-900 dark:text-white">
+                    <dd className="text-base font-bold text-gray-100 ">
                       ETB {total.toFixed(2)}
                     </dd>
                   </dl>
                 </div>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-3 pb-2">
                 <button
                   type="submit"
                   disabled={isSubmitting}
@@ -429,7 +429,7 @@ const CheckoutPage = () => {
           </div>
           {error && (
             <div
-              className="flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+              className="flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 "
               role="alert"
             >
               <svg
@@ -449,7 +449,7 @@ const CheckoutPage = () => {
           )}
           {success && (
             <div
-              className="flex items-center p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
+              className="flex items-center p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 "
               role="alert"
             >
               <svg

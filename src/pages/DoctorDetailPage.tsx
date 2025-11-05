@@ -114,16 +114,16 @@ export default function DoctorDetailPage() {
 
   return (
     <Page back={true}>
-      <div className="p-6 space-y-4 text-white bg-red-500">
-        <h2 className="text-xl font-bold text-emerald-400">
+      <div className=" space-y-4 text-white bg-gray-800 min-h-screen">
+        <h2 className="text-xl  p-6    bg-[#013222] font-bold text-emerald-400">
           {t("Doctor Info")}
         </h2>
 
         {!hasFavoriteChild && (
-          <div className="bg-red-500/10 p-4 rounded border border-red-400 text-white space-y-2">
+          <div className="bg-red-500/10 p-4 rounded border border-red-400 text-white space-y-2 mx-2 ">
             <p>{t("No child selected. Please add a child before booking.")}</p>
             <Button
-              className="bg-red-500 text-white"
+              className="bg-[#0B8FAC] text-white"
               onClick={() => navigate("/children")}
             >
               ➕ {t("Add Child")}
@@ -132,17 +132,17 @@ export default function DoctorDetailPage() {
         )}
 
         {doctor ? (
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-4 items-center mx-2">
             <img
               src={doctor?.avatarUrl || "/doctors/default-avatar.png"}
               alt={`${doctor.firstName} ${doctor.lastName}`}
               className="w-16 h-16 rounded-full object-cover"
             />
             <div>
-              <p className="text-lg font-bold text-gray-300">
+              <p className="text-lg font-bold text-gray-100">
                 {doctor.firstName} {doctor.lastName}
               </p>
-              <p className=" text-gray-400 text-base">
+              <p className=" text-gray-200 text-base">
                 {doctor.SpecialistProfile?.specialty}
               </p>
             </div>
@@ -153,8 +153,8 @@ export default function DoctorDetailPage() {
 
         {hasFavoriteChild && (
           <>
-            <div>
-              <p className="font-medium mb-2 text-gray-400">
+            <div className=" mx-2">
+              <p className="font-medium mb-2 text-gray-200 mx-2">
                 📅 {t("Choose a Slot")}
               </p>
               {loadingSlots ? (
@@ -163,7 +163,7 @@ export default function DoctorDetailPage() {
                 <select
                   value={selectedSlot}
                   onChange={(e) => setSelectedSlot(e.target.value)}
-                  className="w-full bg-gray-500 border border-gray-600 text-black p-2 rounded"
+                  className="w-full bg-gray-500 border border-gray-600 text-white p-2 rounded"
                 >
                   <option className="bg-gray-500 text-gray-700" value="">
                     {t("Select a time slot")}

@@ -134,6 +134,7 @@ const BookingSuccess = () => {
           height: "100vh",
           textAlign: "center",
         }}
+        className="bg-gray-800"
       >
         {/* Success Icon */}
         <div
@@ -163,25 +164,29 @@ const BookingSuccess = () => {
         </div>
 
         <Text
+          className=" text-white"
           style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "10px" }}
         >
           Congratulations
         </Text>
-        <Text style={{ fontSize: "16px", marginBottom: "10px" }}>
+        <Text
+          className=" text-white"
+          style={{ fontSize: "16px", marginBottom: "10px" }}
+        >
           Your payment was successful 🎉
         </Text>
 
         {/* ✅ Show dynamic payment info */}
         {paymentInfo && (
           <div style={{ marginBottom: "30px" }}>
-            <Text style={{ fontSize: "16px" }}>
+            <Text className=" text-gray-100" style={{ fontSize: "16px" }}>
               {paymentInfo.customization?.title}
             </Text>
             <br />
-            <Text style={{ fontSize: "14px", color: "#555" }}>
+            <Text className="text-gray-100" style={{ fontSize: "14px" }}>
               Paid by: {paymentInfo.first_name} {paymentInfo.last_name ?? ""}
             </Text>
-            <Text style={{ fontSize: "14px", color: "#555" }}>
+            <Text className="text-gray-100" style={{ fontSize: "14px" }}>
               Amount: {paymentInfo.amount} {paymentInfo.currency}
             </Text>
           </div>

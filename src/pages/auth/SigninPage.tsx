@@ -336,9 +336,16 @@ export const SignInPage = () => {
 
       {/* Forgot Password Modal */}
       {/* Forgot Password Modal */}
-      <Modal open={showForgotModal} onOpenChange={setShowForgotModal}>
-        <div className="p-4">
-          <Headline style={{ marginBottom: "12px" }}>
+      <Modal
+        open={showForgotModal}
+        onOpenChange={setShowForgotModal}
+        className=" bg-white"
+      >
+        <div className="p-4 bg-gray-800">
+          <Headline
+            style={{ marginBottom: "12px" }}
+            className=" text-white font-black text-base"
+          >
             📩 Forgot Password
           </Headline>
 
@@ -358,7 +365,7 @@ export const SignInPage = () => {
             <input
               placeholder="+251912345678"
               value={forgotPhone}
-              className={`w-full px-4 py-2 rounded-lg border focus:outline-none ${
+              className={`w-full px-4 py-2  text-white rounded-lg border focus:outline-none ${
                 forgotPhoneError ? "border-red-500" : "border-gray-300"
               }`}
               onChange={(e) => {
@@ -383,15 +390,19 @@ export const SignInPage = () => {
 
       {/* Reset Password Modal */}
       <Modal open={showResetModal} onOpenChange={setShowResetModal}>
-        <div className="p-4">
+        <div className="p-4 bg-gray-800">
           <p className="text-green-500 py-2 ml-3">{successMessage}</p>
-          <Headline style={{ marginBottom: "12px" }}>
+          <Headline
+            style={{ marginBottom: "12px" }}
+            className="text-white font-black text-base"
+          >
             🔐 Reset Password
           </Headline>
 
           <Input
             name="otp"
             placeholder="Enter OTP"
+            className="text-white"
             value={resetData.otp}
             onChange={handleResetChange}
           />
@@ -405,7 +416,7 @@ export const SignInPage = () => {
             placeholder="New Password"
             value={resetData.password}
             onChange={handleResetChange}
-            className="mb-2"
+            className="mb-2 text-white"
           />
           <Input
             name="confirmPassword"
@@ -413,7 +424,7 @@ export const SignInPage = () => {
             placeholder="Confirm Password"
             value={resetData.confirmPassword}
             onChange={handleResetChange}
-            className="mb-2"
+            className="mb-2 text-white"
           />
           {passwordLengthErrorMessage && (
             <p className="text-red-500 text-sm mb-2">
