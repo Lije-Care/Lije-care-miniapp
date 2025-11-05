@@ -213,7 +213,7 @@ const MealLibraryComponent = () => {
           </label>
 
           <input
-            type="datetime-local"
+            type="date"
             id="datetime-local"
             className="w-full p-2 rounded bg-[#0d778f] text-white"
             placeholder="Select meal date"

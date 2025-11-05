@@ -136,7 +136,7 @@ export const CartPage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                           <button
                             type="button"
                             onClick={() => dispatch(removeFromCart(item.id))}
-                            className="font-medium text-indigo-600 hover:text-indigo-500"
+                            className="font-medium text-0B8FAC] hover:text-[#0B8FAC]"
                           >
                             Remove
                           </button>
@@ -164,14 +164,14 @@ export const CartPage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           {cartItems.length === 0 ? (
             <button
               onClick={handleShopNow}
-              className="flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-xs hover:bg-indigo-700"
+              className="flex w-full items-center justify-center rounded-md border border-transparent  bg-[#0B8FAC] px-6 py-3 text-base font-medium text-white shadow-xs hover:bg-indigo-700"
             >
               Shop Now
             </button>
           ) : (
             <a
               href="#/checkout/page"
-              className={`flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-xs hover:bg-indigo-700 ${
+              className={`flex w-full items-center justify-center rounded-md border border-transparent  bg-[#0B8FAC] px-6 py-3 text-base font-medium text-white shadow-xs hover:bg-indigo-700 ${
                 cartItems.length === 0 ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
@@ -184,7 +184,7 @@ export const CartPage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             or
             <button
               onClick={handleShopNow}
-              className="font-medium text-indigo-600 hover:text-indigo-500"
+              className="font-medium text-[#0B8FAC] hover:text-indigo-500"
             >
               Continue Shopping
               <span aria-hidden="true"> &rarr;</span>

@@ -4,10 +4,11 @@ import {
   HomeIcon,
   PersonIcon,
 } from "@100mslive/react-icons";
-import { FaChildren } from "react-icons/fa6";
+// import { FaChildren } from "react-icons/fa6";
 import { TabsList } from "@telegram-apps/telegram-ui";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { SquareMenu } from "lucide-react"; //TableOfContents
 
 const BottomNav = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const BottomNav = () => {
       path: "/consultat",
     },
     {
-      label: <FaChildren style={{ width: "28px", height: "24px" }} />,
+      label: <SquareMenu style={{ width: "28px", height: "24px" }} />,
       path: "/children",
     },
     {

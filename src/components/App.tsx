@@ -48,6 +48,7 @@ const Layout = ({ children }: { children: any }) => {
   return (
     <div>
       <div
+        className=" bg-gray-800"
         style={{
           marginTop: "0px",
           paddingBottom: shouldHideNavbar ? "0px" : "60px",

@@ -94,7 +94,7 @@ export default function ConsultationTab() {
           </div>
         </div>
 
-        <p className="font-extrabold text-gray-200 truncate py-2">
+        <p className="font-extrabold text-gray-200 truncate py-2 ml-2">
           👩‍⚕️ {t("Choose a Specialist")}
         </p>
 
@@ -113,7 +113,7 @@ export default function ConsultationTab() {
                 )}
               </p>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-3 mx-2">
                 {filteredSpecialists.map((doc) => {
                   const fullName = `${doc?.firstName} ${doc?.lastName}`;
                   return (
