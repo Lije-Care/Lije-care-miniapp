@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
@@ -12,14 +11,13 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
-
 import { updateChild, Child } from "@/redux/slices/childSlice";
 import type { RootState, AppDispatch } from "@/redux/store";
-
 import GrowthTracker from "./Profile/GrowthTracker";
-
 import { Page } from "@/components/Page";
 import { useTranslation } from "react-i18next";
+import ChatBox from "@/components/ai/ChatBox";
+import { calculateNutrients } from "@/utils/calculateNutrients";
 
 type ChildFormData = {
   name: string;
@@ -34,21 +32,6 @@ type ChildFormData = {
   medications: string;
 };
 
-type Result = {
-  bmi: string;
-  calories: number;
-  protein: number;
-  fat: number;
-  carbs: number;
-  iron: number;
-  calcium: number;
-  vitaminA: number;
-  water: number;
-  zinc: number;
-  status: string;
-  error?: string;
-};
-
 const ChildProfilePage: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
@@ -57,12 +40,11 @@ const ChildProfilePage: React.FC = () => {
     state.children?.data?.find((c: Child) => c.id === childId)
   );
   // console.log(child?.activity_level);
-
   const [loadingPage, setLoadingPage] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [result, setResult] = useState<Result | null>(null);
-
+  const [isChatBox, setIsChatBox] = useState(false);
+  const [result, setResult] = useState<any | null>(null);
   const { register, handleSubmit, reset, watch } = useForm<ChildFormData>({
     defaultValues: {
       name: "",
@@ -77,13 +59,11 @@ const ChildProfilePage: React.FC = () => {
       activity_level: "Moderate",
     },
   });
-
   const formatDateToYYYYMMDD = (dateString: string) => {
     if (!dateString) return "";
     const date = new Date(dateString);
     return date.toISOString().split("T")[0];
   };
-
   useEffect(() => {
     if (child) {
       reset({
@@ -97,146 +77,33 @@ const ChildProfilePage: React.FC = () => {
       setLoadingPage(false);
     }
   }, [child, reset]);
-
   const weight = watch("weight");
   const height = watch("height");
   const gender = watch("gender");
   const date_of_birth = watch("date_of_birth");
-
+  const activity_level =
+    watch("activity_level") || child?.activity_level || "Moderate";
   useEffect(() => {
-    const calculateAgeInMonths = (birthDate: string): number => {
-      if (!birthDate) return 0;
-      const today = new Date();
-      const birth = new Date(birthDate);
-
-      let years = today.getFullYear() - birth.getFullYear();
-      let months = today.getMonth() - birth.getMonth();
-
-      if (today.getDate() < birth.getDate()) {
-        months -= 1;
-      }
-
-      if (months < 0) {
-        years -= 1;
-        months += 12;
-      }
-
-      return years * 12 + months;
-    };
-
-    const months = calculateAgeInMonths(date_of_birth);
-
-    if (weight && height && gender && months >= 0) {
+    if (weight && height && gender && date_of_birth) {
       const weightNum = Number(weight);
       const heightNum = Number(height);
-      const bmi = weightNum / (heightNum / 100) ** 2;
-      const roundedBMI = parseFloat(bmi.toFixed(2));
-
-      let status = "Normal";
-      if (bmi < 14) status = "Underweight";
-      else if (bmi > 17) status = "Overweight";
-
-      // Calculate calories based on age
-      let value1: number;
-      if (months <= 6) {
-        value1 = weightNum * 108;
-      } else if (months <= 36) {
-        value1 = weightNum * 102;
-      } else {
-        value1 = weightNum * 90;
-      }
-
-      // Activity level multiplier
-      const activityLevel = child?.activity_level;
-      let value2: number;
-      if (activityLevel === "Moderate") {
-        value2 = 1.13;
-      } else if (activityLevel === "Active") {
-        value2 = 1.26;
-      } else {
-        value2 = 1;
-      }
-
-      // Health condition multiplier
-      let value3: number;
-      if (status === "Overweight") {
-        value3 = 0.9;
-      } else if (status === "Underweight") {
-        value3 = 1.15;
-      } else {
-        value3 = 1;
-      }
-
-      // Calculate total calories
-      const calories = value1 * value2 * value3;
-
-      // Calculate macronutrients
-      const protein = parseFloat(((calories * 0.12) / 4).toFixed(2));
-      const fat = parseFloat(((calories * 0.35) / 9).toFixed(2));
-      const carbs = parseFloat(((calories * 0.5) / 4).toFixed(2));
-
-      // Calculate micronutrients
-      let iron: number;
-      if (months <= 6) {
-        iron = 0.27;
-      } else if (months <= 12) {
-        iron = 11;
-      } else if (months <= 36) {
-        iron = 7;
-      } else {
-        iron = 10;
-      }
-
-      let calcium: number;
-      let vitaminA: number;
-      let water: number;
-      let zinc: number;
-      if (months <= 6) {
-        calcium = 200;
-        vitaminA = 400;
-        water = 700;
-        zinc = 2;
-      } else if (months <= 12) {
-        calcium = 260;
-        vitaminA = 500;
-        water = 900;
-        zinc = 3;
-      } else if (months <= 36) {
-        calcium = 700;
-        vitaminA = 300;
-        water = 1300;
-        zinc = 3;
-      } else {
-        calcium = 1000;
-        vitaminA = 400;
-        water = 1600;
-        zinc = 5;
-      }
-
-      setResult({
-        bmi: roundedBMI.toString(),
-        calories: parseInt(calories.toFixed(0)),
-        protein,
-        fat,
-        carbs,
-        iron: parseFloat(iron.toFixed(2)),
-        calcium,
-        vitaminA,
-        water,
-        zinc,
-        status,
-      });
+      const newResult = calculateNutrients(
+        weightNum,
+        heightNum,
+        gender,
+        date_of_birth,
+        activity_level
+      );
+      setResult(newResult);
     } else {
       setResult(null);
     }
-  }, [weight, height, gender, date_of_birth]);
-
+  }, [weight, height, gender, date_of_birth, activity_level]);
   useEffect(() => {
     if (result) {
       // console.log("Child Profile:", result);
     }
   }, [result]);
-
   // Load nutrient result from localStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem(`nutrient_${childId}`);
@@ -244,14 +111,12 @@ const ChildProfilePage: React.FC = () => {
       setResult(JSON.parse(stored));
     }
   }, [childId]);
-
   // Save nutrient result whenever it changes
   useEffect(() => {
     if (result) {
       localStorage.setItem(`nutrient_${childId}`, JSON.stringify(result));
     }
   }, [result, childId]);
-
   const onSubmit = async (data: any) => {
     setSubmitting(true);
     const updatedData = {
@@ -263,6 +128,7 @@ const ChildProfilePage: React.FC = () => {
     try {
       await dispatch(updateChild({ id: childId, ...updatedData })).unwrap();
       setIsEditing(false);
+      setIsChatBox(false);
     } catch (err) {
       console.error("Update failed", err);
       alert("Failed to update profile. Please try again.");
@@ -270,7 +136,6 @@ const ChildProfilePage: React.FC = () => {
       setSubmitting(false);
     }
   };
-
   if (loadingPage) {
     return (
       <div className="flex justify-center items-center h-32">
@@ -278,7 +143,6 @@ const ChildProfilePage: React.FC = () => {
       </div>
     );
   }
-
   return (
     <Page back={true}>
       <div className="max-w-4xl mx-auto p-4 bg-gray-800 ">
@@ -286,17 +150,36 @@ const ChildProfilePage: React.FC = () => {
           <h1 className="text-2xl font-bold text-emerald-400">
             {t("Child Profile")}
           </h1>
-          <Button
-            onClick={() => setIsEditing(!isEditing)}
-            className="bg-gray-800 text-white"
-          >
-            {isEditing ? t("Cancel") : t("Edit")}
-          </Button>
+          <div className=" flex space-x-4">
+            <button
+              onClick={() => setIsChatBox(!isChatBox)}
+              className="bg-[#0B8FAC] hover:bg-[#0ea4c6] px-4 py-2 rounded text-gray-100 "
+            >
+              {isChatBox ? t("Cancel") : t("Ask Ai")}
+            </button>
+            <button
+              onClick={() => setIsEditing(!isEditing)}
+              className="bg-[#0B8FAC] hover:bg-[#0ea4c6] px-4 py-2 rounded text-gray-100 "
+            >
+              {isEditing ? t("Cancel") : t("Edit")}
+            </button>
+          </div>
         </div>
-        <h2 className=" ml-6 text-gray-500 font-semibold text-xl">
-          Anthropometric Assessment
-        </h2>
-
+        {!isChatBox && (
+          <h2 className=" ml-6 text-gray-500 font-semibold text-xl">
+            Anthropometric Assessment
+          </h2>
+        )}
+        {isChatBox && (
+          <div className="h-full mb-6 px-2 mt-4">
+            <h1 className="text-2xl font-bold mb-4">Your Child Assistant</h1>
+            <ChatBox
+              userId={childId as string}
+              chatId={childId as string}
+              backendUrl={import.meta.env.VITE_API_URL}
+            />
+          </div>
+        )}
         {isEditing && (
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -310,9 +193,8 @@ const ChildProfilePage: React.FC = () => {
               <Text className="text-lg font-semibold text-gray-300">
                 {t("Basic Information")}
               </Text>
-
               {/* Name */}
-              <div className="mt-4  ">
+              <div className="mt-4 ">
                 <label
                   htmlFor="name"
                   className="block mb-1 text-[#FFFFFF] font-[600]"
@@ -327,7 +209,6 @@ const ChildProfilePage: React.FC = () => {
                   {...register("name")}
                 />
               </div>
-
               {/* Date of Birth */}
               <div className="mt-4">
                 <label
@@ -343,7 +224,6 @@ const ChildProfilePage: React.FC = () => {
                   {...register("date_of_birth")}
                 />
               </div>
-
               {/* Gender */}
               {/* Gender */}
               <div className="mt-4">
@@ -353,7 +233,6 @@ const ChildProfilePage: React.FC = () => {
                 >
                   {t("Gender")}
                 </label>
-
                 <select
                   id="gender"
                   {...register("gender")}
@@ -367,7 +246,6 @@ const ChildProfilePage: React.FC = () => {
                   </option>
                 </select>
               </div>
-
               {/* Weight */}
               <div className="mt-4">
                 <label
@@ -384,7 +262,6 @@ const ChildProfilePage: React.FC = () => {
                   {...register("weight")}
                 />
               </div>
-
               {/* Height */}
               <div className="mt-4">
                 <label
@@ -401,7 +278,6 @@ const ChildProfilePage: React.FC = () => {
                   {...register("height")}
                 />
               </div>
-
               {/* Activity Level */}
               <div className="mt-4">
                 <label
@@ -426,7 +302,6 @@ const ChildProfilePage: React.FC = () => {
                   </option>
                 </select>
               </div>
-
               {/* MUAC */}
               <div className="mt-4">
                 <label
@@ -443,7 +318,6 @@ const ChildProfilePage: React.FC = () => {
                   {...register("muac")}
                 />
               </div>
-
               <div className="mt-4">
                 <label
                   htmlFor="allergies"
@@ -459,7 +333,6 @@ const ChildProfilePage: React.FC = () => {
                   {...register("allergies")}
                 />
               </div>
-
               <div className="mt-4">
                 <label
                   htmlFor="medications"
@@ -475,7 +348,6 @@ const ChildProfilePage: React.FC = () => {
                   {...register("medications")}
                 />
               </div>
-
               <div className="mt-4">
                 <label
                   htmlFor="dietary_restrictions"
@@ -491,7 +363,6 @@ const ChildProfilePage: React.FC = () => {
                   {...register("dietary_restrictions")}
                 />
               </div>
-
               <div className="flex justify-end mt-4 p-4">
                 <Button type="submit" stretched disabled={submitting}>
                   {submitting ? <Spinner size="s" /> : t("Save Changes")}
@@ -500,8 +371,7 @@ const ChildProfilePage: React.FC = () => {
             </motion.div>
           </form>
         )}
-
-        {!isEditing && (
+        {!isEditing && !isChatBox && (
           <div>
             <GrowthTracker childProfile={child} />
             <div className=" border border-gray-700 rounded-xl mt-4 p-5 space-y-2 mb-5 bg-[#0B8FAC]">
@@ -553,7 +423,6 @@ const ChildProfilePage: React.FC = () => {
                     <span>{child.muac}</span>
                   </div>
                 )}
-
                 <Divider />
                 {child?.dietary_restrictions && (
                   <div className="flex justify-between">
@@ -626,5 +495,4 @@ const ChildProfilePage: React.FC = () => {
     </Page>
   );
 };
-
 export default ChildProfilePage;

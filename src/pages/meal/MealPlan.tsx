@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import api from "@/api/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -7,7 +7,7 @@ import { Meal } from "@/types/meal";
 import fallback from "@/assets/meal.png";
 import { useTranslation } from "react-i18next";
 import { Eye } from "lucide-react";
-
+import { calculateNutrients } from "@/utils/calculateNutrients";
 const MealLibraryComponent = () => {
   const { t } = useTranslation();
   const [meals, setMeals] = useState<any[]>([]);
@@ -16,7 +16,6 @@ const MealLibraryComponent = () => {
   const [selectedMeals, setSelectedMeals] = useState<
     { meal: any; multiplier: number }[]
   >([]);
-
   const [mealDescription, setMealDescription] = useState(
     t("A healthy and balanced meal plan for the child.")
   );
@@ -27,97 +26,33 @@ const MealLibraryComponent = () => {
   // --- New state for date-time picker ---
   const [selectedDateTime, setSelectedDateTime] = useState<string>("");
   const [dateSelected, setDateSelected] = useState(false);
+  const [allMealPlans, setAllMealPlans] = useState<any[]>([]);
+  const [showProgress, setShowProgress] = useState(false);
   const navigate = useNavigate();
   const { data: children } = useSelector((state: RootState) => state.children);
   const { specialists } = useSelector((state: RootState) => state.specialists);
   const { id: paramId } = useParams<{ id: string }>();
-
-  useEffect(() => {
-    const fetchMeals = async () => {
-      try {
-        const res = await api.get("meal/find-all?skip=0&limit=1000");
-        const responseData = Array.isArray(res.data)
-          ? res.data
-          : res.data?.data;
-        setMeals(responseData || []);
-      } catch (err) {
-        console.error("Error fetching meals:", err);
-        setError(t("Could not load meals. Please try again."));
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchMeals();
-  }, [t]);
-
-  useEffect(() => {
-    if (meals.length > 0 && !activeTab) {
-      const uniqueTimes = Array.from(
-        new Set(meals.flatMap((m) => m.mealTimes || []))
-      );
-      if (uniqueTimes.length > 0) {
-        setActiveTab(uniqueTimes[0]);
-      }
-    }
-  }, [meals, activeTab]);
-
-  const toggleMealExpand = (mealId: string) => {
-    setExpandedMealId((prev) => (prev === mealId ? null : mealId));
-  };
-
-  const toggleMeal = (meal: Meal) => {
-    setSelectedMeals((prev) => {
-      const exists = prev.find((m) => m.meal.id === meal.id);
-      return exists
-        ? prev.filter((m) => m.meal.id !== meal.id)
-        : [...prev, { meal, multiplier: 1 }];
-    });
-  };
-
-  const handleMultiplierChange = (mealId: string, value: number) => {
-    setSelectedMeals((prev) =>
-      prev.map((m) =>
-        m.meal.id === mealId ? { ...m, multiplier: Math.max(1, value) } : m
-      )
-    );
-  };
-
-  // collect all unique meal times for tabs
-  const allMealTimess = Array.from(
-    new Set(meals?.flatMap((plan) => plan.mealTimes || []))
+  const child = useMemo(
+    () => children.find((c: any) => c.id === paramId),
+    [children, paramId]
   );
-
-  // Filter meals based on active tab
-  const filteredMeals = activeTab
-    ? meals.filter((meal) => meal.mealTimes?.includes(activeTab))
-    : meals;
-
-  const sumNutrients = () => {
-    const totals: Record<string, { amount: number; unit?: string }> = {};
-    let totalVolume = 0;
-
-    selectedMeals.forEach(({ meal, multiplier }) => {
-      const mealYieldVolume = calculateYieldVolume(meal);
-      totalVolume += mealYieldVolume * multiplier;
-
-      const mealNutrients = calculateMealNutrients(meal);
-      for (const [name, { amount, unit }] of Object.entries(mealNutrients)) {
-        if (!totals[name]) totals[name] = { amount: 0, unit };
-        totals[name].amount += amount * multiplier;
-      }
-    });
-
-    return { totalVolume, nutrients: totals };
-  };
-
-  // Get current date/time formatted for datetime-local input
-  const getMinDateTime = () => {
-    const now = new Date();
-    now.setSeconds(0, 0); // remove seconds & milliseconds for compatibility
-    const localISOTime = now.toISOString().slice(0, 16); // e.g., "2025-10-28T14:30"
-    return localISOTime;
-  };
-
+  const dailyResult = useMemo<any | null>(() => {
+    if (
+      !child ||
+      !child.weight ||
+      !child.height ||
+      !child.gender ||
+      !child.date_of_birth
+    )
+      return null;
+    return calculateNutrients(
+      child.weight,
+      child.height,
+      child.gender,
+      child.date_of_birth,
+      child.activity_level
+    );
+  }, [child]);
   const calculateYieldVolume = (meal: any) => {
     return (
       meal?.mealIngredients?.reduce((acc: number, item: any) => {
@@ -138,40 +73,221 @@ const MealLibraryComponent = () => {
       }, 0) ?? 0
     );
   };
-
   const calculateMealNutrients = (meal: any) => {
     const nutrientsByType: Record<string, { amount: number; unit?: string }> =
       {};
-
     meal?.mealIngredients?.forEach((item: any) => {
       const ing = item.ingredient;
       const conversionToBase = ing?.portionUnit?.conversionToBase ?? 1;
       const portionSize = ing?.portionSize ?? 1;
       const quantity = item.quantity ?? 1;
-
       ing?.nutrientAmounts?.forEach((na: any) => {
         const nutrientType = (na?.nutrient?.name || "other").toLowerCase();
         const unit = na?.nutrient?.unit || "";
         const adjustedAmount =
           na.amount * (quantity / portionSize) * conversionToBase;
-
         if (!nutrientsByType[nutrientType])
           nutrientsByType[nutrientType] = { amount: 0, unit };
         nutrientsByType[nutrientType].amount += adjustedAmount;
       });
     });
-
     return nutrientsByType;
   };
-
+  const computeNutrients = (selected: { meal: any; multiplier: number }[]) => {
+    const totals: Record<string, { amount: number; unit?: string }> = {};
+    let totalVolume = 0;
+    selected.forEach(({ meal, multiplier }) => {
+      const mealTimesMultiplier = Array.isArray(meal.mealTimes)
+        ? meal.mealTimes.length
+        : 1;
+      const effectiveMultiplier = multiplier * mealTimesMultiplier;
+      const mealYieldVolume = calculateYieldVolume(meal);
+      totalVolume += mealYieldVolume * effectiveMultiplier;
+      const mealNutrients = calculateMealNutrients(meal);
+      for (const [name, { amount, unit }] of Object.entries(mealNutrients)) {
+        if (!totals[name]) totals[name] = { amount: 0, unit };
+        totals[name].amount += amount * effectiveMultiplier;
+      }
+    });
+    return { totalVolume, nutrients: totals };
+  };
+  useEffect(() => {
+    const fetchMeals = async () => {
+      try {
+        const res = await api.get("meal/find-all?skip=0&limit=1000");
+        const responseData = Array.isArray(res.data)
+          ? res.data
+          : res.data?.data;
+        setMeals(responseData || []);
+      } catch (err) {
+        console.error("Error fetching meals:", err);
+        setError(t("Could not load meals. Please try again."));
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMeals();
+  }, [t]);
+  useEffect(() => {
+    if (!paramId) return;
+    const fetchAllMealPlans = async () => {
+      try {
+        const response = await api.get(`/meal-plans/by-child/${paramId}`);
+        const basicPlans = response.data?.data ?? [];
+        const detailedPlans = await Promise.all(
+          basicPlans.map(async (plan: any) => {
+            try {
+              const res = await api.get(`/meal-plans/find-one/${plan.id}`);
+              return res.data;
+            } catch (err) {
+              console.error(`Error fetching detail for plan ${plan.id}:`, err);
+              return plan;
+            }
+          })
+        );
+        // normalize mealTimes to array if needed
+        const normalizedPlans = detailedPlans.map((plan) => ({
+          ...plan,
+          meals: plan.meals?.map((meal: any) => ({
+            ...meal,
+            mealTimes: Array.isArray(meal.mealTimes)
+              ? meal.mealTimes
+              : meal.mealTimes
+              ? [meal.mealTimes]
+              : [],
+          })),
+        }));
+        setAllMealPlans(normalizedPlans);
+      } catch (err) {
+        console.error("Error fetching meal plans:", err);
+        setAllMealPlans([]);
+      }
+    };
+    fetchAllMealPlans();
+  }, [paramId]);
+  useEffect(() => {
+    if (meals.length > 0 && !activeTab) {
+      const uniqueTimes = Array.from(
+        new Set(meals.flatMap((m) => m.mealTimes || []))
+      );
+      if (uniqueTimes.length > 0) {
+        setActiveTab(uniqueTimes[0]);
+      }
+    }
+  }, [meals, activeTab]);
+  const getDateKey = (dateStr: string) =>
+    new Date(dateStr).toISOString().split("T")[0];
+  const toggleMealExpand = (mealId: string) => {
+    setExpandedMealId((prev) => (prev === mealId ? null : mealId));
+  };
+  const toggleMeal = (meal: Meal) => {
+    setSelectedMeals((prev) => {
+      const exists = prev.find((m) => m.meal.id === meal.id);
+      return exists
+        ? prev.filter((m) => m.meal.id !== meal.id)
+        : [...prev, { meal, multiplier: 1 }];
+    });
+  };
+  const handleMultiplierChange = (mealId: string, value: number) => {
+    setSelectedMeals((prev) =>
+      prev.map((m) =>
+        m.meal.id === mealId ? { ...m, multiplier: Math.max(1, value) } : m
+      )
+    );
+  };
+  // collect all unique meal times for tabs
+  const allMealTimess = Array.from(
+    new Set(meals?.flatMap((plan) => plan.mealTimes || []))
+  );
+  // Filter meals based on active tab
+  const filteredMeals = activeTab
+    ? meals.filter((meal) => meal.mealTimes?.includes(activeTab))
+    : meals;
+  const nutrientTotals = useMemo(
+    () => computeNutrients(selectedMeals),
+    [selectedMeals]
+  );
+  const existingMealsForDate = useMemo(() => {
+    if (!selectedDateTime || !allMealPlans.length) return [];
+    const dateKey = selectedDateTime;
+    return allMealPlans
+      .filter((p) => getDateKey(p.meal_date) === dateKey)
+      .flatMap((p) =>
+        (p.meals || []).map((m: any) => ({
+          meal: m,
+          multiplier: m.multiplier || 1,
+        }))
+      );
+  }, [allMealPlans, selectedDateTime]);
+  const existingSummary = useMemo(
+    () => computeNutrients(existingMealsForDate),
+    [existingMealsForDate]
+  );
+  const getTotal = (nutrient: string) => {
+    if (nutrient === "water") {
+      return existingSummary.totalVolume + nutrientTotals.totalVolume;
+    }
+    return (
+      (existingSummary.nutrients[nutrient]?.amount || 0) +
+      (nutrientTotals.nutrients[nutrient]?.amount || 0)
+    );
+  };
+  const getPercentage = (nutrient: string) => {
+    if (!dailyResult || typeof dailyResult[nutrient as keyof any] !== "number")
+      return 0;
+    const daily = dailyResult[nutrient as keyof any] as number;
+    const total = getTotal(nutrient);
+    return Math.min(100, (total / daily) * 100);
+  };
+  const displayNutrients = useMemo(() => {
+    if (!dailyResult) return [];
+    return Object.keys(dailyResult).filter(
+      (key) =>
+        typeof (dailyResult as any)[key] === "number" &&
+        !["bmi", "status"].includes(key)
+    ) as (keyof any)[];
+  }, [dailyResult]);
+  const getLabel = (key: string) => {
+    const labels: Record<string, string> = {
+      calories: "Calories (kcal)",
+      protein: "Protein (g)",
+      fat: "Fat (g)",
+      carbs: "Carbohydrates (g)",
+      iron: "Iron (mg)",
+      calcium: "Calcium (mg)",
+      vitaminA: "Vitamin A (mcg)",
+      water: "Water (ml)",
+      zinc: "Zinc (mg)",
+    };
+    return (
+      labels[key.toLowerCase()] || key.charAt(0).toUpperCase() + key.slice(1)
+    );
+  };
+  const hasExceededLimit = () => {
+    if (!dailyResult) return false;
+    return displayNutrients.some((key) => getPercentage(key as any) >= 100);
+  };
+  // Get current date formatted for date input
+  const getMinDate = () => {
+    const now = new Date();
+    return now.toISOString().split("T")[0];
+  };
   const handleConfirmMealPlan = async () => {
     if (!children.length) return navigate("/children");
+    if (hasExceededLimit()) {
+      alert(
+        t(
+          "You have met or exceeded the daily nutritional limit for some nutrients. Please review your selection."
+        )
+      );
+      return;
+    }
     const payload = {
       expertId: specialists[0]?.id + "",
       childId: paramId,
       meal_description: mealDescription,
-      calories: sumNutrients().nutrients,
-      meal_date: new Date(selectedDateTime), // send selected date-time
+      nutrients: nutrientTotals.nutrients,
+      meal_date: new Date(selectedDateTime),
       meals: selectedMeals.map(({ meal, multiplier }) => ({
         id: meal.id,
         multiplier,
@@ -189,12 +305,7 @@ const MealLibraryComponent = () => {
       setSubmitting(false);
     }
   };
-
-  const nutrientTotals = sumNutrients();
-
-  // console.log({ nutrientTotals });
-
-  // --- Render Date-Time Picker First ---
+  // --- Render Date Picker First ---
   if (!dateSelected) {
     return (
       <div className="min-h-screen bg-gray-800">
@@ -203,25 +314,19 @@ const MealLibraryComponent = () => {
             {t("Select Meal Date & Time")}
           </h2>
         </div>
-
         <div className="p-6 max-w-md bg-[#0B364F] rounded-lg text-white space-y-12 mx-2 pb-12 pt-12 mt-12">
-          <label
-            htmlFor="datetime-local"
-            className="py-2 text-emerald-400 font-serif"
-          >
+          <label htmlFor="date" className="py-2 text-emerald-400 font-serif">
             {t("Select meal date")}
           </label>
-
           <input
             type="date"
-            id="datetime-local"
+            id="date"
             className="w-full p-2 rounded bg-[#0d778f] text-white"
             placeholder="Select meal date"
             value={selectedDateTime}
             onChange={(e) => setSelectedDateTime(e.target.value)}
-            min={getMinDateTime()} // ✅ disables past dates & times
+            min={getMinDate()} // disables past dates
           />
-
           <button
             disabled={!selectedDateTime}
             onClick={() => setDateSelected(true)}
@@ -237,7 +342,6 @@ const MealLibraryComponent = () => {
       </div>
     );
   }
-
   // --- Main Meal Library UI ---
   return (
     <div className="min-h-screen bg-gray-800">
@@ -266,6 +370,69 @@ const MealLibraryComponent = () => {
         </ul>
       </div>
       <div className="px-4 max-w-3xl mx-auto text-white space-y-6 mt-2">
+        {dailyResult && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-emerald-300">
+              📊 Daily Nutrient Progress
+            </h3>
+
+            <button
+              onClick={() => setShowProgress(!showProgress)}
+              className="bg-[#0B8FAC] hover:bg-[#0ea4c6] px-2 py-1 rounded text-gray-100 "
+            >
+              {showProgress ? "Hide Progress Bar" : "View Progress Bar"}
+            </button>
+            <p className=" -mt-3 text-sm text-gray-500 font-sans">
+              {" "}
+              This bar is used to compare the meal added and the daily
+              requirements
+            </p>
+            {showProgress &&
+              displayNutrients.map((key) => {
+                const perc = getPercentage(key as any);
+                const isOver = perc >= 100;
+                const current = getTotal(key as any);
+                const daily = dailyResult[key as any] as number;
+                const barColor = isOver ? "bg-red-600" : "bg-blue-600";
+                const textColor = isOver ? "text-red-100" : "text-blue-100";
+                const label = getLabel(key as any);
+                return (
+                  <div key={key as any} className="space-y-1">
+                    <div className="flex justify-between text-sm">
+                      <span className="font-medium">{label}</span>
+                      <span className="text-gray-300">
+                        {current.toFixed(key === "calories" ? 0 : 2)} /{" "}
+                        {daily.toFixed(key === "calories" ? 0 : 2)}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-3 relative dark:bg-gray-700">
+                      <div
+                        className={`h-full ${barColor} rounded-full absolute left-0 top-0 transition-all duration-300 ease-in-out`}
+                        style={{ width: `${Math.min(100, perc)}%` }}
+                      />
+                      <div className="flex justify-between items-center absolute inset-0 px-2 -translate-y-0.5">
+                        <span
+                          className={`text-xs font-medium ${textColor} z-10 bg-transparent`}
+                        >
+                          {current.toFixed(key === "calories" ? 0 : 2)}
+                        </span>
+                        <span
+                          className={`text-xs font-medium ${textColor} z-10 bg-transparent`}
+                        >
+                          {daily.toFixed(key === "calories" ? 0 : 2)}
+                        </span>
+                      </div>
+                    </div>
+                    {isOver && (
+                      <span className="text-xs text-red-400">
+                        ⚠️ Exceeded daily limit!
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+          </div>
+        )}
         <textarea
           className="w-full p-2 bg-[#0B364F] text-white rounded"
           rows={2}
@@ -276,7 +443,7 @@ const MealLibraryComponent = () => {
         {selectedMeals.length > 0 && (
           <div className="bg-[#0d778f] p-4 rounded">
             <h2 className="text-lg font-bold text-emerald-300 mb-2">
-              📊 {t("Total Nutrients")}
+              📊 {t("Total Nutrients (Current Selection)")}
             </h2>
             <ul className="text-sm space-y-1">
               <li className="text-gray-100">
@@ -312,10 +479,8 @@ const MealLibraryComponent = () => {
           filteredMeals.map((meal) => {
             const selected = selectedMeals.find((m) => m.meal.id === meal.id);
             const expanded = expandedMealId === meal.id;
-
             // ✅ compute yield volume for this specific meal
             const yieldVolume = calculateYieldVolume(meal);
-
             const mealTimesDisplay = Array.isArray(meal.mealTimes)
               ? meal.mealTimes.join(", ")
               : meal.mealTimes || "N/A";
@@ -435,7 +600,6 @@ const MealLibraryComponent = () => {
                         );
                       })()}
                     </ul>
-
                     <div className="flex gap-2 items-center mt-2">
                       <label className="text-sm text-gray-100">
                         Multiplier:
@@ -480,7 +644,7 @@ const MealLibraryComponent = () => {
       <button
         onClick={handleConfirmMealPlan}
         disabled={submitting || selectedMeals.length === 0}
-        className={`fixed bottom-16 left-4 z-50 w-[320px] mx-3 py-3  rounded-lg text-white text-lg font-semibold transition-all shadow-lg ${
+        className={`fixed bottom-16 left-4 z-50 w-[320px] mx-3 py-3 rounded-lg text-white text-lg font-semibold transition-all shadow-lg ${
           submitting || selectedMeals.length === 0
             ? "bg-gray-400 cursor-not-allowed"
             : "bg-emerald-600 hover:bg-emerald-700"
@@ -491,5 +655,4 @@ const MealLibraryComponent = () => {
     </div>
   );
 };
-
 export default MealLibraryComponent;
