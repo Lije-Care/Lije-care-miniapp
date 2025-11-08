@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { calculateHAZ } from "@/excelData/calculateHAZ";
 import { calculateWHZ } from "@/excelData/calculateWHZ";
@@ -47,7 +46,6 @@ const classifyZ = (z: number, type: string) => {
       note: "Intervention needed.",
     };
   }
-
   if (type === "MUAC") {
     if (z < -3)
       return {
@@ -79,7 +77,6 @@ const classifyZ = (z: number, type: string) => {
       note: "Reduce fat intake & assess lifestyle.",
     };
   }
-
   if (type === "Height") {
     if (z < -3)
       return {
@@ -123,7 +120,6 @@ const classifyZ = (z: number, type: string) => {
       note: "Immediate intervention advised.",
     };
   }
-
   // ✅ Default fallback
   return {
     label: "Unknown",
@@ -145,25 +141,21 @@ interface ChildProfile {
 const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
   const [child, setChild] = useState<ChildProfile | null>(null);
   const [zScores, setZScores] = useState<any>(null);
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const { t } = useTranslation();
   const gender =
     childProfile?.gender.toLowerCase() === "female" ? "girl" : "boy";
-
   useEffect(() => {
     if (childProfile) {
       setChild(childProfile);
-
       const hazResult = calculateHAZ(
         85, // heightCm
         29, // ageInWeeks
         7, // ageInMonths
         gender // gender
       );
-
       console.log("HAZ Z-Score:", hazResult.haz);
       // console.log("HAZ Classification:", hazResult.classification);
-
       const birthDate = new Date(childProfile.date_of_birth);
       const today = new Date();
       const ageInWeeks = differenceInWeeks(today, birthDate);
@@ -174,7 +166,6 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
         const months = Math.floor(diffInDays / 30);
         return months;
       }
-
       const ageInMonths = differenceInMonthsApprox(today, birthDate);
       const measuredStanding = childProfile.height > 87;
       const bmiResult = calculateBMIZ(
@@ -185,15 +176,13 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
         gender,
         measuredStanding
       );
-
       // console.log("ageInMonths", ageInMonths);
       // console.log("BMI Z-Score:", bmiResult);
       // console.log(
-      //   "Z-Score:",
-      //   calculateHAZ(childProfile.height, ageInWeeks, ageInMonths, gender)
+      // "Z-Score:",
+      // calculateHAZ(childProfile.height, ageInWeeks, ageInMonths, gender)
       // );
       // 2. Normalize gender to "girl" or "boy"
-
       const calculatedZScores = {
         BMI: bmiResult,
         MUAC: calculateMUACZ(childProfile.muac, ageInMonths, gender).zScore,
@@ -214,10 +203,8 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
       setZScores(calculatedZScores);
     }
   }, [childProfile]);
-
   if (!child || !zScores)
     return <div className="text-center text-gray-400 mt-10">Loading...</div>;
-
   const indicators = [
     {
       key: "HAZ",
@@ -266,36 +253,61 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
       result: classifyZ(zScores.MUAC, "MUAC"),
     },
   ];
-
   const visibleIndicators = expanded ? indicators : indicators.slice(0, 3);
-
   return (
     <div className="max-w-3xl mx-auto font-sans text-white space-y-4 p-4">
       <div className="text-center font-extrabold italic py-1 text-lime-600">
         Child: <span className=" underline">{child.name}</span>{" "}
         {t("Anthropometric")}
       </div>
-      <div className="grid md:grid-cols-3 gap-4">
+      <div className="flex flex-row overflow-x-auto gap-4 pb-4 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent md:grid md:grid-cols-3 md:overflow-x-visible">
         {visibleIndicators.map(({ key, label, value, result }) => (
           <div
             key={key}
-            className="rounded-xl bg-[#0B8FAC] border border-gray-700 p-4 shadow-sm"
+            className="flex-shrink-0 w-64 md:w-auto rounded-xl bg-[#0B8FAC] border border-gray-700 p-4 shadow-sm flex flex-col justify-center items-center"
           >
-            <h3 className="text-md font-semibold text-gray-300">{label}</h3>
-            <div className="flex justify-between mt-2 text-sm ">
-              <span className="text-gray-100">Z-Score:</span>
-              <span className={`font-bold ${result.color}`}>
-                {value?.toFixed(2)}
-              </span>
+            <div className="relative size-40 flex flex-col justify-center items-center">
+              <svg
+                className="rotate-[135deg] size-full"
+                viewBox="0 0 36 36"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="16"
+                  fill="none"
+                  className="stroke-current text-green-200 dark:text-neutral-700"
+                  stroke-width="1"
+                  stroke-dasharray="75 100"
+                  stroke-linecap="round"
+                ></circle>
+                <circle
+                  cx="18"
+                  cy="18"
+                  r="16"
+                  fill="none"
+                  className="stroke-current text-yellow-500 dark:text-yellow-500"
+                  stroke-width="2"
+                  stroke-dasharray="56.25 100"
+                  stroke-linecap="round"
+                ></circle>
+              </svg>
+              <div className="absolute top-1/2 start-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+                <span className={`text-4xl font-bold ${result.color}`}>
+                  {value}
+                </span>
+                <span className={`${result.color} block`}>Z Score</span>
+              </div>
             </div>
-            <div className="mt-1 text-sm ">
+            <div className="mt-1 text-sm flex flex-col justify-center items-center ">
+              <h3 className=" text-gray-100 font-bold text-xl"> {label}</h3>
               <p className={`font-medium ${result.color}`}>{result.label}</p>
-              <p className="text-gray-100 text-xs">{result.note}</p>
+              <p className="text-gray-200 text-xs">{result.note}</p>
             </div>
           </div>
         ))}
       </div>
-
       {indicators.length > 3 && (
         <div className="text-center">
           <button
@@ -309,7 +321,6 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
     </div>
   );
 };
-
 export default GrowthTrackerHome;
 
 /**
@@ -319,32 +330,27 @@ const differenceInDays = (end: Date, start: Date): number => {
   const msPerDay = 1000 * 60 * 60 * 24;
   return Math.floor((end.getTime() - start.getTime()) / msPerDay);
 };
-
 /**
  * Custom month difference assuming 1 month = 30 days
  */
 const differenceInMonthsApprox = (end: Date, start: Date): number => {
   return Math.floor(differenceInDays(end, start) / 30);
 };
-
 /**
  * Custom week difference assuming 1 week = 7 days
  */
 const differenceInWeeksApprox = (end: Date, start: Date): number => {
   return Math.floor(differenceInDays(end, start) / 7);
 };
-
 export const getAgeValue = (
   dob: string | Date,
   ageType: "week" | "month"
 ): number => {
   const birthDate = new Date(dob);
   const now = new Date();
-
   if (ageType === "week") return differenceInWeeksApprox(now, birthDate);
   return differenceInMonthsApprox(now, birthDate);
 };
-
 const getAgeDetails = (
   dob: string
 ): { age: number; type: "week" | "month" } => {
@@ -356,7 +362,6 @@ const getAgeDetails = (
     ? { age: ageInWeeks, type: "week" }
     : { age: Math.floor(diffInDays / 30), type: "month" };
 };
-
 const getWHZRange = (dob: string): "0_2" | "2_5" => {
   const birthDate = new Date(dob);
   const now = new Date();
