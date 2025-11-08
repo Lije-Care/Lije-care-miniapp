@@ -103,20 +103,16 @@ const BookingCheckout = () => {
         </h1>
       </div>
 
-      <section className="bg-gray-200 py-1 dark:bg-gray-800 md:py-16">
+      <section className="bg-gray-800 py-1  md:py-16">
         <form
           onSubmit={handleSubmit}
           className="mx-auto max-w-screen-xl px-4 2xl:px-0"
         >
           {/* Package Details */}
-          <div className="bg-white dark:bg-gray-700 p-4 rounded-lg mb-6 border border-gray-300 dark:border-gray-600">
-            <h2 className="text-lg font-bold text-gray-800 dark:text-white">
-              {pkg.title}
-            </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              {pkg.description}
-            </p>
-            <p className="mt-2 text-gray-800 dark:text-gray-200">
+          <div className="bg-gray-600  p-4 rounded-lg mb-6 border border-gray-300 ">
+            <h2 className="text-lg font-bold text-gray-200 ">{pkg.title}</h2>
+            <p className="text-sm text-gray-200 ">{pkg.description}</p>
+            <p className="mt-2 text-gray-200 ">
               <strong>Sessions:</strong> {pkg.sessionsAllowed} |{" "}
               <strong>Validity:</strong> {pkg.validityDays} days
             </p>
@@ -129,13 +125,14 @@ const BookingCheckout = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Form fields */}
             <div>
-              <label className="block text-sm font-medium text-gray-900 dark:text-white">
+              <label className="block text-sm font-medium text-gray-200 ">
                 {t("Your name")}*
               </label>
               <input
                 type="text"
                 id="customerName"
                 value={formData.customerName}
+                placeholder="Enter you name"
                 onChange={handleInputChange}
                 className="block w-full rounded-lg border border-black bg-white p-2.5 text-sm text-gray-900"
                 required
@@ -143,13 +140,14 @@ const BookingCheckout = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 dark:text-white">
+              <label className="block text-sm font-medium text-gray-200 ">
                 {t("Your email")}*
               </label>
               <input
                 type="email"
                 id="customerEmail"
                 value={formData.customerEmail}
+                placeholder="Enter your email"
                 onChange={handleInputChange}
                 className="block w-full rounded-lg border border-black bg-white p-2.5 text-sm text-gray-900"
                 required
@@ -157,7 +155,7 @@ const BookingCheckout = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 dark:text-white">
+              <label className="block text-sm font-medium text-gray-200 ">
                 {t("Your Phone")}*
               </label>
               <input
@@ -165,19 +163,21 @@ const BookingCheckout = () => {
                 id="customerPhone"
                 value={formData.customerPhone}
                 onChange={handleInputChange}
+                placeholder="Enter phone number"
                 className="block w-full rounded-lg border border-black bg-white p-2.5 text-sm text-gray-900"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 dark:text-white">
+              <label className="block text-sm font-medium text-gray-200 ">
                 {t("City")}*
               </label>
               <input
                 type="text"
                 id="city"
                 value={formData.city}
+                placeholder="Enter address"
                 onChange={handleInputChange}
                 className="block w-full rounded-lg border border-black bg-white p-2.5 text-sm text-gray-900"
                 required
@@ -186,12 +186,12 @@ const BookingCheckout = () => {
           </div>
 
           {/* Total Summary */}
-          <div className="mt-8 p-4 bg-white dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
-            <div className="flex justify-between text-gray-800 dark:text-gray-200">
+          <div className="mt-8 p-4 bg-gray-600 rounded-lg border border-gray-300 ">
+            <div className="flex justify-between text-gray-200 ">
               <span>{t("Tax")}:</span>
               <span>ETB {tax.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between text-gray-800 dark:text-gray-200 font-semibold mt-2">
+            <div className="flex justify-between text-gray-200  font-semibold mt-2">
               <span>{t("Total")}:</span>
               <span>ETB {total.toFixed(2)}</span>
             </div>
