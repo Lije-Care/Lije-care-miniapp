@@ -50,13 +50,13 @@ const PackageList = () => {
   }
 
   return (
-    <section className="bg-white dark:bg-gray-900">
+    <section className="bg-gray-800">
       <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
         <div className="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
-          <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+          <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-white ">
             Please Select a Plan
           </h2>
-          <p className="mb-5 font-light text-gray-500 sm:text-xl dark:text-gray-400">
+          <p className="mb-5 font-light text-gray-200 sm:text-xl ">
             Choose a plan and make a payment to connect with our experts.
           </p>
         </div>
@@ -66,10 +66,10 @@ const PackageList = () => {
           {data.map((pkg) => (
             <div
               key={pkg.id}
-              className="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-[#0B364F] rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white"
+              className="flex flex-col p-6 mx-auto max-w-lg text-center text-white bg-[#0B364F] rounded-lg border border-gray-100 shadow "
             >
               <h3 className="mb-4 text-2xl font-semibold">{pkg.title}</h3>
-              <p className="font-light text-gray-500 sm:text-lg dark:text-gray-400">
+              <p className="font-light text-gray-200 sm:text-lg ">
                 {pkg.description}
               </p>
 
@@ -77,7 +77,7 @@ const PackageList = () => {
                 <span className="mr-2 text-5xl font-extrabold">
                   ETB {pkg.price}
                 </span>
-                <span className="text-gray-500 dark:text-gray-400">/plan</span>
+                <span className="text-gray-200 ">/plan</span>
               </div>
 
               <ul role="list" className="mb-8 space-y-4 text-left">

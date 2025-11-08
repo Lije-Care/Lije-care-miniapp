@@ -121,7 +121,11 @@ export default function DoctorDetailPage() {
 
         {!hasFavoriteChild && (
           <div className="bg-red-500/10 p-4 rounded border border-red-400 text-white space-y-2 mx-2 ">
-            <p>{t("No child selected. Please add a child before booking.")}</p>
+            <p>
+              {t(
+                "No child selected as a Favorite child. Please add a Favorite  child before booking."
+              )}
+            </p>
             <Button
               className="bg-[#0B8FAC] text-white"
               onClick={() => navigate("/children")}
