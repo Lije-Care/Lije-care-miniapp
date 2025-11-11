@@ -18,12 +18,7 @@ export default function ConsultationTab() {
     (state: RootState) => state.specialists
   );
 
-  const categories = [
-    t("All"),
-    t("Nutritionist"),
-    t("Doctors"),
-    t("Questions"),
-  ];
+  const categories = [t("All"), t("Nutritionist"), t("Doctors"), t("Any(CS)")];
   const [activeCategory, setActiveCategory] = useState(t("All"));
 
   useEffect(() => {
@@ -57,8 +52,19 @@ export default function ConsultationTab() {
 
     if (activeCategory === t("All")) return true;
 
+    const role = doc?.role || "";
     const specialty = doc?.SpecialistProfile?.specialty || "";
-    return specialty.toLowerCase() === activeCategory.toLowerCase();
+
+    switch (activeCategory) {
+      case t("Nutritionist"):
+        return role.toUpperCase() === "NUTRITIONIST";
+      case t("Doctors"):
+        return specialty.toUpperCase() === "PEDIATRICIAN";
+      case t("Questions"):
+        return role.toUpperCase() === "CUSTOMER_SUPPORT";
+      default:
+        return false;
+    }
   });
 
   return (

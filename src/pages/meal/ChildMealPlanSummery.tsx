@@ -113,20 +113,20 @@ const ChildMealPlanSummary = () => {
     ).sort((b, a) => new Date(b).getTime() - new Date(a).getTime());
   }, [mealPlans]);
 
-  const dateSummaries = useMemo(() => {
-    if (!mealPlans) return {};
-    const summaries: Record<string, { count: number; totalCalories: number }> =
-      {};
-    mealPlans.forEach((plan) => {
-      const key = getDateKey(plan.meal_date);
-      if (!summaries[key]) {
-        summaries[key] = { count: 0, totalCalories: 0 };
-      }
-      summaries[key].count++;
-      summaries[key].totalCalories += plan.calories;
-    });
-    return summaries;
-  }, [mealPlans]);
+  // const dateSummaries = useMemo(() => {
+  //   if (!mealPlans) return {};
+  //   const summaries: Record<string, { count: number; totalCalories: number }> =
+  //     {};
+  //   mealPlans.forEach((plan) => {
+  //     const key = getDateKey(plan.meal_date);
+  //     if (!summaries[key]) {
+  //       summaries[key] = { count: 0, totalCalories: 0 };
+  //     }
+  //     summaries[key].count++;
+  //     summaries[key].totalCalories += plan.calories;
+  //   });
+  //   return summaries;
+  // }, [mealPlans]);
 
   const filteredPlans = useMemo(() => {
     if (!activeDate || !mealPlans) return [];
@@ -174,7 +174,7 @@ const ChildMealPlanSummary = () => {
 
   // date card
   const DateCard = ({ dateKey }: { dateKey: string }) => {
-    const summary = dateSummaries[dateKey];
+    // const summary = dateSummaries[dateKey];
     const formattedDate = new Date(dateKey).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
@@ -182,14 +182,18 @@ const ChildMealPlanSummary = () => {
     });
     return (
       <div className=" flex justify-between p-4 shadow-sm bg-[#0B8FAC] rounded-xl w-full border border-gray-200 hover:shadow-md cursor-pointer transition-all">
-        <div key={dateKey} className="" onClick={() => setActiveDate(dateKey)}>
+        <div
+          key={dateKey}
+          className=" py-2"
+          onClick={() => setActiveDate(dateKey)}
+        >
           <h3 className="text-lg font-bold text-emerald-300">
             {formattedDate}
           </h3>
-          <p className="text-sm text-gray-300">
+          {/* <p className="text-sm text-gray-300">
             Plans: {summary?.count || 0} | Total: {summary?.totalCalories || 0}{" "}
             kcal
-          </p>
+          </p> */}
         </div>
         <button
           onClick={() => setActiveDate(dateKey)}
@@ -227,10 +231,10 @@ const ChildMealPlanSummary = () => {
           <p className="text-sm line-clamp-2 font-medium">
             {mealPlan.meal_description || "No description available."}
           </p>
-          <p className="text-xs">
+          {/* <p className="text-xs">
             🔥 {mealPlan.calories} kcal · 🕒{" "}
-            {new Date(mealPlan.meal_date).toLocaleDateString()}
-          </p>
+            Date: {new Date(mealPlan.meal_date).toLocaleDateString()}
+          </p> */}
         </div>
         {/* Child Info */}
         <div className="my-2 border-t border-gray-200" />

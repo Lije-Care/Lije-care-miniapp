@@ -11,14 +11,12 @@ import { calculateNutrients } from "@/utils/calculateNutrients";
 const MealLibraryComponent = () => {
   const { t } = useTranslation();
   const [meals, setMeals] = useState<any[]>([]);
-  console.log({ meals });
+  // console.log({ meals });
   const [expandedMealId, setExpandedMealId] = useState<string | null>(null);
   const [selectedMeals, setSelectedMeals] = useState<
     { meal: any; multiplier: number }[]
   >([]);
-  const [mealDescription, setMealDescription] = useState(
-    t("A healthy and balanced meal plan for the child.")
-  );
+  const [mealDescription, setMealDescription] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -50,7 +48,7 @@ const MealLibraryComponent = () => {
       child.height,
       child.gender,
       child.date_of_birth,
-      child.activity_level
+      child.activity_level || "Moderate"
     );
   }, [child]);
   const calculateYieldVolume = (meal: any) => {
@@ -263,10 +261,10 @@ const MealLibraryComponent = () => {
       labels[key.toLowerCase()] || key.charAt(0).toUpperCase() + key.slice(1)
     );
   };
-  const hasExceededLimit = () => {
-    if (!dailyResult) return false;
-    return displayNutrients.some((key) => getPercentage(key as any) >= 100);
-  };
+  // const hasExceededLimit = () => {
+  //   if (!dailyResult) return false;
+  //   return displayNutrients.some((key) => getPercentage(key as any) >= 100);
+  // };
   // Get current date formatted for date input
   const getMinDate = () => {
     const now = new Date();
@@ -274,14 +272,14 @@ const MealLibraryComponent = () => {
   };
   const handleConfirmMealPlan = async () => {
     if (!children.length) return navigate("/children");
-    if (hasExceededLimit()) {
-      alert(
-        t(
-          "You have met or exceeded the daily nutritional limit for some nutrients. Please review your selection."
-        )
-      );
-      return;
-    }
+    // if (hasExceededLimit()) {
+    //   alert(
+    //     t(
+    //       "You have met or exceeded the daily nutritional limit for some nutrients. Please review your selection."
+    //     )
+    //   );
+    //   return;
+    // }
     const payload = {
       expertId: specialists[0]?.id + "",
       childId: paramId,
@@ -314,7 +312,7 @@ const MealLibraryComponent = () => {
             {t("Select Meal Date & Time")}
           </h2>
         </div>
-        <div className="p-6 max-w-md bg-[#0B364F] rounded-lg text-white space-y-12 mx-2 pb-12 pt-12 mt-12">
+        <div className="p-6 max-w-md bg-[#0B364F] rounded-lg text-white space-y-6 mx-2 pb-12 pt-12 mt-12">
           <label htmlFor="date" className="py-2 text-emerald-400 font-serif">
             {t("Select meal date")}
           </label>
@@ -327,6 +325,19 @@ const MealLibraryComponent = () => {
             onChange={(e) => setSelectedDateTime(e.target.value)}
             min={getMinDate()} // disables past dates
           />
+          <label htmlFor="date" className="py-2 text-emerald-400 font-serif">
+            {t("Enter Description")}
+          </label>
+          <textarea
+            className=" mt-2 w-full p-1 bg-gray-200 text-black rounded"
+            rows={2}
+            value={mealDescription}
+            onChange={(e) => {
+              setMealDescription(e.target.value);
+            }}
+            placeholder={t(" Please enter describe of meal plan...")}
+          />
+
           <button
             disabled={!selectedDateTime}
             onClick={() => setDateSelected(true)}
@@ -433,13 +444,7 @@ const MealLibraryComponent = () => {
               })}
           </div>
         )}
-        <textarea
-          className="w-full p-2 bg-[#0B364F] text-white rounded"
-          rows={2}
-          value={mealDescription}
-          onChange={(e) => setMealDescription(e.target.value)}
-          placeholder={t("Describe the meal plan...")}
-        />
+
         {selectedMeals.length > 0 && (
           <div className="bg-[#0d778f] p-4 rounded">
             <h2 className="text-lg font-bold text-emerald-300 mb-2">
@@ -487,7 +492,7 @@ const MealLibraryComponent = () => {
             return (
               <div
                 key={meal.id}
-                className={`p-4 rounded-xl border transition-all duration-200 cursor-pointer border-gray-700 shadow-sm ${
+                className={`p-4 rounded-xl border transition-all duration-200 cursor-pointer border-gray-700 shadow-sm mb-6 ${
                   selected ? "bg-[#0d778f]" : "bg-[#0B8FAC]"
                 }`}
                 onClick={() => toggleMealExpand(meal.id)}
@@ -522,6 +527,25 @@ const MealLibraryComponent = () => {
                         View
                       </span>
                     </div>
+                    <div className="flex gap-2 items-center mt-2">
+                      <label className="text-sm text-gray-100">
+                        Multiplier:
+                      </label>
+                      <input
+                        type="number"
+                        min={1}
+                        disabled={!selected}
+                        className="w-16 text-black px-2 py-1 bg-gray-300 rounded disabled:bg-gray-600 disabled:cursor-not-allowed"
+                        value={selected?.multiplier ?? 1}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) =>
+                          handleMultiplierChange(
+                            meal.id,
+                            parseInt(e.target.value)
+                          )
+                        }
+                      />
+                    </div>
                   </div>
                 </div>
                 {expanded && (
@@ -535,9 +559,7 @@ const MealLibraryComponent = () => {
                     <p className="text-gray-100">
                       <strong>Meal Time:</strong> {mealTimesDisplay}
                     </p>
-                    <p className="text-gray-100">
-                      <strong>Prepping Time:</strong> {meal.prepTime ?? "N/A"}
-                    </p>
+
                     <p className="text-gray-100">
                       <strong>Yield Volume:</strong>{" "}
                       {yieldVolume.toFixed(2) ?? "N/A"} ml
@@ -558,6 +580,17 @@ const MealLibraryComponent = () => {
                     </p>
                     <p className="text-gray-100">
                       <strong>How to Store:</strong> {meal.howToStore}
+                    </p>
+                    <p className="text-gray-100">
+                      <strong>Direction:</strong>
+                      <a
+                        href={meal.videoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-200 px-2 underline text-sm"
+                      >
+                        Watch Video
+                      </a>
                     </p>
                     <p className="text-gray-100">
                       <strong>Ingredients:</strong>
@@ -600,25 +633,6 @@ const MealLibraryComponent = () => {
                         );
                       })()}
                     </ul>
-                    <div className="flex gap-2 items-center mt-2">
-                      <label className="text-sm text-gray-100">
-                        Multiplier:
-                      </label>
-                      <input
-                        type="number"
-                        min={1}
-                        disabled={!selected}
-                        className="w-16 text-black px-2 py-1 bg-gray-300 rounded disabled:bg-gray-600 disabled:cursor-not-allowed"
-                        value={selected?.multiplier ?? 1}
-                        onClick={(e) => e.stopPropagation()}
-                        onChange={(e) =>
-                          handleMultiplierChange(
-                            meal.id,
-                            parseInt(e.target.value)
-                          )
-                        }
-                      />
-                    </div>
                   </div>
                 )}
                 <div className="mt-3 flex justify-end">
@@ -644,8 +658,8 @@ const MealLibraryComponent = () => {
       <button
         onClick={handleConfirmMealPlan}
         disabled={submitting || selectedMeals.length === 0}
-        className={`fixed bottom-16 left-4 z-50 w-[320px] mx-3 py-3 rounded-lg text-white text-lg font-semibold transition-all shadow-lg ${
-          submitting || selectedMeals.length === 0
+        className={`fixed bottom-12 left-4 z-50 w-[320px] mx-3 py-2 rounded-lg  text-white text-lg font-semibold transition-all shadow-lg ${
+          submitting || selectedMeals.length === 0 || !mealDescription.trim()
             ? "bg-gray-400 cursor-not-allowed"
             : "bg-emerald-600 hover:bg-emerald-700"
         }`}

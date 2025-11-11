@@ -104,10 +104,7 @@ const BookingCheckout = () => {
       </div>
 
       <section className="bg-gray-800 py-1  md:py-16">
-        <form
-          onSubmit={handleSubmit}
-          className="mx-auto max-w-screen-xl px-4 2xl:px-0"
-        >
+        <form onSubmit={handleSubmit} className="mx-auto px-4 2xl:px-0">
           {/* Package Details */}
           <div className="bg-gray-600  p-4 rounded-lg mb-6 border border-gray-300 ">
             <h2 className="text-lg font-bold text-gray-200 ">{pkg.title}</h2>
