@@ -6,6 +6,7 @@ import { Spinner, Button } from "@telegram-apps/telegram-ui";
 import { Page } from "@/components/Page";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { FaPlus } from "react-icons/fa";
 
 export default function DoctorDetailPage() {
   const { t } = useTranslation();
@@ -120,18 +121,19 @@ export default function DoctorDetailPage() {
         </h2>
 
         {!hasFavoriteChild && (
-          <div className="bg-red-500/10 p-4 rounded border border-red-400 text-white space-y-2 mx-2 ">
+          <div className="bg-[#0D778F] p-4 rounded border border-gray-300 text-white space-y-2 mx-2 ">
             <p>
               {t(
-                "No child selected as a Favorite child. Please add a Favorite  child before booking."
+                "No active child is selected. Please add an active child before booking."
               )}
             </p>
-            <Button
-              className="bg-[#0B8FAC] text-white"
+            <button
+              className="flex bg-[#013222] hover:bg-[#0ea4c6] px-4 py-2 rounded text-gray-100 w-32"
               onClick={() => navigate("/children")}
             >
-              ➕ {t("Add Child")}
-            </Button>
+              <FaPlus className="text-base mt-1 px-1" />
+              <span>{t("Add Child")}</span>
+            </button>
           </div>
         )}
 

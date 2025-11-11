@@ -53,7 +53,8 @@ const MealDetails: React.FC = () => {
   }
 
   const meals = data?.meals || [];
-  // console.log("meals", meals);
+  console.log({ meals });
+
   if (!meals.length) {
     return (
       <Text className="text-center mt-8">
@@ -61,6 +62,27 @@ const MealDetails: React.FC = () => {
       </Text>
     );
   }
+
+  const calculateYieldVolume = (meal: any) => {
+    return (
+      meal?.mealIngredients?.reduce((acc: number, item: any) => {
+        const ing = item.ingredient;
+        const type = ing?.portionUnit?.type?.toLowerCase();
+        const quantity = item.quantity ?? 0;
+        const conversion = ing?.portionUnit?.conversionToBase ?? 1;
+        let volume = 0;
+        if (type === "mass") {
+          const mass = quantity * conversion;
+          if (ing?.density && ing.density > 0) {
+            volume = mass / ing.density;
+          }
+        } else if (type === "volume") {
+          volume = quantity * conversion;
+        }
+        return acc + volume;
+      }, 0) ?? 0
+    );
+  };
 
   return (
     <>
@@ -72,6 +94,7 @@ const MealDetails: React.FC = () => {
       <div className=" min-h-screen max-w-3xl mx-auto px-4 py-6 -mt-3 text-white space-y-8 bg-gray-800">
         {meals.map((meal: any) => {
           const isOpen = openMealId === meal.id;
+          const yieldVolume = calculateYieldVolume(meal);
 
           return (
             <div
@@ -124,14 +147,9 @@ const MealDetails: React.FC = () => {
                     <div>
                       <strong>Age Group:</strong> {meal.ageGroup}m+
                     </div>
+
                     <div>
-                      <strong>Prep Time:</strong> {meal.prepTime || "N/A"}
-                    </div>
-                    <div>
-                      <strong>Cost:</strong> {meal.cost || "N/A"}
-                    </div>
-                    <div>
-                      <strong>Volume:</strong> {meal.totalVolume} ml
+                      <strong>Vom:</strong> {yieldVolume.toFixed(2)} ml
                     </div>
                   </div>
 

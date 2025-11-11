@@ -1,5 +1,7 @@
+import { RootState } from "@/redux/store";
 import { SendHorizontal } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 
 type Message = {
   role: "user" | "assistant";
@@ -12,11 +14,13 @@ interface ChatBoxProps {
   backendUrl: string; // pass NestJS URL as a prop
 }
 
-export default function ChatBox({ userId, chatId, backendUrl }: ChatBoxProps) {
+export default function ChatBox({ chatId, backendUrl }: ChatBoxProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
+  const parentState = useSelector((state: RootState) => state.parent);
+  const parentId = parentState?.userDetails.id;
 
   // Scroll to bottom when messages change (if user is near bottom)
   useEffect(() => {
@@ -44,7 +48,11 @@ export default function ChatBox({ userId, chatId, backendUrl }: ChatBoxProps) {
       const res = await fetch(`${backendUrl}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, chatId, message: input }),
+        body: JSON.stringify({
+          userId: parentId,
+          chatId,
+          message: input,
+        }),
       });
 
       if (!res.ok) throw new Error("Failed to send message");

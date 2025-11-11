@@ -13,6 +13,7 @@ const AllMealPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchMeals = async () => {
@@ -53,9 +54,15 @@ const AllMealPage = () => {
     new Set(meals?.flatMap((plan) => plan.mealTimes || []))
   );
 
-  const filteredMeals = activeTab
+  // Filter by tab first
+  const tabFilteredMeals = activeTab
     ? meals.filter((meal) => meal.mealTimes?.includes(activeTab))
     : meals;
+
+  // Then filter by search term
+  const filteredMeals = tabFilteredMeals.filter((meal) =>
+    meal.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const calculateYieldVolume = (meal: any) => {
     return (
@@ -82,24 +89,19 @@ const AllMealPage = () => {
   const calculateMealNutrients = (meal: any) => {
     const nutrientsByType: Record<string, { amount: number; unit?: string }> =
       {};
-
     meal?.mealIngredients?.forEach((item: any) => {
       const ing = item.ingredient;
       const portionSize = ing?.portionSize ?? 1;
       const quantity = item.quantity ?? 1;
-
       ing?.nutrientAmounts?.forEach((na: any) => {
         const nutrientType = (na?.nutrient?.name || "other").toLowerCase();
         const unit = na?.nutrient?.unit || "";
         const adjustedAmount = na.amount * (quantity / portionSize);
-
         if (!nutrientsByType[nutrientType])
           nutrientsByType[nutrientType] = { amount: 0, unit };
-
         nutrientsByType[nutrientType].amount += adjustedAmount;
       });
     });
-
     return nutrientsByType;
   };
 
@@ -107,6 +109,47 @@ const AllMealPage = () => {
     <div className="min-h-screen w-full bg-gray-800">
       {/* Tabs */}
       <div className="bg-[#013222]">
+        <form className="max-w-md mx-auto px-2 py-1 mb-1">
+          <label
+            htmlFor="default-search"
+            className="mb-2 text-sm font-medium text-gray-white sr-only dark:text-white"
+          >
+            Search
+          </label>
+          <div className="relative px-2 mr-5">
+            <div className="absolute inset-y-0 start-0 flex items-center ps-1 pointer-events-none ml-5 px-2">
+              <svg
+                className="w-4 h-4 text-white dark:text-gray-400"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                />
+              </svg>
+            </div>
+            <input
+              type="search"
+              id="default-search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className=" w-full p-2 ps-8 ml-2 text-sm text-white border border-gray-500 rounded-lg bg-[#0B364F]"
+              placeholder="Search meals..."
+            />
+            <button
+              type="submit"
+              className=" mt-4 text-white absolute end-0.5 bottom-0.5 bg-[#0B8FAC] hover:bg-[#124766] font-medium rounded-lg text-sm px-4 pt-1.5 pb-2 "
+            >
+              Search
+            </button>
+          </div>
+        </form>
         <div className="flex justify-between items-center px-4 py-3 bg-[#013222] border-b border-gray-700">
           <h2 className="text-xl font-bold text-white">{t("All Meals")}</h2>
           <span className="text-gray-300 text-sm">
@@ -131,7 +174,6 @@ const AllMealPage = () => {
           ))}
         </div>
       </div>
-
       {/* Meal Cards */}
       <div className="px-4 mt-4 text-white space-y-6">
         {loading ? (
@@ -150,9 +192,7 @@ const AllMealPage = () => {
             const mealTimesDisplay = Array.isArray(meal.mealTimes)
               ? meal.mealTimes.join(", ")
               : meal.mealTimes || "N/A";
-
             const nutrientsByType = calculateMealNutrients(meal); // ✅ calculate here
-
             return (
               <div
                 key={meal.id}
@@ -193,7 +233,6 @@ const AllMealPage = () => {
                     </div>
                   </div>
                 </div>
-
                 {expanded && (
                   <div className="mt-4 space-y-2 text-sm bg-[#D9D9D94D] p-4 rounded-lg">
                     <p className="text-gray-100">
@@ -206,13 +245,24 @@ const AllMealPage = () => {
                       <strong>Meal Time:</strong> {mealTimesDisplay}
                     </p>
                     <p className="text-gray-100">
-                      <strong>Prepping Time:</strong> {meal.prepTime ?? "N/A"}
-                    </p>
-                    <p className="text-gray-100">
                       <strong>Yield Volume:</strong>{" "}
                       {yieldVolume.toFixed(2) ?? "N/A"} ml
                     </p>
-
+                    <p className="text-gray-100">
+                      <strong>Direction:</strong> {meal.direction ?? "N/A"}
+                    </p>
+                    {/* Video */}
+                    <p className="text-gray-100">
+                      <strong>Video:</strong>
+                      <a
+                        href={meal.videoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-200 px-2 underline text-sm"
+                      >
+                        Watch Video
+                      </a>
+                    </p>
                     {/* ✅ Ingredients with nutrients */}
                     <div className="mt-3 ">
                       <p className="text-gray-100 font-semibold underline py-2">
@@ -222,7 +272,6 @@ const AllMealPage = () => {
                         {meal?.mealIngredients?.length ? (
                           meal.mealIngredients.map((item: any) => {
                             const ing = item.ingredient;
-
                             return (
                               <li key={item.id}>
                                 <span className="font-semibold text-emerald-300 ">
@@ -231,7 +280,6 @@ const AllMealPage = () => {
                                   {ing?.name ?? "Unknown"}
                                 </span>
                                 <br />
-
                                 {/* Nutrients per ingredient */}
                                 <span className="pt-4 underline text-base font-black">
                                   Nutrients
@@ -268,7 +316,6 @@ const AllMealPage = () => {
                         )}
                       </ul>
                     </div>
-
                     {/* ✅ Per Meal Nutritional Summary */}
                     <div className="bg-[#013222] text-white text-sm p-4 mt-4 rounded-lg">
                       <h3 className="text-lg font-bold mb-2">

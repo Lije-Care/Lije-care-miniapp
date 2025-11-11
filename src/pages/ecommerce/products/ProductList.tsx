@@ -212,7 +212,7 @@ const ProductList = () => {
 text-gray-200 border border-gray-400 rounded-lg 
 hover:bg-gray-300 hover:text-gray-800 
 disabled:opacity-50 disabled:cursor-not-allowed bg-gray-800"
->
+              >
                 <svg
                   className="w-3.5 h-3.5 me-2 rtl:rotate-180"
                   aria-hidden="true"

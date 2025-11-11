@@ -210,47 +210,31 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
       key: "HAZ",
       label: "Height for Age",
       value: zScores.HAZ.haz,
-      result: {
-        label: zScores.HAZ.classification,
-        color: "text-blue-400",
-        note: zScores.HAZ.classification,
-      },
+      type: "Height",
     },
     {
       key: "WHZ",
       label: "Weight for Height",
       value: zScores.WHZ.zScore,
-      result: {
-        label: zScores.WHZ.classification,
-        color: "text-orange-400",
-        note: zScores.WHZ.classification,
-      },
+      type: "Height",
     },
     {
       key: "WAZ",
       label: "Weight for Age",
       value: zScores.WAZ.zScore,
-      result: {
-        label: zScores.WAZ.classification,
-        color: "text-yellow-400",
-        note: zScores.WAZ.classification,
-      },
+      type: "BMI",
     },
     {
       key: "BMI",
       label: "BMI for Age",
       value: zScores.BMI.zScore,
-      result: {
-        label: zScores.BMI.classification,
-        color: "text-yellow-400",
-        note: zScores.BMI.classification,
-      },
+      type: "BMI",
     },
     {
       key: "MUAC",
       label: "MUAC for Age",
       value: zScores.MUAC,
-      result: classifyZ(zScores.MUAC, "MUAC"),
+      type: "MUAC",
     },
   ];
   const visibleIndicators = expanded ? indicators : indicators.slice(0, 3);
@@ -261,52 +245,56 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
         {t("Anthropometric")}
       </div>
       <div className="flex flex-row overflow-x-auto gap-4 pb-4 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent md:grid md:grid-cols-3 md:overflow-x-visible">
-        {visibleIndicators.map(({ key, label, value, result }) => (
-          <div
-            key={key}
-            className="flex-shrink-0 w-64 md:w-auto rounded-xl bg-[#0B8FAC] border border-gray-700 p-4 shadow-sm flex flex-col justify-center items-center"
-          >
-            <div className="relative size-40 flex flex-col justify-center items-center">
-              <svg
-                className="rotate-[135deg] size-full"
-                viewBox="0 0 36 36"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  cx="18"
-                  cy="18"
-                  r="16"
-                  fill="none"
-                  className="stroke-current text-green-200 dark:text-neutral-700"
-                  stroke-width="1"
-                  stroke-dasharray="75 100"
-                  stroke-linecap="round"
-                ></circle>
-                <circle
-                  cx="18"
-                  cy="18"
-                  r="16"
-                  fill="none"
-                  className="stroke-current text-yellow-500 dark:text-yellow-500"
-                  stroke-width="2"
-                  stroke-dasharray="56.25 100"
-                  stroke-linecap="round"
-                ></circle>
-              </svg>
-              <div className="absolute top-1/2 start-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                <span className={`text-4xl font-bold ${result.color}`}>
-                  {value}
-                </span>
-                <span className={`${result.color} block`}>Z Score</span>
+        {visibleIndicators.map(({ key, label, value, type }) => {
+          const result = classifyZ(value, type);
+          const normalizedProgress = Math.max(0, Math.min(1, (value + 3) / 6));
+          const dashOffset = 100 * (1 - normalizedProgress);
+          return (
+            <div
+              key={key}
+              className="flex-shrink-0 w-64 md:w-auto rounded-xl bg-[#0B8FAC] border border-gray-700 p-4 shadow-sm flex flex-col justify-center items-center"
+            >
+              <div className="relative size-40 flex flex-col justify-center items-center">
+                <svg
+                  className="size-full rotate-[-90deg]"
+                  viewBox="0 0 36 36"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="18"
+                    cy="18"
+                    r="16"
+                    fill="none"
+                    className="text-gray-600"
+                    strokeWidth="2"
+                  />
+                  <circle
+                    cx="18"
+                    cy="18"
+                    r="16"
+                    fill="none"
+                    className={`stroke-current ${result.color}`}
+                    strokeWidth="4"
+                    strokeDasharray="100 100"
+                    strokeDashoffset={dashOffset}
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className="absolute top-1/2 start-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+                  <span className={`text-4xl font-bold ${result.color}`}>
+                    {value}
+                  </span>
+                  <span className={`${result.color} block`}>Z Score</span>
+                </div>
+              </div>
+              <div className="mt-1 text-sm flex flex-col justify-center items-center ">
+                <h3 className=" text-gray-100 font-bold text-xl"> {label}</h3>
+                <p className={`font-medium ${result.color}`}>{result.label}</p>
+                <p className="text-gray-200 text-xs">{result.note}</p>
               </div>
             </div>
-            <div className="mt-1 text-sm flex flex-col justify-center items-center ">
-              <h3 className=" text-gray-100 font-bold text-xl"> {label}</h3>
-              <p className={`font-medium ${result.color}`}>{result.label}</p>
-              <p className="text-gray-200 text-xs">{result.note}</p>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       {indicators.length > 3 && (
         <div className="text-center">

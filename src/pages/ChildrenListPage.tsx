@@ -94,14 +94,14 @@ const ChildrenListPage: React.FC = () => {
   };
 
   // ✅ Tabs setup
-  const categories = [t("Child List"), t("Meals"), t("Ingredients")];
-  const [activeCategory, setActiveCategory] = useState(t("Child List"));
-  const [pageTitle, setPageTitle] = useState(t("My Children"));
+  const categories = [t("Meal plan"), t("Meals"), t("Ingredients")];
+  const [activeCategory, setActiveCategory] = useState(t("Meal plan"));
+  const [pageTitle, setPageTitle] = useState(t("Meal plan"));
 
   // ✅ Update title when tab changes
   useEffect(() => {
-    if (activeCategory === t("Child List")) {
-      setPageTitle(t("My Children"));
+    if (activeCategory === t("Meal plan")) {
+      setPageTitle(t("Meal plan"));
     } else if (activeCategory === t("Meals")) {
       setPageTitle(t("Meals"));
     } else if (activeCategory === t("Ingredients")) {
@@ -116,8 +116,8 @@ const ChildrenListPage: React.FC = () => {
         <div className="flex justify-between items-center  bg-[#013222] p-4">
           <Headline className="text-white">{pageTitle}</Headline>
 
-          {/* Only show Add Child button on Child List tab */}
-          {activeCategory === t("Child List") && (
+          {/* Only show Add Child button on Meal plan tab */}
+          {activeCategory === t("Meal plan") && (
             <button
               className="flex bg-[#0B8FAC] hover:bg-[#0ea4c6] px-4 py-2 rounded text-gray-100 w-32"
               onClick={() => setShowAddModal(true)}
@@ -150,7 +150,7 @@ const ChildrenListPage: React.FC = () => {
 
         {/* ✅ Dynamic Page Content */}
         <div className="">
-          {activeCategory === t("Child List") && (
+          {activeCategory === t("Meal plan") && (
             <>
               {loading && (
                 <div className="flex justify-center py-6">
