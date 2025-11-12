@@ -3,7 +3,6 @@ import api from "@/api/axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { Meal } from "@/types/meal";
 import fallback from "@/assets/meal.png";
 import { useTranslation } from "react-i18next";
 import { Eye } from "lucide-react";
