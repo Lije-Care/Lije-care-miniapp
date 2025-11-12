@@ -238,6 +238,7 @@ const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
     },
   ];
   const visibleIndicators = expanded ? indicators : indicators.slice(0, 3);
+  console.log({ visibleIndicators });
   return (
     <div className="max-w-3xl mx-auto font-sans text-white space-y-4 p-4">
       <div className="text-center font-extrabold italic py-1 text-lime-600">
