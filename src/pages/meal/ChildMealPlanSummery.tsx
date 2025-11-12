@@ -34,7 +34,7 @@ type MealPlan = {
 
 const ChildMealPlanSummary = () => {
   const { t } = useTranslation();
-  const [mealPlans, setMealPlans] = useState<MealPlan[] | null>(null);
+  const [mealPlans, setMealPlans] = useState<any[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [selectedMealPlan, setSelectedMealPlan] = useState<MealPlan | null>(
@@ -47,7 +47,7 @@ const ChildMealPlanSummary = () => {
   const childId = id;
   const navigate = useNavigate();
 
-  console.log({ mealPlans });
+  // console.log({ mealPlans });
   const getDateKey = (dateStr: string) =>
     new Date(dateStr).toISOString().split("T")[0];
 
@@ -76,15 +76,14 @@ const ChildMealPlanSummary = () => {
         // normalize mealTimes to array
         const normalizedPlans = detailedPlans.map((plan) => ({
           ...plan,
-          meals: plan.meals?.map((meal: any) => ({
-            ...meal,
-            mealTimes: Array.isArray(meal.mealTimes)
-              ? meal.mealTimes
-              : meal.mealTimes
-              ? [meal.mealTimes]
-              : [],
-          })),
+          mealTimes: plan.mealTimes || {}, // ensure it’s an object
+          meals:
+            plan.meals?.map((meal: any) => ({
+              ...meal,
+              // we don’t need to overwrite mealTimes here, it comes from plan
+            })) || [],
         }));
+
         setMealPlans(normalizedPlans);
       })
       .catch((err) => {
@@ -140,13 +139,11 @@ const ChildMealPlanSummary = () => {
 
   // collect all unique meal times for tabs
   const allMealTimess = useMemo(() => {
-    return Array.from(
-      new Set(
-        mealPlans?.flatMap(
-          (plan) => plan.meals?.flatMap((meal) => meal.mealTimes) || []
-        ) || []
-      )
+    if (!mealPlans) return [];
+    const times = mealPlans.flatMap(
+      (plan) => Object.values(plan.mealTimes).flat() // flatten all mealTimes arrays
     );
+    return Array.from(new Set(times)); // unique
   }, [mealPlans]);
 
   const handleDeleteMealPlan = async () => {
@@ -205,7 +202,7 @@ const ChildMealPlanSummary = () => {
     );
   };
 
-  const PlanCard = ({ mealPlan }: { mealPlan: MealPlan }) => {
+  const PlanCard = ({ mealPlan }: { mealPlan: any }) => {
     const selected = selectedMealPlan?.id === mealPlan.id;
     console.log({ selected });
     return (
@@ -251,17 +248,15 @@ const ChildMealPlanSummary = () => {
         <div>
           <h4 className="text-sm font-semibold mb-1">🍽️ Meals</h4>
           {Array.isArray(mealPlan.meals) &&
-          mealPlan.meals.filter(
-            (m) => Array.isArray(m.mealTimes) && m.mealTimes.includes(activeTab)
-          ).length > 0 ? (
+          Object.entries(mealPlan.mealTimes).some(([times]) =>
+            times.includes(activeTab)
+          ) ? (
             <div className="space-y-1">
               {mealPlan.meals
-                .filter(
-                  (meal) =>
-                    Array.isArray(meal.mealTimes) &&
-                    meal.mealTimes.includes(activeTab)
+                .filter((meal: any) =>
+                  mealPlan.mealTimes[meal.id]?.includes(activeTab)
                 )
-                .map((meal) => (
+                .map((meal: any) => (
                   <div
                     key={meal.id}
                     className="flex justify-between items-center text-sm"
@@ -275,6 +270,7 @@ const ChildMealPlanSummary = () => {
             <p className="text-xs">No meals for this meal time.</p>
           )}
         </div>
+
         <span className="block mt-2 text-teal-300 rounded-sm px-2 py-1 underline text-sm">
           View detail
         </span>
@@ -330,16 +326,16 @@ const ChildMealPlanSummary = () => {
             {allMealTimess.length > 0 && (
               <ul className="bg-[#013222] px-2 -mt-2 flex flex-wrap text-sm font-medium text-center border-b border-gray-200 mb-4">
                 {allMealTimess.map((time) => (
-                  <li key={time} className="mr-2">
+                  <li key={time as any} className="mr-2">
                     <button
-                      onClick={() => setActiveTab(time)}
+                      onClick={() => setActiveTab(time as any)}
                       className={`py-2 px-2 text-[18px] font-normal whitespace-nowrap mx-auto w-full rounded-sm ${
                         activeTab === time
                           ? "bg-[#0B8FAC] text-white" // filled style
                           : " text-gray-200 text-xl font-extrabold" // outline style
                       } rounded-lg`}
                     >
-                      {time}
+                      {time as any}
                     </button>
                   </li>
                 ))}

@@ -8,20 +8,23 @@ import fallback from "@/assets/meal.png";
 import { useTranslation } from "react-i18next";
 import { Eye } from "lucide-react";
 import { calculateNutrients } from "@/utils/calculateNutrients";
+
+type SelectedMeal = {
+  meal: any;
+  multiplier: number;
+  selectedMealTime: string;
+};
+
 const MealLibraryComponent = () => {
   const { t } = useTranslation();
   const [meals, setMeals] = useState<any[]>([]);
-  // console.log({ meals });
   const [expandedMealId, setExpandedMealId] = useState<string | null>(null);
-  const [selectedMeals, setSelectedMeals] = useState<
-    { meal: any; multiplier: number }[]
-  >([]);
+  const [selectedMeals, setSelectedMeals] = useState<SelectedMeal[]>([]);
   const [mealDescription, setMealDescription] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [activeTab, setActiveTab] = useState<string>(""); // selected meal time tab
-  // --- New state for date-time picker ---
+  const [activeTab, setActiveTab] = useState<string>("");
   const [selectedDateTime, setSelectedDateTime] = useState<string>("");
   const [dateSelected, setDateSelected] = useState(false);
   const [allMealPlans, setAllMealPlans] = useState<any[]>([]);
@@ -91,14 +94,11 @@ const MealLibraryComponent = () => {
     });
     return nutrientsByType;
   };
-  const computeNutrients = (selected: { meal: any; multiplier: number }[]) => {
+  const computeNutrients = (selected: SelectedMeal[]) => {
     const totals: Record<string, { amount: number; unit?: string }> = {};
     let totalVolume = 0;
     selected.forEach(({ meal, multiplier }) => {
-      const mealTimesMultiplier = Array.isArray(meal.mealTimes)
-        ? meal.mealTimes.length
-        : 1;
-      const effectiveMultiplier = multiplier * mealTimesMultiplier;
+      const effectiveMultiplier = multiplier; // * 1 for selected time
       const mealYieldVolume = calculateYieldVolume(meal);
       totalVolume += mealYieldVolume * effectiveMultiplier;
       const mealNutrients = calculateMealNutrients(meal);
@@ -143,7 +143,6 @@ const MealLibraryComponent = () => {
             }
           })
         );
-        // normalize mealTimes to array if needed
         const normalizedPlans = detailedPlans.map((plan) => ({
           ...plan,
           meals: plan.meals?.map((meal: any) => ({
@@ -178,26 +177,34 @@ const MealLibraryComponent = () => {
   const toggleMealExpand = (mealId: string) => {
     setExpandedMealId((prev) => (prev === mealId ? null : mealId));
   };
-  const toggleMeal = (meal: Meal) => {
+  const toggleMeal = (meal: any, mealTime: string) => {
     setSelectedMeals((prev) => {
-      const exists = prev.find((m) => m.meal.id === meal.id);
+      const exists = prev.find(
+        (m) => m.meal.id === meal.id && m.selectedMealTime === mealTime
+      );
       return exists
-        ? prev.filter((m) => m.meal.id !== meal.id)
-        : [...prev, { meal, multiplier: 1 }];
+        ? prev.filter(
+            (m) => !(m.meal.id === meal.id && m.selectedMealTime === mealTime)
+          )
+        : [...prev, { meal, multiplier: 1, selectedMealTime: mealTime }];
     });
   };
-  const handleMultiplierChange = (mealId: string, value: number) => {
+  const handleMultiplierChange = (
+    mealId: string,
+    mealTime: string,
+    value: number
+  ) => {
     setSelectedMeals((prev) =>
       prev.map((m) =>
-        m.meal.id === mealId ? { ...m, multiplier: Math.max(1, value) } : m
+        m.meal.id === mealId && m.selectedMealTime === mealTime
+          ? { ...m, multiplier: Math.max(1, value) }
+          : m
       )
     );
   };
-  // collect all unique meal times for tabs
   const allMealTimess = Array.from(
     new Set(meals?.flatMap((plan) => plan.mealTimes || []))
   );
-  // Filter meals based on active tab
   const filteredMeals = activeTab
     ? meals.filter((meal) => meal.mealTimes?.includes(activeTab))
     : meals;
@@ -217,10 +224,17 @@ const MealLibraryComponent = () => {
         }))
       );
   }, [allMealPlans, selectedDateTime]);
-  const existingSummary = useMemo(
-    () => computeNutrients(existingMealsForDate),
-    [existingMealsForDate]
-  );
+  const existingSummary = useMemo(() => {
+    // For existing, need to adapt to SelectedMeal type, but since computeNutrients now takes SelectedMeal[], adapt
+    const adaptedExisting: SelectedMeal[] = existingMealsForDate.map(
+      ({ meal, multiplier }) => ({
+        meal,
+        multiplier,
+        selectedMealTime: "", // not used for existing
+      })
+    );
+    return computeNutrients(adaptedExisting);
+  }, [existingMealsForDate]);
   const getTotal = (nutrient: string) => {
     if (nutrient === "water") {
       return existingSummary.totalVolume + nutrientTotals.totalVolume;
@@ -261,35 +275,49 @@ const MealLibraryComponent = () => {
       labels[key.toLowerCase()] || key.charAt(0).toUpperCase() + key.slice(1)
     );
   };
-  // const hasExceededLimit = () => {
-  //   if (!dailyResult) return false;
-  //   return displayNutrients.some((key) => getPercentage(key as any) >= 100);
-  // };
-  // Get current date formatted for date input
   const getMinDate = () => {
     const now = new Date();
     return now.toISOString().split("T")[0];
   };
   const handleConfirmMealPlan = async () => {
     if (!children.length) return navigate("/children");
-    // if (hasExceededLimit()) {
-    //   alert(
-    //     t(
-    //       "You have met or exceeded the daily nutritional limit for some nutrients. Please review your selection."
-    //     )
-    //   );
-    //   return;
-    // }
+    // Group by meal.id, sum multipliers, collect unique mealTimes for each meal
+    const mealMap = selectedMeals.reduce(
+      (map, { meal, multiplier, selectedMealTime }) => {
+        if (!map.has(meal.id)) {
+          map.set(meal.id, { multiplier: 0, mealTimes: new Set<string>() });
+        }
+        const entry = map.get(meal.id)!;
+        entry.multiplier += multiplier;
+        entry.mealTimes.add(selectedMealTime);
+        return map;
+      },
+      new Map<string, { multiplier: number; mealTimes: Set<string> }>()
+    );
+
+    const mealTimesObj = Object.fromEntries(
+      Array.from(mealMap.entries()).map(([id, { mealTimes }]) => [
+        id,
+        Array.from(mealTimes),
+      ])
+    );
+
+    const mealsPayload = Array.from(mealMap.entries()).map(
+      ([id, { multiplier }]) => ({
+        id,
+        multiplier,
+      })
+    );
+
     const payload = {
       expertId: specialists[0]?.id + "",
       childId: paramId,
       meal_description: mealDescription,
       nutrients: nutrientTotals.nutrients,
       meal_date: new Date(selectedDateTime),
-      meals: selectedMeals.map(({ meal, multiplier }) => ({
-        id: meal.id,
-        multiplier,
-      })),
+      calories: 0,
+      mealTimes: mealTimesObj,
+      meals: mealsPayload,
     };
     try {
       setSubmitting(true);
@@ -303,7 +331,6 @@ const MealLibraryComponent = () => {
       setSubmitting(false);
     }
   };
-  // --- Render Date Picker First ---
   if (!dateSelected) {
     return (
       <div className="min-h-screen bg-gray-800">
@@ -323,7 +350,7 @@ const MealLibraryComponent = () => {
             placeholder="Select meal date"
             value={selectedDateTime}
             onChange={(e) => setSelectedDateTime(e.target.value)}
-            min={getMinDate()} // disables past dates
+            min={getMinDate()}
           />
           <label htmlFor="date" className="py-2 text-emerald-400 font-serif">
             {t("Enter Description")}
@@ -337,7 +364,6 @@ const MealLibraryComponent = () => {
             }}
             placeholder={t(" Please enter describe of meal plan...")}
           />
-
           <button
             disabled={!selectedDateTime}
             onClick={() => setDateSelected(true)}
@@ -353,7 +379,6 @@ const MealLibraryComponent = () => {
       </div>
     );
   }
-  // --- Main Meal Library UI ---
   return (
     <div className="min-h-screen bg-gray-800">
       <div className="bg-[#013222] p-4">
@@ -362,7 +387,6 @@ const MealLibraryComponent = () => {
         </h1>
       </div>
       <div className="">
-        {/* Meal Time Tabs */}
         <ul className="bg-[#013222] pl-3 pt-4 pb-1.5 flex flex-wrap text-sm font-medium text-center border-b border-gray-200">
           {allMealTimess.map((time) => (
             <li key={time} className="">
@@ -370,8 +394,8 @@ const MealLibraryComponent = () => {
                 onClick={() => setActiveTab(time)}
                 className={`py-1 px-2 text-[18px] font-normal whitespace-nowrap mx-auto w-full rounded-sm ${
                   activeTab === time
-                    ? "bg-[#0B8FAC] text-white" // filled style
-                    : " text-gray-200 text-xl font-extrabold" // outline style
+                    ? "bg-[#0B8FAC] text-white"
+                    : " text-gray-200 text-xl font-extrabold"
                 } rounded-lg`}
               >
                 {time}
@@ -386,7 +410,6 @@ const MealLibraryComponent = () => {
             <h3 className="text-lg font-semibold text-emerald-300">
               📊 Daily Nutrient Progress
             </h3>
-
             <button
               onClick={() => setShowProgress(!showProgress)}
               className="bg-[#0B8FAC] hover:bg-[#0ea4c6] px-2 py-1 rounded text-gray-100 "
@@ -444,7 +467,6 @@ const MealLibraryComponent = () => {
               })}
           </div>
         )}
-
         {selectedMeals.length > 0 && (
           <div className="bg-[#0d778f] p-4 rounded">
             <h2 className="text-lg font-bold text-emerald-300 mb-2">
@@ -482,9 +504,10 @@ const MealLibraryComponent = () => {
           </p>
         ) : (
           filteredMeals.map((meal) => {
-            const selected = selectedMeals.find((m) => m.meal.id === meal.id);
+            const thisSelected = selectedMeals.find(
+              (m) => m.meal.id === meal.id && m.selectedMealTime === activeTab
+            );
             const expanded = expandedMealId === meal.id;
-            // ✅ compute yield volume for this specific meal
             const yieldVolume = calculateYieldVolume(meal);
             const mealTimesDisplay = Array.isArray(meal.mealTimes)
               ? meal.mealTimes.join(", ")
@@ -493,7 +516,7 @@ const MealLibraryComponent = () => {
               <div
                 key={meal.id}
                 className={`p-4 rounded-xl border transition-all duration-200 cursor-pointer border-gray-700 shadow-sm mb-6 ${
-                  selected ? "bg-[#0d778f]" : "bg-[#0B8FAC]"
+                  thisSelected ? "bg-[#0d778f]" : "bg-[#0B8FAC]"
                 }`}
                 onClick={() => toggleMealExpand(meal.id)}
               >
@@ -534,13 +557,14 @@ const MealLibraryComponent = () => {
                       <input
                         type="number"
                         min={1}
-                        disabled={!selected}
+                        disabled={!thisSelected}
                         className="w-16 text-black px-2 py-1 bg-gray-300 rounded disabled:bg-gray-600 disabled:cursor-not-allowed"
-                        value={selected?.multiplier ?? 1}
+                        value={thisSelected?.multiplier ?? 1}
                         onClick={(e) => e.stopPropagation()}
                         onChange={(e) =>
                           handleMultiplierChange(
                             meal.id,
+                            activeTab,
                             parseInt(e.target.value)
                           )
                         }
@@ -559,7 +583,6 @@ const MealLibraryComponent = () => {
                     <p className="text-gray-100">
                       <strong>Meal Time:</strong> {mealTimesDisplay}
                     </p>
-
                     <p className="text-gray-100">
                       <strong>Yield Volume:</strong>{" "}
                       {yieldVolume.toFixed(2) ?? "N/A"} ml
@@ -639,15 +662,15 @@ const MealLibraryComponent = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      toggleMeal(meal);
+                      toggleMeal(meal, activeTab);
                     }}
                     className={`text-xs px-4 py-1.5 rounded font-semibold transition-all ${
-                      selected
+                      thisSelected
                         ? "bg-red-500 hover:bg-red-600"
                         : "bg-teal-300 text-black hover:bg-blue-600"
                     }`}
                   >
-                    {selected ? "Remove" : "Add"}
+                    {thisSelected ? "Remove" : "Add"}
                   </button>
                 </div>
               </div>
