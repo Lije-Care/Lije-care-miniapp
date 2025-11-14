@@ -78,14 +78,13 @@ const MealLibraryComponent = () => {
       {};
     meal?.mealIngredients?.forEach((item: any) => {
       const ing = item.ingredient;
-      const conversionToBase = ing?.portionUnit?.conversionToBase ?? 1;
+      // const conversionToBase = ing?.portionUnit?.conversionToBase ?? 1;
       const portionSize = ing?.portionSize ?? 1;
       const quantity = item.quantity ?? 1;
       ing?.nutrientAmounts?.forEach((na: any) => {
         const nutrientType = (na?.nutrient?.name || "other").toLowerCase();
         const unit = na?.nutrient?.unit || "";
-        const adjustedAmount =
-          na.amount * (quantity / portionSize) * conversionToBase;
+        const adjustedAmount = na.amount * (quantity / portionSize);
         if (!nutrientsByType[nutrientType])
           nutrientsByType[nutrientType] = { amount: 0, unit };
         nutrientsByType[nutrientType].amount += adjustedAmount;
