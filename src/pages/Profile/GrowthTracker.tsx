@@ -41,7 +41,7 @@ interface Indicator {
   type: string;
 }
 
-const GrowthTracker = ({ childProfile }: { childProfile: ChildProfile }) => {
+const GrowthTracker = ({ childProfile }: { childProfile: any }) => {
   const { t } = useTranslation();
   const [child, setChild] = useState<ChildProfile | null>(null);
   const [zScores, setZScores] = useState<CalculatedZScores | null>(null);
