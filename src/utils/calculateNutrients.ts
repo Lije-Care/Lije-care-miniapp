@@ -1,3 +1,5 @@
+import { calculateBMIZ } from "@/excelData/calculateBMIZ";
+import { differenceInWeeks } from "date-fns";
 export const calculateAgeInMonths = (birthDate: string): number => {
   if (!birthDate) return 0;
   const today = new Date();
@@ -17,28 +19,56 @@ export const calculateAgeInMonths = (birthDate: string): number => {
 export const calculateNutrients = (
   weight: number,
   height: number,
-  _gender: string,
+  gender: string,
   date_of_birth: string,
   activity_level: "Active" | "Moderate" | "Sedentary" = "Moderate"
 ): any | null => {
   const months = calculateAgeInMonths(date_of_birth);
+  // console.log({ months });
   if (months < 0 || !weight || !height) return null;
 
-  const bmi = weight / (height / 100) ** 2;
+  const birthDate = new Date(date_of_birth);
+  const today = new Date();
+
+  // Calculate age in days
+  const diffInMs = today.getTime() - birthDate.getTime();
+  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+  // Convert to months using 30 days per month (rounded normally)
+  const ageInMonths = Math.round(diffInDays / 30);
+
+  // Weeks (keep your existing logic)
+  const ageInWeeks = differenceInWeeks(today, birthDate);
+
+  const measuredStanding = height > 87;
+  const bmiResult = calculateBMIZ(
+    weight,
+    height,
+    ageInWeeks <= 13 ? ageInWeeks : ageInMonths,
+    ageInWeeks <= 13 ? "week" : "month",
+    gender === "Male" ? "boy" : "girl",
+    measuredStanding
+  );
+  const bmi = bmiResult.zScore;
+
   const roundedBMI = parseFloat(bmi.toFixed(2));
+
   let status = "Normal";
-  if (bmi < 14) status = "Underweight";
-  else if (bmi > 17) status = "Overweight";
+  if (bmi <= -2) status = "Underweight";
+  else if (bmi >= 2) status = "Overweight";
 
   // Calculate calories based on age
   let value1: number;
   if (months <= 6) {
     value1 = weight * 108;
+  } else if (months <= 12) {
+    value1 = weight * 98;
   } else if (months <= 36) {
     value1 = weight * 102;
   } else {
     value1 = weight * 90;
   }
+  // console.log({ value1 }); //1620
 
   // Activity level multiplier
   let value2: number;
@@ -59,6 +89,7 @@ export const calculateNutrients = (
   } else {
     value3 = 1;
   }
+  // console.log({ value3 });
 
   // Calculate total calories
   const calories = value1 * value2 * value3;

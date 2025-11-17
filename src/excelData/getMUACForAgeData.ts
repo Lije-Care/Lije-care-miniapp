@@ -10,13 +10,11 @@ export interface MUACForAgeEntry {
 export const getMUACForAgeData = (
   gender: "boy" | "girl"
 ): MUACForAgeEntry[] => {
-
-
   if (gender === "boy") {
     return boysMuacData.map((entry: any) => ({
       Months: entry.Month,
-      Median: entry["SD"],
-      "1 SD": entry["1 SD"]
+      Median: entry["SD(M)"],
+      "1 SD": entry["1 SD"],
     }));
   }
 
@@ -24,7 +22,7 @@ export const getMUACForAgeData = (
     return girlsMuacData.map((entry: any) => ({
       Months: entry.Months,
       Median: entry["SD"],
-      "1 SD": entry["1 SD"]
+      "1 SD": entry["1 SD"],
     }));
   }
 

@@ -34,14 +34,15 @@ export const calculateHAZ = (
   if (ageInWeeks <= 13) {
     const raw = gender === "boy" ? boys0To13Weeks : girls0To13Weeks;
     data = raw.map((row: any) => ({
-      age: parseInt(row.weeks),
+      age: parseInt(row.Weeks),
       median: row["SD(M)"],
       plus1SD: row["1 SD"],
     }));
   } else if (ageInMonths >= 4 && ageInMonths <= 60) {
     const raw = gender === "boy" ? boys4mTo5y : girls4mTo5y;
+
     data = raw.map((row: any) => ({
-      age: parseInt(row.months),
+      age: parseInt(row.Month),
       median: row["SD(M)"],
       plus1SD: row["1 SD"],
     }));
@@ -57,13 +58,10 @@ export const calculateHAZ = (
       : prev;
   });
 
-  // console.log("Data fetched for HAZ calculation:", row);
-
   const median = parseFloat(row.median as string);
   const plus1SD = parseFloat(row.plus1SD as string);
   const SD = plus1SD - median;
-  // console.log();
-  // console.log("Row found for HAZ calculation:", row);
+
   if (isNaN(median) || isNaN(plus1SD) || Math.abs(SD) < 0.0001) {
     return { haz: 0, classification: "Invalid reference values" };
   }
