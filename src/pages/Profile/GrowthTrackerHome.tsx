@@ -40,11 +40,7 @@ interface Indicator {
   type: string;
 }
 
-const GrowthTrackerHome = ({
-  childProfile,
-}: {
-  childProfile: ChildProfile;
-}) => {
+const GrowthTrackerHome = ({ childProfile }: { childProfile: any }) => {
   const [child, setChild] = useState<ChildProfile | null>(null);
   const [zScores, setZScores] = useState<CalculatedZScores | null>(null);
   const [expanded, setExpanded] = useState(true);
