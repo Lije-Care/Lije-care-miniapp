@@ -6,14 +6,17 @@ export const calculateMUACZ = (
   gender: "boy" | "girl"
 ): { muac: number; zScore: number; classification: string } => {
   const data = getMUACForAgeData(gender);
- 
+  console.log({ data });
 
-  const row = data.find(entry => parseInt(entry.Months ?? "") === ageInMonths);
+  const row = data.find(
+    (entry) => parseInt(entry.Months ?? "") === ageInMonths
+  );
+  console.log({ row });
   if (!row || !row["Median"] || !row["1 SD"]) {
     return {
       muac: parseFloat(muacCm.toFixed(2)),
       zScore: 0,
-      classification: "No matching MUAC-for-age reference found."
+      classification: "No matching MUAC-for-age reference found.",
     };
   }
 
@@ -25,7 +28,7 @@ export const calculateMUACZ = (
     return {
       muac: parseFloat(muacCm.toFixed(2)),
       zScore: 0,
-      classification: "Invalid SD or median values."
+      classification: "Invalid SD or median values.",
     };
   }
 
@@ -37,9 +40,13 @@ export const calculateMUACZ = (
 };
 
 const classifyMUACZ = (z: number): string => {
-  if (z < -3) return "Severe Acute Malnutrition (SAM): Urgent intervention required.";
-  if (z >= -3 && z < -2) return "Moderate Acute Malnutrition (MAM): Supplementary feeding needed.";
-  if (z >= -2 && z < 1) return "Normal Nutrition Status: Balanced diet recommended.";
-  if (z >= 1 && z < 2) return "Risk of Overnutrition: Monitor diet and activity.";
+  if (z < -3)
+    return "Severe Acute Malnutrition (SAM): Urgent intervention required.";
+  if (z >= -3 && z < -2)
+    return "Moderate Acute Malnutrition (MAM): Supplementary feeding needed.";
+  if (z >= -2 && z < 1)
+    return "Normal Nutrition Status: Balanced diet recommended.";
+  if (z >= 1 && z < 2)
+    return "Risk of Overnutrition: Monitor diet and activity.";
   return "Overnutrition (Obesity Risk): Review dietary habits and activity.";
 };

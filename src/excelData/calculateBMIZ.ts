@@ -29,7 +29,7 @@ export const calculateBMIZ = (
 
   gender.toLowerCase() === "female" ? "girl" : "boy";
 
-  const data = getBMIForAgeData(gender, ageValue, ageType);
+  const data = getBMIForAgeData(gender, ageType);
 
   const row = data.find((entry) =>
     ageType === "week"
