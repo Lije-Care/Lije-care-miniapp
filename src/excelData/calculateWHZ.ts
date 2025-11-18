@@ -1,4 +1,7 @@
-import { getWeightForHeightData, WeightForHeightEntry } from "./dataselectorWHZ";
+import {
+  getWeightForHeightData,
+  WeightForHeightEntry,
+} from "./dataselectorWHZ";
 
 export const calculateWHZ = (
   weightKg: number,
@@ -39,7 +42,8 @@ export const calculateWHZ = (
     return { zScore: 0, classification: "Invalid reference data" };
   }
 
-  const zRaw = (weightKg - median) / SD;
+  const zRaw = (weightKg - median) / SD; // (13-13.2)/14.5-13.2
+  // 13-13.6/14.7-13.6
   const zScore = parseFloat(zRaw.toFixed(2));
   const classification = classifyWHZ(zScore);
 

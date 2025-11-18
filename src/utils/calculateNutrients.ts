@@ -56,6 +56,7 @@ export const calculateNutrients = (
   let status = "Normal";
   if (bmi <= -2) status = "Underweight";
   else if (bmi >= 2) status = "Overweight";
+  console.log({ status });
 
   // Calculate calories based on age
   let value1: number;

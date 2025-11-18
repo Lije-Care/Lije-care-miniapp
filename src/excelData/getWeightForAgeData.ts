@@ -6,10 +6,9 @@ import girls4mTo10y from "@/excelData/Weight-for-age/girls_4m_to_10y.json";
 export interface WeightForAgeEntry {
   Weeks?: string;
   Months?: string;
-  "SD": string;
+  SD: string;
   "1 SD": string;
 }
-
 
 export const getWeightForAgeData = (
   gender: "boy" | "girl",
@@ -20,7 +19,7 @@ export const getWeightForAgeData = (
     return boys0To13Weeks.map((entry: any) => ({
       Weeks: entry.weeks,
       Months: undefined,
-      "SD": entry["SD(M)"],
+      SD: entry["SD(M)"],
       "1 SD": entry["1 SD"],
     }));
   }
@@ -28,7 +27,7 @@ export const getWeightForAgeData = (
   if (gender === "boy" && ageType === "month") {
     return boys4mTo10y.map((entry: any) => ({
       Months: entry.Month,
-      "SD": entry["SD(M)"],
+      SD: entry["SD(M)"],
       "1 SD": entry["1 SD"],
       Weeks: undefined,
     }));
@@ -37,7 +36,7 @@ export const getWeightForAgeData = (
   if (gender === "girl" && ageType === "month") {
     return girls4mTo10y.map((entry: any) => ({
       Months: entry.Month,
-      "SD": entry["SD(M)"],
+      SD: entry["SD(M)"],
       "1 SD": entry["1 SD"],
       Weeks: undefined,
     }));
