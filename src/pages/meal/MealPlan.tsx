@@ -79,9 +79,7 @@ const MealLibraryComponent = () => {
     tg.BackButton.show();
 
     tg.BackButton.onClick(() => {
-      // Go back using your routing system
-      window.history.back(); // If using normal navigation
-      // router.back(); // If using Next.js router
+      window.history.back();
     });
 
     return () => {
