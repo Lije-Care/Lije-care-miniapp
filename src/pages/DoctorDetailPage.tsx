@@ -116,9 +116,19 @@ export default function DoctorDetailPage() {
   return (
     <Page back={true}>
       <div className=" space-y-4 text-white bg-gray-800 min-h-screen">
-        <h2 className="text-xl  p-6    bg-[#013222] font-bold text-emerald-400">
-          {t("Doctor Info")}
-        </h2>
+        <div className=" bg-[#013222] pl-3 pb-3">
+          <h2 className="text-xl  pt-6 pb-5 ml-6    font-bold text-emerald-400">
+            {t("Doctor Info")}
+          </h2>
+          <button
+            onClick={() => {
+              navigate(-1);
+            }}
+            className="text-emerald-400 hover:text-emerald-300 text-sm font-medium pb-2  flex justify-start items-start"
+          >
+            ← Back
+          </button>
+        </div>
 
         {!hasFavoriteChild && (
           <div className="bg-[#0D778F] p-4 rounded border border-gray-300 text-white space-y-2 mx-2 ">

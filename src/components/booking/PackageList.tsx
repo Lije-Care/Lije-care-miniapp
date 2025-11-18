@@ -56,6 +56,14 @@ const PackageList = () => {
           <h2 className="mb-4 text-4xl tracking-tight font-extrabold text-white ">
             Please Select a Plan
           </h2>
+          <button
+            onClick={() => {
+              navigate(-1);
+            }}
+            className="text-emerald-400 hover:text-emerald-300 text-sm font-medium pb-2  flex justify-start items-start"
+          >
+            ← Back
+          </button>
           <p className="mb-5 font-light text-gray-200 sm:text-xl ">
             Choose a plan and make a payment to connect with our experts.
           </p>

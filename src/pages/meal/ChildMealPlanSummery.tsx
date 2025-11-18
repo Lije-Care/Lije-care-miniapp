@@ -244,31 +244,29 @@ const ChildMealPlanSummary = () => {
           {mealPlan.child?.dietary_restrictions || t("None")}
         </div>
         {/* Meals filtered by active tab */}
-        <div className="my-2 border-t border-gray-200" />
+        <div className="my-2 " />
         <div>
-          <h4 className="text-sm font-semibold mb-1">🍽️ Meals</h4>
+          {/* <h4 className="text-sm font-semibold mb-1">🍽️ Meals</h4> */}
           {Array.isArray(mealPlan.meals) &&
-          Object.entries(mealPlan.mealTimes).some(([times]) =>
-            times.includes(activeTab)
-          ) ? (
-            <div className="space-y-1">
-              {mealPlan.meals
-                .filter((meal: any) =>
-                  mealPlan.mealTimes[meal.id]?.includes(activeTab)
-                )
-                .map((meal: any) => (
-                  <div
-                    key={meal.id}
-                    className="flex justify-between items-center text-sm"
-                  >
-                    <span>Meal name: {meal.name || "Untitled"}</span>
-                    <Badge type="dot">{meal.mealType || "Unknown"}</Badge>
-                  </div>
-                ))}
-            </div>
-          ) : (
-            <p className="text-xs">No meals for this meal time.</p>
-          )}
+            Object.entries(mealPlan.mealTimes).some(([times]) =>
+              times.includes(activeTab)
+            ) && (
+              <div className="space-y-1">
+                {mealPlan.meals
+                  .filter((meal: any) =>
+                    mealPlan.mealTimes[meal.id]?.includes(activeTab)
+                  )
+                  .map((meal: any) => (
+                    <div
+                      key={meal.id}
+                      className="flex justify-between items-center text-sm"
+                    >
+                      <span>Meal name: {meal.name || "Untitled"}</span>
+                      <Badge type="dot">{meal.mealType || "Unknown"}</Badge>
+                    </div>
+                  ))}
+              </div>
+            )}
         </div>
 
         <span className="block mt-2 text-teal-300 rounded-sm px-2 py-1 underline text-sm">
