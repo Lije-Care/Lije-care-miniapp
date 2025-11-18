@@ -235,9 +235,9 @@ const MealLibraryComponent = () => {
     return computeNutrients(adaptedExisting);
   }, [existingMealsForDate]);
   const getTotal = (nutrient: string) => {
-    if (nutrient === "water") {
-      return existingSummary.totalVolume + nutrientTotals.totalVolume;
-    }
+    // if (nutrient === "water") {
+    //   return existingSummary.totalVolume + nutrientTotals.totalVolume;
+    // }
     return (
       (existingSummary.nutrients[nutrient]?.amount || 0) +
       (nutrientTotals.nutrients[nutrient]?.amount || 0)
@@ -266,7 +266,7 @@ const MealLibraryComponent = () => {
       carbs: "Carbohydrates (g)",
       iron: "Iron (mg)",
       calcium: "Calcium (mg)",
-      vitaminA: "Vitamin A (mcg)",
+      vitamina: "Vitamin A (mcg)",
       water: "Water (ml)",
       zinc: "Zinc (mg)",
     };

@@ -117,27 +117,27 @@ export const calculateNutrients = (
   }
 
   let calcium: number;
-  let vitaminA: number;
+  let vitamina: number;
   let water: number;
   let zinc: number;
   if (months <= 6) {
     calcium = 200;
-    vitaminA = 400;
+    vitamina = 400;
     water = 700;
     zinc = 2;
   } else if (months <= 12) {
     calcium = 260;
-    vitaminA = 500;
+    vitamina = 500;
     water = 900;
     zinc = 3;
   } else if (months <= 36) {
     calcium = 700;
-    vitaminA = 300;
+    vitamina = 300;
     water = 1300;
     zinc = 3;
   } else {
     calcium = 1000;
-    vitaminA = 400;
+    vitamina = 400;
     water = 1600;
     zinc = 5;
   }
@@ -154,7 +154,7 @@ export const calculateNutrients = (
     carbs,
     iron: parseFloat(iron.toFixed(2)),
     calcium,
-    vitaminA,
+    vitamina,
     water,
     zinc,
     status,
