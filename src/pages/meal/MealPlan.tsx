@@ -73,20 +73,6 @@ const MealLibraryComponent = () => {
       }, 0) ?? 0
     );
   };
-  useEffect(() => {
-    const tg = window.Telegram.WebApp;
-
-    tg.BackButton.show();
-
-    tg.BackButton.onClick(() => {
-      navigate("/children"); // The correct way for React Router
-    });
-
-    return () => {
-      tg.BackButton.hide();
-      tg.BackButton.onClick = () => {}; // Clear handler properly
-    };
-  }, []);
 
   const calculateMealNutrients = (meal: any) => {
     const nutrientsByType: Record<string, { amount: number; unit?: string }> =
@@ -347,10 +333,18 @@ const MealLibraryComponent = () => {
   if (!dateSelected) {
     return (
       <div className="min-h-screen bg-gray-800">
-        <div className="bg-[#013222] px-6 pt-6 pb-12 flex justify-center items-center">
-          <h2 className="text-2xl font-bold text-emerald-400">
+        <div className="bg-[#013222] px-6 pt-6 pb-12 flex flex-col ">
+          <h2 className="text-2xl font-bold text-emerald-400 flex justify-center items-center">
             {t("Select Meal Date & Time")}
           </h2>
+          <button
+            onClick={() => {
+              navigate(-1);
+            }}
+            className="text-emerald-400 hover:text-emerald-300 text-sm font-medium pb-2 mt-3 flex justify-start items-start"
+          >
+            ← Back
+          </button>
         </div>
         <div className="p-6 max-w-md bg-[#0B364F] rounded-lg text-white space-y-6 mx-2 pb-12 pt-12 mt-12">
           <label htmlFor="date" className="py-2 text-emerald-400 font-serif">
