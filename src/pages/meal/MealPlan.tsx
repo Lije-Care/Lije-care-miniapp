@@ -73,6 +73,23 @@ const MealLibraryComponent = () => {
       }, 0) ?? 0
     );
   };
+  useEffect(() => {
+    const tg = window.Telegram.WebApp;
+
+    tg.BackButton.show();
+
+    tg.BackButton.onClick(() => {
+      // Go back using your routing system
+      window.history.back(); // If using normal navigation
+      // router.back(); // If using Next.js router
+    });
+
+    return () => {
+      tg.BackButton.hide();
+      tg.BackButton.offClick(); // Remove previous handler
+    };
+  }, []);
+
   const calculateMealNutrients = (meal: any) => {
     const nutrientsByType: Record<string, { amount: number; unit?: string }> =
       {};
