@@ -79,7 +79,7 @@ const MealLibraryComponent = () => {
     tg.BackButton.show();
 
     tg.BackButton.onClick(() => {
-      navigate(-1); // The correct way for React Router
+      navigate("/children"); // The correct way for React Router
     });
 
     return () => {
