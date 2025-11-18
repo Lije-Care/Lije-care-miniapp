@@ -21,6 +21,7 @@ export const getWeightForHeightData = (
 ): WeightForHeightEntry[] => {
   if (gender === "boy" && ageGroup === "0_2") return boys0To2Years;
   if (gender === "boy" && ageGroup === "2_5") return boys2To5Years;
+
   if (gender === "girl" && ageGroup === "0_2") return girls0To2Years;
   if (gender === "girl" && ageGroup === "2_5") return girls2To5Years;
   return [];
