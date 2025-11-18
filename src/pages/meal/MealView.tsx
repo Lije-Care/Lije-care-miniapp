@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import api from "@/api/axios";
 import {
   Title,
@@ -18,6 +18,7 @@ const MealDetails: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openMealId, setOpenMealId] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMealPlan = async () => {
@@ -87,9 +88,19 @@ const MealDetails: React.FC = () => {
   return (
     <>
       <div className=" bg-gray-800 ">
-        <Title className=" mx-auto p-6 text-2xl font-bold text-emerald-400 bg-[#013222] ">
-          🍽️ Meal Plan Overview
-        </Title>
+        <div className="bg-[#013222] pb-5 pl-2 ">
+          <Title className=" mx-auto pt-6 pb-4 text-2xl font-bold text-emerald-400 bg-[#013222] ">
+            🍽️ Meal Plan Overview
+          </Title>
+          <button
+            onClick={() => {
+              navigate(-1);
+            }}
+            className="text-emerald-400 hover:text-emerald-300 text-sm font-medium pb-2  flex justify-start items-start"
+          >
+            ← Back
+          </button>
+        </div>
       </div>
       <div className=" min-h-screen max-w-3xl mx-auto px-4 py-6 -mt-3 text-white space-y-8 bg-gray-800">
         {meals.map((meal: any) => {

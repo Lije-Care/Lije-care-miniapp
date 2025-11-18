@@ -392,9 +392,17 @@ const MealLibraryComponent = () => {
         <h1 className="text-2xl font-bold text-emerald-400">
           🍽️ {t("Create Meal Plan")}
         </h1>
+        <button
+          onClick={() => {
+            navigate(-1);
+          }}
+          className="text-emerald-400 hover:text-emerald-300 text-sm font-medium mt-3 flex justify-start items-start"
+        >
+          ← Back
+        </button>
       </div>
       <div className="">
-        <ul className="bg-[#013222] pl-3 pt-4 pb-1.5 flex flex-wrap text-sm font-medium text-center border-b border-gray-200">
+        <ul className="bg-[#013222] pl-3 pt-3 pb-1.5 flex flex-wrap text-sm font-medium text-center border-b border-gray-200">
           {allMealTimess.map((time) => (
             <li key={time} className="">
               <button
