@@ -79,12 +79,12 @@ const MealLibraryComponent = () => {
     tg.BackButton.show();
 
     tg.BackButton.onClick(() => {
-      window.history.back();
+      navigate(-1); // The correct way for React Router
     });
 
     return () => {
       tg.BackButton.hide();
-      tg.BackButton.offClick(); // Remove previous handler
+      tg.BackButton.onClick = () => {}; // Clear handler properly
     };
   }, []);
 
