@@ -35,6 +35,7 @@ type MealPlan = {
 const ChildMealPlanSummary = () => {
   const { t } = useTranslation();
   const [mealPlans, setMealPlans] = useState<any[] | null>(null);
+
   const [error, setError] = useState<string | null>(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [selectedMealPlan, setSelectedMealPlan] = useState<MealPlan | null>(
@@ -246,9 +247,9 @@ const ChildMealPlanSummary = () => {
         {/* Meals filtered by active tab */}
         <div className="my-2 " />
         <div>
-          {/* <h4 className="text-sm font-semibold mb-1">🍽️ Meals</h4> */}
+          <h4 className="text-sm font-semibold mb-1">🍽️ Meals</h4>
           {Array.isArray(mealPlan.meals) &&
-            Object.entries(mealPlan.mealTimes).some(([times]) =>
+            Object.entries(mealPlan.mealTimes).some(([, times]: any) =>
               times.includes(activeTab)
             ) && (
               <div className="space-y-1">
@@ -256,12 +257,14 @@ const ChildMealPlanSummary = () => {
                   .filter((meal: any) =>
                     mealPlan.mealTimes[meal.id]?.includes(activeTab)
                   )
-                  .map((meal: any) => (
+                  .map((meal: any, index: number) => (
                     <div
                       key={meal.id}
                       className="flex justify-between items-center text-sm"
                     >
-                      <span>Meal name: {meal.name || "Untitled"}</span>
+                      <span>
+                        {index + 1}. {meal.name || "Untitled"}
+                      </span>
                       <Badge type="dot">{meal.mealType || "Unknown"}</Badge>
                     </div>
                   ))}
