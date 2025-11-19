@@ -22,7 +22,7 @@ export default function ConsultationTab() {
   const [activeCategory, setActiveCategory] = useState(t("All"));
 
   useEffect(() => {
-    dispatch(fetchSpecialists({ page: 1, limit: 10 }));
+    dispatch(fetchSpecialists({ page: 1, limit: 10000 }));
   }, [dispatch]);
 
   // ✅ Helper to check future unbooked slots
@@ -53,13 +53,14 @@ export default function ConsultationTab() {
     if (activeCategory === t("All")) return true;
 
     const role = doc?.role || "";
-    const specialty = doc?.SpecialistProfile?.specialty || "";
+    // const specialty = doc?.SpecialistProfile?.specialty || "";
+    console.log({ specialists });
 
     switch (activeCategory) {
       case t("Nutritionist"):
         return role.toUpperCase() === "NUTRITIONIST";
       case t("Doctors"):
-        return specialty.toUpperCase() === "PEDIATRICIAN";
+        return role.toUpperCase() === "PEDIATRICIAN";
       case t("Questions"):
         return role.toUpperCase() === "CUSTOMER_SUPPORT";
       default:

@@ -17,6 +17,27 @@ const loadCartState = () => {
     return undefined;
   }
 };
+// Load specialists from localStorage
+// const loadSpecialistsState = () => {
+//   try {
+//     const serializedState = localStorage.getItem("specialists");
+//     if (!serializedState) return undefined;
+//     return JSON.parse(serializedState);
+//   } catch (err) {
+//     console.warn("Failed to load specialists:", err);
+//     return undefined;
+//   }
+// };
+
+// Save specialists to localStorage
+// const saveSpecialistsState = (state: any) => {
+//   try {
+//     const serializedState = JSON.stringify(state);
+//     localStorage.setItem("specialists", serializedState);
+//   } catch (err) {
+//     console.warn("Failed to save specialists:", err);
+//   }
+// };
 
 // Save cart state to localStorage
 const saveCartState = (state: any) => {
@@ -29,6 +50,7 @@ const saveCartState = (state: any) => {
 };
 
 const preloadedCartState = loadCartState();
+// const preloadedSpecialistsState = loadSpecialistsState();
 
 export const store = configureStore({
   reducer: {
@@ -42,12 +64,16 @@ export const store = configureStore({
   // Inject persisted cart state into preloadedState
   preloadedState: {
     cart: preloadedCartState,
+    // specialists: preloadedSpecialistsState,
   },
 });
 
 // Subscribe to store changes to save cart slice on update
 store.subscribe(() => {
-  saveCartState(store.getState().cart);
+  const state = store.getState(); // ← NOW state exists
+
+  saveCartState(state.cart);
+  // saveSpecialistsState(state.specialists); // ← works now
 });
 
 export type RootState = ReturnType<typeof store.getState>;
