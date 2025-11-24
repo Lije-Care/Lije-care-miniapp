@@ -12,7 +12,7 @@ export default function DoctorDetailPage() {
   const { t } = useTranslation();
   const { doctorId } = useParams();
   const telegramuser = JSON.parse(localStorage.getItem("user") || "{}");
-  const parentId = telegramuser?.id;
+  // const parentId = telegramuser?.id;
 
   const [doctor, setDoctor] = useState<any>(null);
   const [availability, setAvailability] = useState<any[]>([]);
@@ -64,18 +64,18 @@ export default function DoctorDetailPage() {
 
     try {
       // ✅ Check payment before booking
-      const res = await api.get(`/booked/by-parent/${parentId}`);
+      // const res = await api.get(`/booked/by-parent/${parentId}`);
 
-      const allOrders = res.data.data || [];
-      const successOrder = allOrders.find(
-        (order: any) => order.paymentStatus === "SUCCESS"
-      );
+      // const allOrders = res.data.data || [];
+      // const successOrder = allOrders.find(
+      //   (order: any) => order.paymentStatus === "SUCCESS"
+      // );
 
-      if (!successOrder) {
-        // ⛔ Not paid → redirect to package page
-        navigate("/package/list");
-        return;
-      }
+      // if (!successOrder) {
+      //   // ⛔ Not paid → redirect to package page
+      //   navigate("/package/list");
+      //   return;
+      // }
 
       // ✅ Paid → proceed with booking
       await api.post("/booking/create", {
