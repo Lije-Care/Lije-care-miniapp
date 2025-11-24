@@ -202,15 +202,33 @@ const ChatScreen = () => {
 
   const sendMessage = async () => {
     if (!message.trim() || !chatRoomId || !currentUserId) return;
-    const payload = { content: message, chatRoomId, senderId: currentUserId };
-    try {
-      const res = await api.post("/chat/message", payload);
-      setMessage("");
-      setMessages((prev) => [...prev, res.data]);
-    } catch (err) {
-      console.error("Failed to send message:", err);
-    }
+
+    const payload = {
+      content: message,
+      chatRoomId,
+      senderId: currentUserId,
+    };
+
+    socket.emit("send_message", payload); // 🔥 Use socket like admin
+
+    setMessage("");
   };
+  useEffect(() => {
+    if (!chatRoomId) return;
+
+    socket.emit("join_room", chatRoomId);
+
+    const handler = (msg: any) => {
+      setMessages((prev) => [...prev, msg]);
+    };
+
+    socket.on("receive_message", handler);
+
+    // CLEANUP — must return ONLY a function
+    return () => {
+      socket.off("receive_message", handler);
+    };
+  }, [chatRoomId]);
 
   return (
     <Page back={true}>
