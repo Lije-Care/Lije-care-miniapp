@@ -30,7 +30,7 @@ const BookingCheckout = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const tax = 20;
+  const tax = 0;
   const total = pkg.price + tax;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

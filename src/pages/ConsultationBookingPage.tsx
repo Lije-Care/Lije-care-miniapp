@@ -22,7 +22,7 @@ export default function ConsultationTab() {
   const [activeCategory, setActiveCategory] = useState(t("All"));
 
   useEffect(() => {
-    dispatch(fetchSpecialists({ page: 1, limit: 10000 }));
+    dispatch(fetchSpecialists({ page: 1, limit: 1000 }));
   }, [dispatch]);
 
   // ✅ Helper to check future unbooked slots

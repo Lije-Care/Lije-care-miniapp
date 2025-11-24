@@ -298,7 +298,7 @@ const AccountSettings = () => {
             onChange={handleChangeReset}
             className="w-full mb-4 px-3 py-2 border rounded-md"
           />
-          <Button className="w-full" onClick={handleResetPassword}>
+          <Button className="w-full " onClick={handleResetPassword}>
             ✅ {t("Confirm Reset")}
           </Button>
         </div>

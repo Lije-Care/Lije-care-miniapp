@@ -8,6 +8,7 @@ const BookingsList: React.FC = () => {
   const { t } = useTranslation();
   const [chatOpen] = useState(false);
   const { bookings, loading, error } = useBookings();
+  console.log({ bookings });
   const navigate = useNavigate();
   console.log(chatOpen);
 
