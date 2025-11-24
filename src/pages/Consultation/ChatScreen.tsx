@@ -140,15 +140,15 @@ const ChatScreen = () => {
   }, [chatRoomId]);
 
   // --- Listen for socket messages ---
-  useEffect(() => {
-    const handler = (msg: any) => setMessages((prev) => [...prev, msg]);
-    socket.on("receive_message", handler);
+  // useEffect(() => {
+  //   const handler = (msg: any) => setMessages((prev) => [...prev, msg]);
+  //   socket.on("receive_message", handler);
 
-    // Cleanup: remove the listener when component unmounts
-    return () => {
-      socket.off("receive_message", handler);
-    };
-  }, []);
+  //   // Cleanup: remove the listener when component unmounts
+  //   return () => {
+  //     socket.off("receive_message", handler);
+  //   };
+  // }, []);
 
   // --- Peer View Component ---
   const PeerView = ({ peer }: { peer: any }) => {
