@@ -35,6 +35,13 @@ const ChatScreen = () => {
   const [message, setMessage] = useState("");
   const messagesFetched = useRef(false);
 
+  // const [videoRoomId, setVideoRoomId] = useState<string | null>(null); // New: Track video room
+  const [isLoadingRoom, setIsLoadingRoom] = useState(true); // New: Track fetch
+  // Add states
+  const [guestVideoRoomCode, setGuestVideoRoomCode] = useState<string | null>(
+    null
+  );
+
   const telegramUser = JSON.parse(localStorage.getItem("user") || "{}");
   const currentUserId = telegramUser?.id;
 
@@ -113,21 +120,27 @@ const ChatScreen = () => {
     }
   }, [doctorId]);
 
-  // --- Load or create chat room ---
+  // In fetch useEffect:
   useEffect(() => {
     if (telegramUser?.id && selectedDoctor?.id) {
+      setIsLoadingRoom(true);
       api
         .post("/chat/rooms/find-or-create", {
           parentId: telegramUser.id,
           expertId: selectedDoctor.id,
         })
-        .then((res) => setChatRoomId(res.data.id))
-        .catch((err) =>
-          console.error("Failed to load or create chat room:", err)
-        );
+        .then((res) => {
+          setChatRoomId(res.data.id);
+          setGuestVideoRoomCode(res.data.guestVideoRoomCode); // Use guest code
+          // setVideoRoomId(res.data.guestVideoRoomCode); // Alias if needed
+          setIsLoadingRoom(false);
+        })
+        .catch((err) => {
+          console.error("Failed to load or create chat room:", err);
+          setIsLoadingRoom(false);
+        });
     }
   }, [telegramUser?.id, selectedDoctor?.id]);
-
   // --- Load messages ---
   useEffect(() => {
     if (chatRoomId && !messagesFetched.current) {
@@ -183,17 +196,26 @@ const ChatScreen = () => {
     );
   };
 
-  // --- HMS actions ---
+  // In joinRoom:
   const joinRoom = async () => {
+    if (!guestVideoRoomCode || !activeSlotBooking) {
+      alert(
+        "Video room or active slot not ready. Please wait for the slot to start."
+      );
+      return;
+    }
+
     try {
       const authToken = await hmsActions.getAuthTokenByRoomCode({
-        roomCode: "nzk-qbsn-ppv",
+        roomCode: guestVideoRoomCode, // Now valid code
       });
       await hmsActions.join({ userName: "Parent", authToken });
     } catch (e) {
-      console.error(e);
+      console.error("Failed to join room:", e);
+      alert("Failed to join video call. Please try again.");
     }
   };
+
   const leaveRoom = async () => await hmsActions.leave();
   const toggleVideo = async () =>
     await hmsActions.setLocalVideoEnabled(!isVideoOn);
@@ -209,10 +231,11 @@ const ChatScreen = () => {
       senderId: currentUserId,
     };
 
-    socket.emit("send_message", payload); // 🔥 Use socket like admin
+    socket.emit("send_message", payload);
 
     setMessage("");
   };
+
   useEffect(() => {
     if (!chatRoomId) return;
 
@@ -246,10 +269,16 @@ const ChatScreen = () => {
             </span>
           )}
           <div className="flex space-x-2">
-            {!isConnected && activeSlotBooking && (
-              <button className="p-2" onClick={joinRoom}>
-                <FiPhoneCall className="h-6 w-6 text-green-600" />
-              </button>
+            {!isConnected &&
+              activeSlotBooking &&
+              guestVideoRoomCode &&
+              !isLoadingRoom && (
+                <button className="p-2" onClick={joinRoom}>
+                  <FiPhoneCall className="h-6 w-6 text-green-600" />
+                </button>
+              )}
+            {isLoadingRoom && (
+              <span className="text-sm text-gray-500">Loading room...</span>
             )}
 
             {isConnected && peers.some((peer) => peer.videoTrack) && (
