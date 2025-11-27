@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import api from "@/api/axios";
-import { Badge, Placeholder } from "@telegram-apps/telegram-ui";
+import { Badge, Placeholder, Title, Text } from "@telegram-apps/telegram-ui";
 import { useNavigate, useParams } from "react-router-dom";
 import { Page } from "@/components/Page";
 import { useTranslation } from "react-i18next";
@@ -48,6 +48,8 @@ const ChildMealPlanSummary = () => {
   const childId = id;
   const navigate = useNavigate();
 
+  const fallbackImg = "https://via.placeholder.com/400x250?text=Meal+Image";
+
   // console.log({ mealPlans });
   const getDateKey = (dateStr: string) =>
     new Date(dateStr).toISOString().split("T")[0];
@@ -93,19 +95,6 @@ const ChildMealPlanSummary = () => {
       });
   }, [childId]);
 
-  useEffect(() => {
-    if (mealPlans && mealPlans.length > 0 && activeDate && !activeTab) {
-      const allMealTimess = Array.from(
-        new Set(
-          mealPlans.flatMap(
-            (plan) => plan.meals?.flatMap((meal: any) => meal.mealTimes) || []
-          )
-        )
-      );
-      if (allMealTimess.length > 0) setActiveTab(allMealTimess[0]);
-    }
-  }, [mealPlans, activeDate, activeTab]);
-
   const uniqueDates = useMemo(() => {
     if (!mealPlans) return [];
     return Array.from(
@@ -140,12 +129,25 @@ const ChildMealPlanSummary = () => {
 
   // collect all unique meal times for tabs
   const allMealTimess = useMemo(() => {
-    if (!mealPlans) return [];
-    const times = mealPlans.flatMap(
-      (plan) => Object.values(plan.mealTimes).flat() // flatten all mealTimes arrays
+    if (!filteredPlans) return [];
+    const times = filteredPlans.flatMap(
+      (plan) => Object.values(plan.mealTimes || {}).flat() // flatten all mealTimes arrays
     );
     return Array.from(new Set(times)); // unique
-  }, [mealPlans]);
+  }, [filteredPlans]);
+
+  useEffect(() => {
+    if (filteredPlans && filteredPlans.length > 0 && activeDate && !activeTab) {
+      const allMealTimesSet = Array.from(
+        new Set(
+          filteredPlans.flatMap((plan) =>
+            Object.values(plan.mealTimes || {}).flat()
+          )
+        )
+      );
+      if (allMealTimesSet.length > 0) setActiveTab(allMealTimesSet[0] as any);
+    }
+  }, [filteredPlans, activeDate, activeTab]);
 
   const handleDeleteMealPlan = async () => {
     if (!selectedMealPlan) return;
@@ -209,8 +211,7 @@ const ChildMealPlanSummary = () => {
     return (
       <div
         key={mealPlan.id}
-        className="p-4 shadow-sm bg-[#0B8FAC] rounded-xl w-full border border-gray-200 hover:shadow-md cursor-pointer transition-all relative"
-        onClick={() => navigate(`/detail/${mealPlan.id}`)}
+        className="p-4 shadow-sm bg-[#0B8FAC] rounded-xl w-full border border-gray-200 hover:shadow-md transition-all relative"
       >
         {/* Delete button */}
         <div className="absolute right-2 top-2">
@@ -248,36 +249,80 @@ const ChildMealPlanSummary = () => {
         <div className="my-2 " />
         <div>
           <h4 className="text-sm font-semibold mb-1">🍽️ Meals</h4>
-          {Array.isArray(mealPlan.meals) &&
-            Object.entries(mealPlan.mealTimes).some(([, times]: any) =>
-              times.includes(activeTab)
-            ) && (
-              <div className="space-y-1">
-                {mealPlan.meals
-                  .filter((meal: any) =>
-                    mealPlan.mealTimes[meal.id]?.includes(activeTab)
-                  )
-                  .map((meal: any, index: number) => (
-                    <div
-                      key={meal.id}
-                      className="flex justify-between items-center text-sm"
-                    >
-                      <span>
-                        {index + 1}. {meal.name || "Untitled"}
-                      </span>
-                      <Badge type="dot">{meal.mealType || "Unknown"}</Badge>
+          <div className="space-y-2 max-h-48 overflow-y-auto">
+            {mealPlan.meals
+              ?.filter((meal: any) =>
+                mealPlan.mealTimes[meal.id]?.includes(activeTab)
+              )
+              .map((meal: any) => {
+                const mealTimes = mealPlan.mealTimes[meal.id] || [];
+                return (
+                  <div
+                    key={meal.id}
+                    className="flex items-start gap-3 p-2 bg-gray-700/30 rounded-lg"
+                  >
+                    <img
+                      src={meal.imageUrl ? `${meal.imageUrl}` : fallbackImg}
+                      alt={meal.name}
+                      onError={(e) => {
+                        e.currentTarget.src = fallbackImg;
+                      }}
+                      className="w-12 h-12 rounded object-cover border border-gray-600 flex-shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <Title className="text-sm font-medium truncate">
+                        {meal.name || "Untitled"}
+                      </Title>
+                      <Text className="text-xs text-gray-300">
+                        Age:{" "}
+                        <span className="ml-1">
+                          {meal.ageGroup || "N/A"}m+,
+                        </span>
+                        <br />
+                        Meal Type:{" "}
+                        <span className="ml-1">
+                          {meal.mealType || "Unknown"}
+                        </span>
+                        <br />
+                        Meal Time:{" "}
+                        <span className="ml-1">
+                          {mealTimes.join(", ").toLowerCase()}
+                        </span>
+                      </Text>
+                      {meal.description && (
+                        <Text className="text-xs text-gray-400 mt-1 line-clamp-1">
+                          {meal.description}
+                        </Text>
+                      )}
                     </div>
-                  ))}
-              </div>
-            )}
+                    <Badge type="dot" className="ml-auto mt-1 self-start">
+                      {meal.mealType || "Unknown"}
+                    </Badge>
+                  </div>
+                );
+              })}
+          </div>
         </div>
 
-        <span className="block mt-2 text-teal-300 rounded-sm px-2 py-1 underline text-sm">
+        <button
+          onClick={() => navigate(`/detail/${mealPlan.id}`)}
+          className="block mt-2 text-teal-300 rounded-sm px-2 py-1 underline text-sm bg-transparent border-none cursor-pointer w-full text-left"
+        >
           View detail
-        </span>
+        </button>
       </div>
     );
   };
+
+  const visiblePlans = useMemo(() => {
+    return filteredPlans.filter(
+      (plan) =>
+        Array.isArray(plan.meals) &&
+        plan.meals.some((meal: any) =>
+          plan.mealTimes[meal.id]?.includes(activeTab)
+        )
+    );
+  }, [filteredPlans, activeTab]);
 
   return (
     <Page back={true}>
@@ -342,15 +387,17 @@ const ChildMealPlanSummary = () => {
                 ))}
               </ul>
             )}
-            {filteredPlans.length > 0 ? (
+            {visiblePlans.length > 0 ? (
               <div className="space-y-4">
-                {filteredPlans.map((plan) => (
+                {visiblePlans.map((plan) => (
                   <PlanCard key={plan.id} mealPlan={plan} />
                 ))}
               </div>
             ) : (
               <div className="text-center text-gray-500">
-                No meal plans for this date.
+                {filteredPlans.length > 0
+                  ? "No meal plans for this meal time."
+                  : "No meal plans for this date."}
               </div>
             )}
           </div>
