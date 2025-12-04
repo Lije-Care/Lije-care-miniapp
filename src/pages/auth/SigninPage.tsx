@@ -52,20 +52,20 @@ export const SignInPage = () => {
     const phoneFromBot = urlParams.get("phone");
 
     if (phoneFromBot) {
-      setPhone(phoneFromBot);
+      setPhone("+" + phoneFromBot);
     }
   }, []);
 
   // ✅ Accept both Ethio Telecom (+2519...) and Safaricom (+2517...) numbers
-  // const validatePhone = (value: string) => /^\+251(9|7)\d{8}$/.test(value);
+  const validatePhone = (value: string) => /^\+251(9|7)\d{8}$/.test(value);
 
   const signin = async () => {
     setError("");
 
-    // if (!validatePhone(phone)) {
-    //   setError("Phone must start with +2519|7 and be 12 digits.");
-    //   return;
-    // }
+    if (!validatePhone(phone)) {
+      setError("Phone must start with +2519|7 and be 12 digits.");
+      return;
+    }
 
     if (!password || password.length < 6) {
       setError("Password must be at least 6 characters long.");
@@ -103,12 +103,12 @@ export const SignInPage = () => {
       return;
     }
 
-    // if (!validatePhone(forgotPhone)) {
-    //   setForgotPhoneError(
-    //     "Enter a valid phone number starting with +2519 or +2517"
-    //   );
-    //   return;
-    // }
+    if (!validatePhone(forgotPhone)) {
+      setForgotPhoneError(
+        "Enter a valid phone number starting with +2519 or +2517"
+      );
+      return;
+    }
 
     try {
       const res = await api.post("/auth/forget-password", {
@@ -229,7 +229,7 @@ export const SignInPage = () => {
                 type="tel"
                 placeholder="+2519XXXXXXXX"
                 className="w-full px-4 text-white py-2 rounded-lg border border-gray-300 focus:outline-none bg-gray-700"
-                value={phone}
+                value={"+" + phone}
                 disabled={!!phone} // 👈 disables if phone exists
                 readOnly
               />
