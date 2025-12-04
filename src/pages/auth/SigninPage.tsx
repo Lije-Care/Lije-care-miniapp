@@ -229,7 +229,7 @@ export const SignInPage = () => {
                 type="tel"
                 placeholder="+2519XXXXXXXX"
                 className="w-full px-4 text-white py-2 rounded-lg border border-gray-300 focus:outline-none bg-gray-700"
-                value={"+" + phone}
+                value={+phone}
                 disabled={!!phone} // 👈 disables if phone exists
                 readOnly
               />
