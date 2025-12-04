@@ -26,6 +26,7 @@ const UserOnboardingForm = () => {
     role: "PARENT",
     telegramId: "",
   });
+  const [tgPhone, setTgPhone] = useState("");
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
@@ -48,6 +49,7 @@ const UserOnboardingForm = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const phoneFromBot = urlParams.get("phone");
+    setTgPhone(phoneFromBot || "");
 
     if (phoneFromBot) {
       setFormData((prev) => ({
@@ -167,6 +169,7 @@ const UserOnboardingForm = () => {
               )}
             </div>
 
+            {tgPhone}
             {/* Phone */}
             <div>
               <label
