@@ -181,7 +181,7 @@ const UserOnboardingForm = () => {
                 type="tel"
                 disabled={!!formData.phone}
                 className="w-full px-4 py-2 rounded-lg border text-gray-400 bg-gray-700"
-                value={"+" + formData.phone}
+                value={+formData.phone}
                 readOnly
               />
 
