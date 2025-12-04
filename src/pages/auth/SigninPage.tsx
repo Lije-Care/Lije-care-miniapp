@@ -47,6 +47,15 @@ export const SignInPage = () => {
     if (tgUserId) setTelegramId(tgUserId.toString());
   }, []);
 
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const phoneFromBot = urlParams.get("phone");
+
+    if (phoneFromBot) {
+      setPhone(phoneFromBot);
+    }
+  }, []);
+
   // ✅ Accept both Ethio Telecom (+2519...) and Safaricom (+2517...) numbers
   const validatePhone = (value: string) => /^\+251(9|7)\d{8}$/.test(value);
 
@@ -219,9 +228,10 @@ export const SignInPage = () => {
                 name="phone"
                 type="tel"
                 placeholder="+2519XXXXXXXX"
-                className="w-full px-4 text-white py-2 rounded-lg border border-gray-300 focus:outline-none"
+                className="w-full px-4 text-white py-2 rounded-lg border border-gray-300 focus:outline-none bg-gray-700"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                disabled={!!phone} // 👈 disables if phone exists
+                readOnly
               />
             </div>
 
