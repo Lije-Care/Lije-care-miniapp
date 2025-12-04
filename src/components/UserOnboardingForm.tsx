@@ -64,11 +64,11 @@ const UserOnboardingForm = () => {
       newErrors.firstName = lang === "en" ? "Name is required" : "ስም ያስፈልጋል";
 
     // ✅ Accept +2519... OR +2517... (Ethio Telecom & Safaricom)
-    if (!/^\+251(9|7)\d{8}$/.test(formData.phone))
-      newErrors.phone =
-        lang === "en"
-          ? "Use format +2519XXXXXXXX or +2517XXXXXXXX"
-          : "በመልክ +2519XXXXXXXX ወይም +2517XXXXXXXX ያስገቡ";
+    // if (!/^\+251(9|7)\d{8}$/.test(formData.phone))
+    //   newErrors.phone =
+    //     lang === "en"
+    //       ? "Use format +2519XXXXXXXX or +2517XXXXXXXX"
+    //       : "በመልክ +2519XXXXXXXX ወይም +2517XXXXXXXX ያስገቡ";
 
     // ✅ Password validation: at least 6 characters + strong pattern
     if (formData.password.length < 6) {
@@ -181,7 +181,7 @@ const UserOnboardingForm = () => {
                 type="tel"
                 disabled={!!formData.phone}
                 className="w-full px-4 py-2 rounded-lg border text-gray-400 bg-gray-700"
-                value={+formData.phone}
+                value={formData.phone}
                 readOnly
               />
 
